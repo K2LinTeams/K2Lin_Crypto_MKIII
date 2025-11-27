@@ -22,7 +22,8 @@ export function GlassCard({ children, className, gradient = false, ...props }: G
       transition={{ duration: 0.3 }}
       className={cn(
         'glass-panel rounded-2xl p-6 relative overflow-hidden',
-        gradient && 'before:absolute before:inset-0 before:bg-gradient-to-br before:from-accent-primary/5 before:to-transparent before:pointer-events-none',
+        gradient &&
+          'before:absolute before:inset-0 before:bg-gradient-to-br before:from-accent-primary/5 before:to-transparent before:pointer-events-none',
         className
       )}
       {...props}
@@ -33,15 +34,24 @@ export function GlassCard({ children, className, gradient = false, ...props }: G
 }
 
 type MotionButtonProps = HTMLMotionProps<'button'> & {
-    variant?: 'primary' | 'secondary' | 'danger' | 'ghost'
-    size?: 'sm' | 'md' | 'lg'
-    icon?: React.ReactNode
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost'
+  size?: 'sm' | 'md' | 'lg'
+  icon?: React.ReactNode
 }
 
-export function GlassButton({ className, variant = 'primary', size = 'md', icon, children, ...props }: MotionButtonProps) {
+export function GlassButton({
+  className,
+  variant = 'primary',
+  size = 'md',
+  icon,
+  children,
+  ...props
+}: MotionButtonProps) {
   const variants = {
-    primary: 'bg-accent-primary/20 hover:bg-accent-primary/30 text-accent-primary border border-accent-primary/50 shadow-[0_0_15px_rgba(var(--accent-primary),0.3)]',
-    secondary: 'bg-bg-secondary/50 hover:bg-bg-secondary/70 text-text-secondary border border-glass-border',
+    primary:
+      'bg-accent-primary/20 hover:bg-accent-primary/30 text-accent-primary border border-accent-primary/50 shadow-[0_0_15px_rgba(var(--accent-primary),0.3)]',
+    secondary:
+      'bg-bg-secondary/50 hover:bg-bg-secondary/70 text-text-secondary border border-glass-border',
     danger: 'bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/30',
     ghost: 'hover:bg-glass-highlight text-text-secondary hover:text-text-primary'
   }
@@ -78,7 +88,11 @@ interface GlassInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 export function GlassInput({ className, label, error, ...props }: GlassInputProps) {
   return (
     <div className="flex flex-col gap-1.5 w-full">
-      {label && <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">{label}</label>}
+      {label && (
+        <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">
+          {label}
+        </label>
+      )}
       <input
         className={cn(
           'glass-input w-full rounded-xl px-4 py-3 text-text-primary placeholder-text-secondary/50 focus:outline-none focus:border-accent-primary/50 focus:ring-1 focus:ring-accent-primary/50 transition-all font-mono text-sm',

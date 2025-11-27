@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { Image, FileWarning, Download, Upload, ArrowRight } from 'lucide-react'
-import { GlassCard } from '../ui/GlassComponents'
+import { GlassCard, GlassButton } from '../ui/GlassComponents'
 import { motion } from 'framer-motion'
 import { useApi } from '../../useApi'
 import { useTranslation } from 'react-i18next'
@@ -72,9 +72,9 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
     <div className="max-w-4xl mx-auto h-full flex flex-col items-center justify-center p-4">
       <div className="text-center mb-8">
         <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="inline-flex p-6 rounded-full bg-bg-secondary/50 border border-glass-border mb-6"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          className="inline-flex p-6 rounded-full bg-bg-secondary/50 border border-glass-border mb-6"
         >
           <Image size={48} className="text-text-secondary" />
         </motion.div>
@@ -84,10 +84,10 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
 
       <GlassCard className="w-full max-w-2xl bg-orange-500/5 border-orange-500/20 mb-8">
         <div className="flex gap-4">
-            <FileWarning className="text-orange-500 flex-shrink-0" />
-            <div className="text-xs text-orange-200/80">
-              <strong>{t('warning')}:</strong> {t('warningText')}
-            </div>
+          <FileWarning className="text-orange-500 flex-shrink-0" />
+          <div className="text-xs text-orange-200/80">
+            <strong>{t('warning')}:</strong> {t('warningText')}
+          </div>
         </div>
       </GlassCard>
 
@@ -111,50 +111,62 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
 
       {manualMode && !isEncrypted && (
         <GlassCard className="w-full max-w-xl mb-6 flex flex-col gap-2">
-            <label className="text-xs text-text-secondary font-bold uppercase">Secret Payload</label>
-            <textarea
-                value={manualInput}
-                onChange={(e) => setManualInput(e.target.value)}
-                placeholder="Enter text to hide in image..."
-                className="w-full h-24 bg-transparent border-b border-glass-border focus:border-accent-primary outline-none resize-none text-sm p-2"
-            />
+          <label className="text-xs text-text-secondary font-bold uppercase">Secret Payload</label>
+          <textarea
+            value={manualInput}
+            onChange={(e) => setManualInput(e.target.value)}
+            placeholder="Enter text to hide in image..."
+            className="w-full h-24 bg-transparent border-b border-glass-border focus:border-accent-primary outline-none resize-none text-sm p-2"
+          />
         </GlassCard>
       )}
 
       <div className="flex flex-col items-center gap-4 w-full max-w-xl">
         {(isEncrypted || (manualMode && manualInput)) && (
-             <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 text-accent-primary bg-accent-primary/10 px-4 py-2 rounded-full text-sm border border-accent-primary/20"
-             >
-                <ArrowRight size={16} /> Payload Ready for Embedding
-             </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-2 text-accent-primary bg-accent-primary/10 px-4 py-2 rounded-full text-sm border border-accent-primary/20"
+          >
+            <ArrowRight size={16} /> Payload Ready for Embedding
+          </motion.div>
         )}
 
         <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={`w-full border-2 border-dashed rounded-3xl p-12 transition-all cursor-pointer flex flex-col items-center justify-center gap-4 ${
-                (isEncrypted || (manualMode && manualInput))
-                ? 'border-accent-primary/50 bg-accent-primary/5 hover:bg-accent-primary/10'
-                : 'border-glass-border hover:border-accent-primary/50 hover:bg-glass-bg'
-            }`}
-            onClick={() => {
-                if(manualMode && !manualInput) {
-                    alert('Please enter some text to embed first.')
-                    return
-                }
-                fileInputRef.current?.click()
-            }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className={`w-full border-2 border-dashed rounded-3xl p-12 transition-all cursor-pointer flex flex-col items-center justify-center gap-4 ${
+            isEncrypted || (manualMode && manualInput)
+              ? 'border-accent-primary/50 bg-accent-primary/5 hover:bg-accent-primary/10'
+              : 'border-glass-border hover:border-accent-primary/50 hover:bg-glass-bg'
+          }`}
+          onClick={() => {
+            if (manualMode && !manualInput) {
+              alert('Please enter some text to embed first.')
+              return
+            }
+            fileInputRef.current?.click()
+          }}
         >
-            <div className={`p-4 rounded-full ${(isEncrypted || (manualMode && manualInput)) ? 'bg-accent-primary/20' : 'bg-bg-secondary'}`}>
-                {(isEncrypted || (manualMode && manualInput)) ? <Upload size={32} className="text-accent-primary"/> : <Download size={32} className="text-text-secondary"/>}
-            </div>
-            <div className={(isEncrypted || (manualMode && manualInput)) ? 'text-accent-primary font-bold' : 'text-text-secondary group-hover:text-accent-primary font-bold'}>
-            {(isEncrypted || (manualMode && manualInput)) ? t('clickToEmbed') : t('uploadToExtract')}
-            </div>
-            <div className="text-xs text-text-secondary">{t('supports')}</div>
+          <div
+            className={`p-4 rounded-full ${isEncrypted || (manualMode && manualInput) ? 'bg-accent-primary/20' : 'bg-bg-secondary'}`}
+          >
+            {isEncrypted || (manualMode && manualInput) ? (
+              <Upload size={32} className="text-accent-primary" />
+            ) : (
+              <Download size={32} className="text-text-secondary" />
+            )}
+          </div>
+          <div
+            className={
+              isEncrypted || (manualMode && manualInput)
+                ? 'text-accent-primary font-bold'
+                : 'text-text-secondary group-hover:text-accent-primary font-bold'
+            }
+          >
+            {isEncrypted || (manualMode && manualInput) ? t('clickToEmbed') : t('uploadToExtract')}
+          </div>
+          <div className="text-xs text-text-secondary">{t('supports')}</div>
         </motion.div>
       </div>
 
@@ -168,29 +180,42 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
 
       <div className="h-8 mt-6">
         {stegoStatus && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-accent-primary animate-pulse">
-                {stegoStatus}
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-sm text-accent-primary animate-pulse"
+          >
+            {stegoStatus}
+          </motion.div>
         )}
       </div>
 
       {stegoImage && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-8 flex flex-col items-center">
-          <h3 className="text-sm text-text-secondary mb-4">{t('outputGenerated')}</h3>
-          <a
-            href={stegoImage}
-            download="crypto3_stego_output.png"
-            className="group relative block overflow-hidden rounded-xl border border-glass-border hover:border-accent-primary transition-all"
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-8 flex flex-col items-center gap-4"
+        >
+          <h3 className="text-sm text-text-secondary">{t('outputGenerated')}</h3>
+          <div className="group relative block overflow-hidden rounded-xl border border-glass-border hover:border-accent-primary transition-all bg-black/20">
+            <img src={stegoImage} alt="Stego Output" className="max-w-xs rounded-xl shadow-2xl" />
+          </div>
+
+          <GlassButton
+            onClick={() => {
+              const link = document.createElement('a')
+              link.href = stegoImage
+              link.download = 'crypto3_stego_output.png'
+              document.body.appendChild(link)
+              link.click()
+              document.body.removeChild(link)
+            }}
+            variant="primary"
+            icon={<Download size={18} />}
+            className="mt-2"
           >
-            <img
-              src={stegoImage}
-              alt="Stego Output"
-              className="max-w-xs rounded-xl shadow-2xl"
-            />
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Download size={32} className="text-white" />
-            </div>
-          </a>
+            Download Image
+          </GlassButton>
         </motion.div>
       )}
     </div>

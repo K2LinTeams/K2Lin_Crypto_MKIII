@@ -52,9 +52,9 @@
     "emergencyWipeDesc": "立即销毁所有本地密钥和缓存",
     "execute": "执行",
     "themes": {
-        "cyberpunk": "赛博朋克",
-        "light": "SaaS / 亮色",
-        "midnight": "深空"
+      "cyberpunk": "赛博朋克",
+      "light": "SaaS / 亮色",
+      "midnight": "深空"
     },
     "language": "语言"
   }

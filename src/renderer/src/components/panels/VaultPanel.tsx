@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Lock, Eye, Copy, Trash2, Key, Unlock, Send } from 'lucide-react'
+import { Lock, Eye, Copy, Trash2, Key, Unlock, Send, Image as ImageIcon } from 'lucide-react'
 import { GlassCard, GlassButton, GlassInput } from '../ui/GlassComponents'
 import { motion } from 'framer-motion'
 import { useApi } from '../../useApi'
@@ -20,6 +20,9 @@ interface VaultPanelProps {
   setEncryptedPackage: (pkg: any) => void
   currentFormat: Format
   setCurrentFormat: (fmt: Format) => void
+  secretKey: string
+  setSecretKey: (key: string) => void
+  onSwitchToStego: () => void
 }
 
 export default function VaultPanel({
@@ -32,12 +35,14 @@ export default function VaultPanel({
   encryptedPackage,
   setEncryptedPackage,
   currentFormat,
-  setCurrentFormat
+  setCurrentFormat,
+  secretKey,
+  setSecretKey,
+  onSwitchToStego
 }: VaultPanelProps) {
-  const [secretKey, setSecretKey] = useState('')
   const [showKey, setShowKey] = useState(false)
   const api = useApi()
-  const { t } = useTranslation('vault')
+  const { t, i18n } = useTranslation('vault')
 
   const handleProcess = async (mode: 'encrypt' | 'decrypt'): Promise<void> => {
     if (!secretKey) return
@@ -48,23 +53,23 @@ export default function VaultPanel({
         let encryptedObj = encryptedPackage
 
         if (!encryptedObj && outputData) {
-            // Try to parse outputData if encryptedPackage is null (e.g. pasted data)
-             if (currentFormat === 'Natural Text (Markov)') {
-                const decodedBytes = await api.nlp.decode(outputData)
-                const jsonString = new TextDecoder().decode(decodedBytes)
-                encryptedObj = JSON.parse(jsonString)
-              } else {
-                try {
-                  encryptedObj = JSON.parse(atob(outputData))
-                } catch {
-                  encryptedObj = JSON.parse(outputData)
-                }
-              }
+          // Try to parse outputData if encryptedPackage is null (e.g. pasted data)
+          if (currentFormat === 'Natural Text (Markov)') {
+            const decodedBytes = await api.nlp.decode(outputData, i18n.language)
+            const jsonString = new TextDecoder().decode(decodedBytes)
+            encryptedObj = JSON.parse(jsonString)
+          } else {
+            try {
+              encryptedObj = JSON.parse(atob(outputData))
+            } catch {
+              encryptedObj = JSON.parse(outputData)
+            }
+          }
         }
 
         if (!encryptedObj) {
-            alert('No encrypted data found to decrypt.')
-            return
+          alert('No encrypted data found to decrypt.')
+          return
         }
 
         const result = await api.crypto.decrypt(
@@ -101,10 +106,14 @@ export default function VaultPanel({
     if (format === 'Base64') {
       setOutputData(btoa(jsonString))
     } else if (format === 'Hex') {
-      setOutputData(Buffer.from(jsonString).toString('hex'))
+      const buffer = new TextEncoder().encode(jsonString)
+      const hex = Array.from(new Uint8Array(buffer))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
+      setOutputData(hex)
     } else if (format === 'Natural Text (Markov)') {
       const buffer = new TextEncoder().encode(jsonString)
-      const text = await api.nlp.encode(buffer.buffer)
+      const text = await api.nlp.encode(buffer.buffer, i18n.language)
       setOutputData(text)
     }
   }
@@ -193,49 +202,64 @@ export default function VaultPanel({
 
         {/* Action Button (Centered Overlay for Desktop) */}
         <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none gap-4">
-           <div className="pointer-events-auto flex flex-col gap-2">
-             <motion.button
-               whileHover={{ scale: 1.1 }}
-               whileTap={{ scale: 0.9 }}
-               onClick={() => handleProcess('encrypt')}
-               className="bg-gradient-to-r from-accent-primary to-accent-secondary text-white p-4 rounded-full shadow-[0_0_20px_rgba(var(--accent-primary),0.4)] flex items-center justify-center"
-               title={t('encrypt')}
-               disabled={isEncrypted}
-             >
-               <Send size={24} />
-             </motion.button>
+          <div className="pointer-events-auto flex flex-col gap-2">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => handleProcess('encrypt')}
+              className="bg-gradient-to-r from-accent-primary to-accent-secondary text-white p-4 rounded-full shadow-[0_0_20px_rgba(var(--accent-primary),0.4)] flex items-center justify-center"
+              title={t('encrypt')}
+              disabled={isEncrypted}
+            >
+              <Send size={24} />
+            </motion.button>
 
-             <motion.button
-               whileHover={{ scale: 1.1 }}
-               whileTap={{ scale: 0.9 }}
-               onClick={() => handleProcess('decrypt')}
-               className="bg-bg-secondary border border-glass-border text-text-secondary hover:text-white p-3 rounded-full shadow-lg flex items-center justify-center backdrop-blur-sm"
-               title={t('decrypt')}
-             >
-               <Unlock size={20} />
-             </motion.button>
-           </div>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => handleProcess('decrypt')}
+              className="bg-bg-secondary border border-glass-border text-text-secondary hover:text-white p-3 rounded-full shadow-lg flex items-center justify-center backdrop-blur-sm"
+              title={t('decrypt')}
+            >
+              <Unlock size={20} />
+            </motion.button>
+          </div>
         </div>
         {/* Mobile Action Button */}
         <div className="lg:hidden flex justify-center gap-4 py-2">
-           <GlassButton onClick={() => handleProcess('encrypt')} variant="primary" icon={<Send />}>
-             {t('encrypt')}
-           </GlassButton>
-           <GlassButton onClick={() => handleProcess('decrypt')} variant="secondary" icon={<Unlock />}>
-             {t('decrypt')}
-           </GlassButton>
+          <GlassButton onClick={() => handleProcess('encrypt')} variant="primary" icon={<Send />}>
+            {t('encrypt')}
+          </GlassButton>
+          <GlassButton
+            onClick={() => handleProcess('decrypt')}
+            variant="secondary"
+            icon={<Unlock />}
+          >
+            {t('decrypt')}
+          </GlassButton>
         </div>
-
 
         {/* Output Area */}
         <GlassCard className="flex flex-col gap-2 min-h-[300px] relative group">
           <div className="flex justify-between items-center">
-            <label className="text-xs text-text-secondary font-bold uppercase">{t('encryptedPayload')}</label>
+            <label className="text-xs text-text-secondary font-bold uppercase">
+              {t('encryptedPayload')}
+            </label>
             <div className="flex gap-2">
-              <button onClick={() => copyToClipboard(outputData)} className="p-1 hover:text-accent-primary text-text-secondary">
+              <button
+                onClick={() => copyToClipboard(outputData)}
+                className="p-1 hover:text-accent-primary text-text-secondary"
+              >
                 <Copy size={14} />
               </button>
-              <button onClick={() => { setOutputData(''); setEncryptedPackage(null); setIsEncrypted(false); }} className="p-1 hover:text-danger text-text-secondary">
+              <button
+                onClick={() => {
+                  setOutputData('')
+                  setEncryptedPackage(null)
+                  setIsEncrypted(false)
+                }}
+                className="p-1 hover:text-danger text-text-secondary"
+              >
                 <Trash2 size={14} />
               </button>
             </div>
@@ -249,12 +273,12 @@ export default function VaultPanel({
           />
 
           {outputData && (
-             <div className="absolute top-0 left-0 w-full h-1 bg-accent-primary/20 shadow-[0_0_15px_rgba(var(--accent-primary),0.5)] animate-[scan_3s_linear_infinite] pointer-events-none"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-accent-primary/20 shadow-[0_0_15px_rgba(var(--accent-primary),0.5)] animate-[scan_3s_linear_infinite] pointer-events-none"></div>
           )}
         </GlassCard>
       </div>
 
-       <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+      <div className="flex flex-wrap gap-4 pb-2">
         {(['Base64', 'Hex', 'Natural Text (Markov)'] as Format[]).map((fmt) => (
           <GlassButton
             key={fmt}
@@ -266,6 +290,18 @@ export default function VaultPanel({
             {fmt}
           </GlassButton>
         ))}
+
+        <div className="w-px h-8 bg-glass-border mx-2"></div>
+
+        <GlassButton
+          onClick={onSwitchToStego}
+          variant="ghost"
+          size="sm"
+          icon={<ImageIcon size={16} />}
+          className="whitespace-nowrap"
+        >
+          Image Stego
+        </GlassButton>
       </div>
 
       <style>{`
