@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Shield, Lock, Image as ImageIcon, Settings, EyeOff } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { clsx } from 'clsx'
@@ -8,102 +8,9 @@ import VaultPanel from './components/panels/VaultPanel'
 import MimicPanel from './components/panels/MimicPanel'
 import SettingsPanel from './components/panels/SettingsPanel'
 import { ThemeProvider } from './components/ThemeContext'
-import { Plus, CheckCircle, Trash2 } from 'lucide-react' // For Panic Mode
-import { useApi } from './useApi'
+import PanicMode from './components/PanicMode'
 import { useTranslation } from 'react-i18next'
 import './i18n' // Import i18n config
-
-// --- Panic Mode Component (Self-contained for clean separation) ---
-const PanicMode = ({ onExit }: { onExit: () => void }) => {
-  const [todos, setTodos] = useState<{ id: number; text: string; done: boolean }[]>([])
-  const { t } = useTranslation('common')
-  const api = useApi()
-
-  // Load Panic Mode Todos
-  useEffect(() => {
-    async function loadTodos(): Promise<void> {
-      const storedTodos = await api.store.get('todos')
-      if (storedTodos) {
-        setTodos(storedTodos)
-      }
-    }
-    loadTodos()
-  }, [])
-
-  // Save Panic Mode Todos
-  const updateTodos = (newTodos: typeof todos): void => {
-    setTodos(newTodos)
-    api.store.set('todos', newTodos)
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col items-center pt-10 transition-all duration-300">
-        <div className="w-full max-w-md bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
-          <div className="bg-blue-500 p-4 flex justify-between items-center text-white">
-            <h1 className="text-xl font-bold">{t('dailyTasks')}</h1>
-            <button
-              onClick={onExit}
-              className="opacity-50 hover:opacity-100 transition-opacity"
-            >
-              <div className="w-2 h-2 bg-white rounded-full"></div> {/* Hidden Toggle */}
-            </button>
-          </div>
-          <div className="p-4">
-            <div className="flex gap-2 mb-4">
-              <input
-                type="text"
-                placeholder={t('addTask')}
-                className="flex-1 border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    const val = (e.target as HTMLInputElement).value
-                    if (val) {
-                      updateTodos([...todos, { id: Date.now(), text: val, done: false }])
-                      ;(e.target as HTMLInputElement).value = ''
-                    }
-                  }
-                }}
-              />
-              <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                <Plus size={20} />
-              </button>
-            </div>
-            <ul className="space-y-2">
-              {todos.map((todo) => (
-                <li
-                  key={todo.id}
-                  className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer"
-                  onClick={() => {
-                    const newTodos = todos.map((t) =>
-                      t.id === todo.id ? { ...t, done: !t.done } : t
-                    )
-                    updateTodos(newTodos)
-                  }}
-                >
-                  {todo.done ? (
-                    <CheckCircle className="text-green-500" size={20} />
-                  ) : (
-                    <div className="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
-                  )}
-                  <span className={todo.done ? 'line-through text-gray-400' : ''}>{todo.text}</span>
-                  <button
-                    className="ml-auto text-gray-300 hover:text-red-500"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      updateTodos(todos.filter((t) => t.id !== todo.id))
-                    }}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        <div className="mt-8 text-xs text-gray-400">{t('simpleNotes')}</div>
-      </div>
-  )
-}
 
 // --- Main App Layout ---
 type Tab = 'vault' | 'mimic' | 'settings'

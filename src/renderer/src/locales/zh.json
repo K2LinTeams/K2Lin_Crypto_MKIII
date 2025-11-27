@@ -21,7 +21,8 @@
     "decrypt": "解密",
     "waitingForData": "等待数据...",
     "operationFailed": "操作失败",
-    "copied": "已复制到剪贴板"
+    "copied": "已复制到剪贴板",
+    "copy": "复制"
   },
   "mimic": {
     "title": "LSB 隐写实验室",
