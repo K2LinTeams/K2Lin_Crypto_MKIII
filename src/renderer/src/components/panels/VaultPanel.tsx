@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Lock, Send, Copy, Trash2, Key, Unlock } from 'lucide-react'
+import { Lock, Eye, Copy, Trash2, Key, Unlock, Send } from 'lucide-react'
 import { GlassCard, GlassButton, GlassInput } from '../ui/GlassComponents'
 import { motion } from 'framer-motion'
 import { useApi } from '../../useApi'
@@ -35,6 +35,7 @@ export default function VaultPanel({
   setCurrentFormat
 }: VaultPanelProps) {
   const [secretKey, setSecretKey] = useState('')
+  const [showKey, setShowKey] = useState(false)
   const api = useApi()
   const { t } = useTranslation('vault')
 
@@ -120,35 +121,61 @@ export default function VaultPanel({
   }
 
   const generateRandomKey = () => {
-    const array = new Uint8Array(32);
-    window.crypto.getRandomValues(array);
-    const key = Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join('');
-    setSecretKey(key);
+    const array = new Uint8Array(32)
+    window.crypto.getRandomValues(array)
+    const key = Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join('')
+    setSecretKey(key)
+  }
+
+  const handleShowKey = () => {
+    setShowKey(true)
+    setTimeout(() => setShowKey(false), 3000)
   }
 
   return (
     <div className="flex flex-col gap-6 max-w-5xl mx-auto h-full">
       <GlassCard className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
-           <h3 className="text-sm font-bold text-text-secondary uppercase tracking-wider flex items-center gap-2">
+          <h3 className="text-sm font-bold text-text-secondary uppercase tracking-wider flex items-center gap-2">
             <Lock size={14} /> {t('sessionKey')}
           </h3>
-          <GlassButton
-            variant="ghost"
-            size="sm"
-            onClick={generateRandomKey}
-            icon={<Key size={14} />}
-            className="text-xs"
-          >
-            {t('generateRandom')}
-          </GlassButton>
+          <div className="flex gap-2">
+            <GlassButton
+              variant="ghost"
+              size="sm"
+              onClick={() => copyToClipboard(secretKey)}
+              icon={<Copy size={14} />}
+              className="text-xs"
+              disabled={!secretKey}
+            >
+              {t('copy')}
+            </GlassButton>
+            <GlassButton
+              variant="ghost"
+              size="sm"
+              onClick={generateRandomKey}
+              icon={<Key size={14} />}
+              className="text-xs"
+            >
+              {t('generateRandom')}
+            </GlassButton>
+          </div>
         </div>
-        <GlassInput
-          type="password"
-          value={secretKey}
-          onChange={(e) => setSecretKey(e.target.value)}
-          placeholder={t('enterKey')}
-        />
+        <div className="relative">
+          <GlassInput
+            type={showKey ? 'text' : 'password'}
+            value={secretKey}
+            onChange={(e) => setSecretKey(e.target.value)}
+            placeholder={t('enterKey')}
+            className="pr-10"
+          />
+          <button
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors"
+            onClick={handleShowKey}
+          >
+            <Eye size={16} className={showKey ? 'text-accent-primary' : ''} />
+          </button>
+        </div>
       </GlassCard>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-0">

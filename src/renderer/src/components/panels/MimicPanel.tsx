@@ -15,6 +15,8 @@ interface MimicPanelProps {
 export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }: MimicPanelProps) {
   const [stegoImage, setStegoImage] = useState<string | null>(null)
   const [stegoStatus, setStegoStatus] = useState('')
+  const [manualMode, setManualMode] = useState(false)
+  const [manualInput, setManualInput] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const api = useApi()
   const { t } = useTranslation('mimic')
@@ -25,11 +27,19 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
 
     const arrayBuffer = await file.arrayBuffer()
 
-    if (isEncrypted && encryptedPackage) {
+    const embeddingMode = (isEncrypted && encryptedPackage) || (manualMode && manualInput)
+
+    if (embeddingMode) {
       // Embedding mode
       setStegoStatus(t('embedding'))
       try {
-        const payload = JSON.stringify(encryptedPackage)
+        let payload = ''
+        if (manualMode) {
+          payload = manualInput
+        } else {
+          payload = JSON.stringify(encryptedPackage)
+        }
+
         const payloadBuffer = new TextEncoder().encode(payload)
 
         const pngBuffer = await api.stego.embed(arrayBuffer, payloadBuffer.buffer)
@@ -81,14 +91,44 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
         </div>
       </GlassCard>
 
+      {/* Mode Toggle */}
+      {!isEncrypted && (
+        <div className="flex gap-4 mb-6">
+          <button
+            onClick={() => setManualMode(false)}
+            className={`px-4 py-2 rounded-full text-sm transition-all ${!manualMode ? 'bg-accent-primary text-white' : 'text-text-secondary hover:bg-bg-secondary'}`}
+          >
+            Extraction Mode
+          </button>
+          <button
+            onClick={() => setManualMode(true)}
+            className={`px-4 py-2 rounded-full text-sm transition-all ${manualMode ? 'bg-accent-primary text-white' : 'text-text-secondary hover:bg-bg-secondary'}`}
+          >
+            Manual Embedding
+          </button>
+        </div>
+      )}
+
+      {manualMode && !isEncrypted && (
+        <GlassCard className="w-full max-w-xl mb-6 flex flex-col gap-2">
+            <label className="text-xs text-text-secondary font-bold uppercase">Secret Payload</label>
+            <textarea
+                value={manualInput}
+                onChange={(e) => setManualInput(e.target.value)}
+                placeholder="Enter text to hide in image..."
+                className="w-full h-24 bg-transparent border-b border-glass-border focus:border-accent-primary outline-none resize-none text-sm p-2"
+            />
+        </GlassCard>
+      )}
+
       <div className="flex flex-col items-center gap-4 w-full max-w-xl">
-        {isEncrypted && (
+        {(isEncrypted || (manualMode && manualInput)) && (
              <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="flex items-center gap-2 text-accent-primary bg-accent-primary/10 px-4 py-2 rounded-full text-sm border border-accent-primary/20"
              >
-                <ArrowRight size={16} /> Encrypted Payload Ready for Embedding
+                <ArrowRight size={16} /> Payload Ready for Embedding
              </motion.div>
         )}
 
@@ -96,17 +136,23 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className={`w-full border-2 border-dashed rounded-3xl p-12 transition-all cursor-pointer flex flex-col items-center justify-center gap-4 ${
-                isEncrypted
+                (isEncrypted || (manualMode && manualInput))
                 ? 'border-accent-primary/50 bg-accent-primary/5 hover:bg-accent-primary/10'
                 : 'border-glass-border hover:border-accent-primary/50 hover:bg-glass-bg'
             }`}
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => {
+                if(manualMode && !manualInput) {
+                    alert('Please enter some text to embed first.')
+                    return
+                }
+                fileInputRef.current?.click()
+            }}
         >
-            <div className={`p-4 rounded-full ${isEncrypted ? 'bg-accent-primary/20' : 'bg-bg-secondary'}`}>
-                {isEncrypted ? <Upload size={32} className="text-accent-primary"/> : <Download size={32} className="text-text-secondary"/>}
+            <div className={`p-4 rounded-full ${(isEncrypted || (manualMode && manualInput)) ? 'bg-accent-primary/20' : 'bg-bg-secondary'}`}>
+                {(isEncrypted || (manualMode && manualInput)) ? <Upload size={32} className="text-accent-primary"/> : <Download size={32} className="text-text-secondary"/>}
             </div>
-            <div className={isEncrypted ? 'text-accent-primary font-bold' : 'text-text-secondary group-hover:text-accent-primary font-bold'}>
-            {isEncrypted ? t('clickToEmbed') : t('uploadToExtract')}
+            <div className={(isEncrypted || (manualMode && manualInput)) ? 'text-accent-primary font-bold' : 'text-text-secondary group-hover:text-accent-primary font-bold'}>
+            {(isEncrypted || (manualMode && manualInput)) ? t('clickToEmbed') : t('uploadToExtract')}
             </div>
             <div className="text-xs text-text-secondary">{t('supports')}</div>
         </motion.div>
