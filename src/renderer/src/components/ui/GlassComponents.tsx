@@ -65,7 +65,6 @@ export function GlassButton({ className, variant = 'primary', size = 'md', icon,
       {...props}
     >
       {icon && <span className="w-5 h-5 flex items-center justify-center">{icon}</span>}
-      {/* Explicitly cast children to ReactNode because Framer Motion types can be weird with strict React 18+ types */}
       {children as React.ReactNode}
     </motion.button>
   )
