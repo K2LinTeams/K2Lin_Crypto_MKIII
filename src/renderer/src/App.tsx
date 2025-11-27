@@ -10,10 +10,13 @@ import SettingsPanel from './components/panels/SettingsPanel'
 import { ThemeProvider } from './components/ThemeContext'
 import { Plus, CheckCircle, Trash2 } from 'lucide-react' // For Panic Mode
 import { useApi } from './useApi'
+import { useTranslation } from 'react-i18next'
+import './i18n' // Import i18n config
 
 // --- Panic Mode Component (Self-contained for clean separation) ---
 const PanicMode = ({ onExit }: { onExit: () => void }) => {
   const [todos, setTodos] = useState<{ id: number; text: string; done: boolean }[]>([])
+  const { t } = useTranslation('common')
   const api = useApi()
 
   // Load Panic Mode Todos
@@ -37,7 +40,7 @@ const PanicMode = ({ onExit }: { onExit: () => void }) => {
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col items-center pt-10 transition-all duration-300">
         <div className="w-full max-w-md bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
           <div className="bg-blue-500 p-4 flex justify-between items-center text-white">
-            <h1 className="text-xl font-bold">Daily Tasks</h1>
+            <h1 className="text-xl font-bold">{t('dailyTasks')}</h1>
             <button
               onClick={onExit}
               className="opacity-50 hover:opacity-100 transition-opacity"
@@ -49,7 +52,7 @@ const PanicMode = ({ onExit }: { onExit: () => void }) => {
             <div className="flex gap-2 mb-4">
               <input
                 type="text"
-                placeholder="Add a new task..."
+                placeholder={t('addTask')}
                 className="flex-1 border border-gray-300 rounded px-3 py-2 outline-none focus:border-blue-500"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
@@ -97,7 +100,7 @@ const PanicMode = ({ onExit }: { onExit: () => void }) => {
             </ul>
           </div>
         </div>
-        <div className="mt-8 text-xs text-gray-400">SimpleNotes v1.0.2 &copy; 2024</div>
+        <div className="mt-8 text-xs text-gray-400">{t('simpleNotes')}</div>
       </div>
   )
 }
@@ -109,6 +112,7 @@ type Format = 'Base64' | 'Hex' | 'Natural Text (Markov)'
 function AppLayout(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<Tab>('vault')
   const [panicMode, setPanicMode] = useState(false)
+  const { t } = useTranslation('common')
 
   // Shared state lifted from panels
   const [inputData, setInputData] = useState('')
@@ -144,7 +148,7 @@ function AppLayout(): React.ReactElement {
           <Shield size={24} className="text-accent-primary" />
         </div>
 
-        <div className="flex-1 flex flex-col gap-6 w-full items-center">
+        <div className="flex-1 flex flex-col gap-6 w-full items-center justify-center">
           {[
             { id: 'vault', icon: Lock, label: 'Vault' },
             { id: 'mimic', icon: ImageIcon, label: 'Mimic' },
@@ -154,17 +158,17 @@ function AppLayout(): React.ReactElement {
               key={item.id}
               onClick={() => setActiveTab(item.id as Tab)}
               className={clsx(
-                'p-3 rounded-xl transition-all relative group',
+                'relative p-3 rounded-xl transition-all group flex items-center justify-center',
                 activeTab === item.id
                   ? 'bg-accent-primary/20 text-accent-primary shadow-[0_0_15px_rgba(var(--accent-primary),0.2)]'
                   : 'text-text-secondary hover:text-text-primary hover:bg-glass-highlight'
               )}
             >
-              <item.icon size={22} />
+              <item.icon size={22} className="relative z-10" />
               {activeTab === item.id && (
                   <motion.div
                     layoutId="active-indicator"
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-accent-primary rounded-r-full"
+                    className="absolute -right-[18px] top-1/2 -translate-y-1/2 w-1 h-8 bg-accent-primary rounded-l-full"
                   />
               )}
             </button>
@@ -174,7 +178,7 @@ function AppLayout(): React.ReactElement {
         <button
           onClick={() => setPanicMode(true)}
           className="p-3 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all mb-4"
-          title="Enable Panic Mode"
+          title={t('panicMode')}
         >
           <EyeOff size={22} />
         </button>
@@ -200,7 +204,7 @@ function AppLayout(): React.ReactElement {
           </div>
           <div className="flex items-center gap-2 text-xs text-success">
              <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-             <span>System Secure</span>
+             <span>{t('systemSecure')}</span>
           </div>
         </header>
 

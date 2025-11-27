@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react'
-import { Image, FileWarning, Download } from 'lucide-react'
+import { Image, FileWarning, Download, Upload, ArrowRight } from 'lucide-react'
 import { GlassCard } from '../ui/GlassComponents'
 import { motion } from 'framer-motion'
 import { useApi } from '../../useApi'
+import { useTranslation } from 'react-i18next'
 
 interface MimicPanelProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,6 +17,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
   const [stegoStatus, setStegoStatus] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const api = useApi()
+  const { t } = useTranslation('mimic')
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     const file = e.target.files?.[0]
@@ -25,7 +27,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
 
     if (isEncrypted && encryptedPackage) {
       // Embedding mode
-      setStegoStatus('Embedding data...')
+      setStegoStatus(t('embedding'))
       try {
         const payload = JSON.stringify(encryptedPackage)
         const payloadBuffer = new TextEncoder().encode(payload)
@@ -36,22 +38,22 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
         const blob = new Blob([pngBuffer as unknown as BlobPart], { type: 'image/png' })
         const url = URL.createObjectURL(blob)
         setStegoImage(url)
-        setStegoStatus('Encryption complete. Please download the PNG.')
+        setStegoStatus(t('encryptionComplete'))
       } catch (err) {
         setStegoStatus('Error: ' + (err as Error).message)
       }
     } else {
       // Extraction mode
-      setStegoStatus('Scanning for data...')
+      setStegoStatus(t('scanning'))
       try {
         const payloadBuffer = await api.stego.extract(arrayBuffer)
         const payloadStr = new TextDecoder().decode(payloadBuffer)
 
         // Callback to parent to handle the extracted data
         onExtract(payloadStr)
-        setStegoStatus('Data found! Switch to Vault to decrypt.')
+        setStegoStatus(t('dataFound'))
       } catch {
-        setStegoStatus('No valid data found or error reading image.')
+        setStegoStatus(t('noDataFound'))
       }
     }
   }
@@ -66,39 +68,49 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
         >
           <Image size={48} className="text-text-secondary" />
         </motion.div>
-        <h2 className="text-3xl font-bold text-text-primary mb-2">LSB Steganography Lab</h2>
-        <p className="text-text-secondary">Hide encrypted payloads inside innocuous images.</p>
+        <h2 className="text-3xl font-bold text-text-primary mb-2">{t('title')}</h2>
+        <p className="text-text-secondary">{t('description')}</p>
       </div>
 
       <GlassCard className="w-full max-w-2xl bg-orange-500/5 border-orange-500/20 mb-8">
         <div className="flex gap-4">
             <FileWarning className="text-orange-500 flex-shrink-0" />
             <div className="text-xs text-orange-200/80">
-              <strong>Warning:</strong> Uses LSB (Least Significant Bit) Steganography.
-              <ul className="list-disc ml-4 mt-2 space-y-1">
-                <li>Output images must be saved as <strong>PNG</strong>.</li>
-                <li>Cloud compression (FB, Twitter, WhatsApp default) will destroy data.</li>
-                <li>Send as "Original/File" only.</li>
-              </ul>
+              <strong>{t('warning')}:</strong> {t('warningText')}
             </div>
         </div>
       </GlassCard>
 
-      <motion.div
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        className={`w-full max-w-xl border-2 border-dashed rounded-3xl p-12 transition-all cursor-pointer flex flex-col items-center justify-center gap-4 ${
-            isEncrypted
-            ? 'border-accent-primary/50 bg-accent-primary/5 hover:bg-accent-primary/10'
-            : 'border-glass-border hover:border-accent-primary/50 hover:bg-glass-bg'
-        }`}
-        onClick={() => fileInputRef.current?.click()}
-      >
-        <div className={isEncrypted ? 'text-accent-primary' : 'text-text-secondary group-hover:text-accent-primary'}>
-           {isEncrypted ? 'Click to Embed Encrypted Data' : 'Upload Image to Extract Data'}
-        </div>
-        <div className="text-xs text-text-secondary">Supports JPG, PNG, WebP</div>
-      </motion.div>
+      <div className="flex flex-col items-center gap-4 w-full max-w-xl">
+        {isEncrypted && (
+             <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2 text-accent-primary bg-accent-primary/10 px-4 py-2 rounded-full text-sm border border-accent-primary/20"
+             >
+                <ArrowRight size={16} /> Encrypted Payload Ready for Embedding
+             </motion.div>
+        )}
+
+        <motion.div
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className={`w-full border-2 border-dashed rounded-3xl p-12 transition-all cursor-pointer flex flex-col items-center justify-center gap-4 ${
+                isEncrypted
+                ? 'border-accent-primary/50 bg-accent-primary/5 hover:bg-accent-primary/10'
+                : 'border-glass-border hover:border-accent-primary/50 hover:bg-glass-bg'
+            }`}
+            onClick={() => fileInputRef.current?.click()}
+        >
+            <div className={`p-4 rounded-full ${isEncrypted ? 'bg-accent-primary/20' : 'bg-bg-secondary'}`}>
+                {isEncrypted ? <Upload size={32} className="text-accent-primary"/> : <Download size={32} className="text-text-secondary"/>}
+            </div>
+            <div className={isEncrypted ? 'text-accent-primary font-bold' : 'text-text-secondary group-hover:text-accent-primary font-bold'}>
+            {isEncrypted ? t('clickToEmbed') : t('uploadToExtract')}
+            </div>
+            <div className="text-xs text-text-secondary">{t('supports')}</div>
+        </motion.div>
+      </div>
 
       <input
         type="file"
@@ -118,7 +130,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
 
       {stegoImage && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-8 flex flex-col items-center">
-          <h3 className="text-sm text-text-secondary mb-4">Output Generated</h3>
+          <h3 className="text-sm text-text-secondary mb-4">{t('outputGenerated')}</h3>
           <a
             href={stegoImage}
             download="crypto3_stego_output.png"

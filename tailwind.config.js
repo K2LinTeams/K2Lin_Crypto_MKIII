@@ -28,8 +28,8 @@ module.exports = {
         success: 'var(--success)',
       },
       fontFamily: {
+        sans: ['Comfortaa', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
     },
   },

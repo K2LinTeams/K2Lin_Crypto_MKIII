@@ -1,21 +1,48 @@
 import { GlassCard, GlassButton } from '../ui/GlassComponents'
 import { useTheme } from '../ThemeContext'
-import { Moon, Sun, Monitor, AlertTriangle } from 'lucide-react'
+import { Moon, Sun, Monitor, AlertTriangle, Languages } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export default function SettingsPanel() {
   const { theme, setTheme } = useTheme()
+  const { t, i18n } = useTranslation('settings')
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng)
+  }
 
   return (
     <div className="max-w-3xl mx-auto h-full p-4">
       <h2 className="text-2xl font-bold text-text-primary mb-6 border-b border-glass-border pb-4">
-        System Configuration
+        {t('title')}
       </h2>
 
       <div className="space-y-6">
 
+        {/* Language Selection */}
+        <GlassCard>
+            <h3 className="text-lg font-medium text-text-primary mb-4">{t('language')}</h3>
+            <div className="grid grid-cols-2 gap-4">
+                <GlassButton
+                    variant={i18n.language.startsWith('en') ? 'primary' : 'secondary'}
+                    onClick={() => changeLanguage('en')}
+                    icon={<Languages size={16}/>}
+                >
+                    English
+                </GlassButton>
+                <GlassButton
+                    variant={i18n.language.startsWith('zh') ? 'primary' : 'secondary'}
+                    onClick={() => changeLanguage('zh')}
+                    icon={<Languages size={16}/>}
+                >
+                    中文
+                </GlassButton>
+            </div>
+        </GlassCard>
+
         {/* Theme Selection */}
         <GlassCard>
-            <h3 className="text-lg font-medium text-text-primary mb-4">Interface Theme</h3>
+            <h3 className="text-lg font-medium text-text-primary mb-4">{t('interfaceTheme')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <GlassButton
                     variant={theme === 'cyberpunk' ? 'primary' : 'secondary'}
@@ -23,7 +50,7 @@ export default function SettingsPanel() {
                     className="justify-start"
                     icon={<Monitor size={16}/>}
                 >
-                    Cyberpunk (Default)
+                    {t('themes.cyberpunk')}
                 </GlassButton>
                 <GlassButton
                     variant={theme === 'light' ? 'primary' : 'secondary'}
@@ -31,7 +58,7 @@ export default function SettingsPanel() {
                     className="justify-start"
                     icon={<Sun size={16}/>}
                 >
-                    SaaS / Light
+                    {t('themes.light')}
                 </GlassButton>
                 <GlassButton
                     variant={theme === 'midnight' ? 'primary' : 'secondary'}
@@ -39,7 +66,7 @@ export default function SettingsPanel() {
                     className="justify-start"
                     icon={<Moon size={16}/>}
                 >
-                    Deep Space
+                    {t('themes.midnight')}
                 </GlassButton>
             </div>
         </GlassCard>
@@ -47,9 +74,9 @@ export default function SettingsPanel() {
         {/* General Settings */}
         <GlassCard className="flex items-center justify-between">
             <div>
-                <div className="text-text-primary font-bold">Clipboard Monitor</div>
+                <div className="text-text-primary font-bold">{t('clipboardMonitor')}</div>
                 <div className="text-text-secondary text-xs mt-1">
-                  Auto-detect "Crypto3" formatted data
+                  {t('clipboardMonitorDesc')}
                 </div>
             </div>
             <div className="w-12 h-6 bg-bg-secondary rounded-full relative cursor-pointer border border-glass-border">
@@ -59,12 +86,12 @@ export default function SettingsPanel() {
 
         <GlassCard className="flex items-center justify-between">
              <div>
-                <div className="text-text-primary font-bold">Panic Mode Pin</div>
+                <div className="text-text-primary font-bold">{t('panicModePin')}</div>
                 <div className="text-text-secondary text-xs mt-1">
-                   Require PIN to exit camouflage mode
+                   {t('panicModePinDesc')}
                 </div>
             </div>
-            <GlassButton size="sm" variant="secondary">Configure</GlassButton>
+            <GlassButton size="sm" variant="secondary">{t('configure')}</GlassButton>
         </GlassCard>
 
         {/* Danger Zone */}
@@ -75,13 +102,13 @@ export default function SettingsPanel() {
                         <AlertTriangle size={20} />
                     </div>
                     <div>
-                        <div className="text-red-500 font-bold">Emergency Wipe</div>
+                        <div className="text-red-500 font-bold">{t('emergencyWipe')}</div>
                         <div className="text-red-400/60 text-xs mt-1">
-                        Destroy all local keys and cache immediately
+                        {t('emergencyWipeDesc')}
                         </div>
                     </div>
                 </div>
-                <GlassButton variant="danger" size="sm">Execute</GlassButton>
+                <GlassButton variant="danger" size="sm">{t('execute')}</GlassButton>
             </div>
         </GlassCard>
       </div>

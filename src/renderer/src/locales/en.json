@@ -1,0 +1,60 @@
+{
+  "common": {
+    "systemSecure": "System Secure",
+    "panicMode": "Panic Mode",
+    "settings": "Settings",
+    "vault": "Vault",
+    "mimic": "Mimic",
+    "config": "Config",
+    "dailyTasks": "Daily Tasks",
+    "addTask": "Add a new task...",
+    "simpleNotes": "SimpleNotes v1.0.2 © 2024"
+  },
+  "vault": {
+    "sessionKey": "Session Key",
+    "generateRandom": "Generate Random",
+    "enterKey": "Enter pre-shared key or password...",
+    "rawData": "Raw Data (Plaintext)",
+    "enterMessage": "Enter message to encrypt...",
+    "encryptedPayload": "Encrypted Payload",
+    "encrypt": "Encrypt",
+    "decrypt": "Decrypt",
+    "waitingForData": "Waiting for data...",
+    "operationFailed": "Operation failed",
+    "copied": "Copied to clipboard"
+  },
+  "mimic": {
+    "title": "LSB Steganography Lab",
+    "description": "Hide encrypted payloads inside innocuous images.",
+    "warning": "Warning",
+    "warningText": "Uses LSB (Least Significant Bit) Steganography. Output images must be saved as PNG. Cloud compression (FB, Twitter, WhatsApp default) will destroy data.",
+    "uploadToExtract": "Upload Image to Extract Data",
+    "clickToEmbed": "Click to Embed Encrypted Data",
+    "supports": "Supports JPG, PNG, WebP",
+    "scanning": "Scanning for data...",
+    "embedding": "Embedding data...",
+    "encryptionComplete": "Encryption complete. Please download the PNG.",
+    "dataFound": "Data found! Switch to Vault to decrypt.",
+    "noDataFound": "No valid data found or error reading image.",
+    "outputGenerated": "Output Generated",
+    "download": "Download Stego Image"
+  },
+  "settings": {
+    "title": "System Configuration",
+    "interfaceTheme": "Interface Theme",
+    "clipboardMonitor": "Clipboard Monitor",
+    "clipboardMonitorDesc": "Auto-detect 'Crypto3' formatted data",
+    "panicModePin": "Panic Mode Pin",
+    "panicModePinDesc": "Require PIN to exit camouflage mode",
+    "configure": "Configure",
+    "emergencyWipe": "Emergency Wipe",
+    "emergencyWipeDesc": "Destroy all local keys and cache immediately",
+    "execute": "Execute",
+    "themes": {
+        "cyberpunk": "Cyberpunk",
+        "light": "SaaS / Light",
+        "midnight": "Deep Space"
+    },
+    "language": "Language"
+  }
+}

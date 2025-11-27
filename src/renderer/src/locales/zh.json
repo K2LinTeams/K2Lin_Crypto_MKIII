@@ -1,0 +1,60 @@
+{
+  "common": {
+    "systemSecure": "系统安全",
+    "panicMode": "伪装模式",
+    "settings": "设置",
+    "vault": "保险箱",
+    "mimic": "伪装",
+    "config": "配置",
+    "dailyTasks": "每日清单",
+    "addTask": "添加新任务...",
+    "simpleNotes": "简易笔记 v1.0.2 © 2024"
+  },
+  "vault": {
+    "sessionKey": "会话密钥",
+    "generateRandom": "生成随机密钥",
+    "enterKey": "输入预共享密钥或密码...",
+    "rawData": "原始数据 (明文)",
+    "enterMessage": "输入要加密的消息...",
+    "encryptedPayload": "加密载荷",
+    "encrypt": "加密",
+    "decrypt": "解密",
+    "waitingForData": "等待数据...",
+    "operationFailed": "操作失败",
+    "copied": "已复制到剪贴板"
+  },
+  "mimic": {
+    "title": "LSB 隐写实验室",
+    "description": "将加密载荷隐藏在无害图像中。",
+    "warning": "警告",
+    "warningText": "使用 LSB (最低有效位) 隐写。输出图像必须保存为 PNG。云端压缩 (微信, WhatsApp 默认) 会破坏数据。",
+    "uploadToExtract": "上传图片以提取数据",
+    "clickToEmbed": "点击嵌入加密数据",
+    "supports": "支持 JPG, PNG, WebP",
+    "scanning": "正在扫描数据...",
+    "embedding": "正在嵌入数据...",
+    "encryptionComplete": "加密完成。请下载 PNG。",
+    "dataFound": "发现数据！切换到保险箱进行解密。",
+    "noDataFound": "未发现有效数据或读取图像错误。",
+    "outputGenerated": "生成结果",
+    "download": "下载隐写图像"
+  },
+  "settings": {
+    "title": "系统配置",
+    "interfaceTheme": "界面主题",
+    "clipboardMonitor": "剪贴板监听",
+    "clipboardMonitorDesc": "自动检测 'Crypto3' 格式数据",
+    "panicModePin": "伪装模式 PIN",
+    "panicModePinDesc": "退出伪装模式需要 PIN 码",
+    "configure": "配置",
+    "emergencyWipe": "紧急销毁",
+    "emergencyWipeDesc": "立即销毁所有本地密钥和缓存",
+    "execute": "执行",
+    "themes": {
+        "cyberpunk": "赛博朋克",
+        "light": "SaaS / 亮色",
+        "midnight": "深空"
+    },
+    "language": "语言"
+  }
+}
