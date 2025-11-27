@@ -23,7 +23,10 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
-    "lucide-react": "^0.555.0"
+    "electron-store": "^11.0.2",
+    "lucide-react": "^0.555.0",
+    "scrypt-js": "^3.0.1",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^3.0.0",

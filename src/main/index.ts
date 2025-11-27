@@ -2,6 +2,10 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { encrypt, decrypt } from './services/crypto'
+import { embed, extract } from './services/stego'
+import { encode, decode } from './services/nlp'
+import { getStoreValue, setStoreValue } from './services/store'
 
 function createWindow(): void {
   // Create the browser window.
@@ -49,8 +53,44 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  // IPC Handlers
+
+  // Crypto
+  ipcMain.handle('crypto:encrypt', async (_, text, password) => {
+    return await encrypt(text, password)
+  })
+  ipcMain.handle('crypto:decrypt', async (_, ciphertext, iv, salt, tag, password) => {
+    return await decrypt(ciphertext, iv, salt, tag, password)
+  })
+
+  // Stego
+  ipcMain.handle('stego:embed', async (_, imageBuffer, dataBuffer) => {
+    const res = await embed(Buffer.from(imageBuffer), Buffer.from(dataBuffer))
+    return new Uint8Array(res)
+  })
+  ipcMain.handle('stego:extract', async (_, imageBuffer) => {
+    const res = await extract(Buffer.from(imageBuffer))
+    return new Uint8Array(res)
+  })
+
+  // NLP
+  ipcMain.handle('nlp:encode', async (_, dataBuffer) => {
+    return encode(Buffer.from(dataBuffer))
+  })
+  ipcMain.handle('nlp:decode', async (_, text) => {
+    const res = decode(text)
+    return new Uint8Array(res)
+  })
+
+  // Store
+  ipcMain.handle('store:get', async (_, key) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return getStoreValue(key as any)
+  })
+  ipcMain.handle('store:set', async (_, key, value) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setStoreValue(key as any, value)
+  })
 
   createWindow()
 

@@ -10,11 +10,11 @@ This project is a desktop application created using the Electron framework. The 
 
 ### Tech Stack
 
-*   [Electron](https://www.electronjs.org/)
-*   [React](https://reactjs.org/)
-*   [TypeScript](https://www.typescriptlang.org/)
-*   [Node.js](https://nodejs.org/)
-*   [Rust](https://www.rust-lang.org/) (for core/backend components)
+- [Electron](https://www.electronjs.org/)
+- [React](https://reactjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Node.js](https://nodejs.org/)
+- [Rust](https://www.rust-lang.org/) (for core/backend components)
 
 ---
 
@@ -25,17 +25,18 @@ To get a local copy up and running, follow these simple steps.
 ### Prerequisites
 
 Make sure you have Node.js and npm installed on your system.
-*   **Node.js** (which includes npm)
-    ```sh
-    # You can check your version with:
-    node -v
-    npm -v
-    ```
-*   **Rust Toolchain**
-    ```sh
-    # You can check your version with:
-    rustc --version
-    ```
+
+- **Node.js** (which includes npm)
+  ```sh
+  # You can check your version with:
+  node -v
+  npm -v
+  ```
+- **Rust Toolchain**
+  ```sh
+  # You can check your version with:
+  rustc --version
+  ```
 
 ### Installation
 
