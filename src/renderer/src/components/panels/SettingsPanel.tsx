@@ -1,11 +1,15 @@
 import { useState } from 'react'
 import { GlassCard, GlassButton, TechHeader, GlassInput } from '../ui/GlassComponents'
 import { useTheme } from '../ThemeContext'
-import { Moon, Sun, Monitor, AlertTriangle, Languages, Sliders, Shield, Zap, Sparkles, X, Check } from 'lucide-react'
+import { Moon, Sun, Monitor, AlertTriangle, Languages, Sliders, Shield, Zap, Sparkles, X, Check, RotateCcw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 
-export default function SettingsPanel() {
+interface SettingsPanelProps {
+  onReplayTutorial?: () => void
+}
+
+export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) {
   const { theme, setTheme } = useTheme()
   const { t, i18n } = useTranslation('settings')
   const [showPinConfig, setShowPinConfig] = useState(false)
@@ -103,22 +107,27 @@ export default function SettingsPanel() {
 
         {/* System Settings */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-           <GlassCard className="flex flex-col justify-between overflow-hidden relative opacity-60 grayscale-[0.5] pointer-events-none">
+           <GlassCard className="flex flex-col justify-between">
               <div className="flex items-start justify-between mb-4">
-                <div className="flex gap-3">
-                   <div className="p-2 bg-accent-primary/10 rounded-lg text-accent-primary">
-                      <Zap size={20} />
-                   </div>
-                   <div>
-                      <div className="text-text-primary font-bold font-mono text-sm">{t('clipboardMonitor')}</div>
-                      <div className="text-text-secondary text-xs mt-1">{t('clipboardMonitorDesc')} (N/A)</div>
-                   </div>
-                </div>
-                {/* Disabled Toggle UI */}
-                <div className="w-10 h-5 bg-bg-secondary rounded-full relative border border-glass-border">
-                  <div className="absolute left-1 top-0.5 w-3.5 h-3.5 bg-text-secondary/20 rounded-full"></div>
-                </div>
+                 <div className="flex gap-3">
+                    <div className="p-2 bg-accent-primary/10 rounded-lg text-accent-primary">
+                       <Zap size={20} />
+                    </div>
+                    <div>
+                       <div className="text-text-primary font-bold font-mono text-sm">{t('replayTutorial')}</div>
+                       <div className="text-text-secondary text-xs mt-1">{t('replayTutorialDesc')}</div>
+                    </div>
+                 </div>
               </div>
+              <GlassButton
+                 size="sm"
+                 variant="secondary"
+                 className="self-end w-full"
+                 onClick={onReplayTutorial}
+                 icon={<RotateCcw size={14} />}
+              >
+                 {t('replayTutorial')}
+              </GlassButton>
            </GlassCard>
 
            <GlassCard className="flex flex-col justify-between">

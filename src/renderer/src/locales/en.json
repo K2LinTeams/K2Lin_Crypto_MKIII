@@ -114,6 +114,23 @@
       "midnight": "Deep Space",
       "sakura": "Sakura"
     },
-    "language": "Language"
+    "language": "Language",
+    "replayTutorial": "Replay Tutorial",
+    "replayTutorialDesc": "Watch the introduction again"
+  },
+  "tutorial": {
+    "welcomeTitle": "Welcome to Crypto3! 👋",
+    "welcomeDesc": "Your ultimate tool for secure communication and digital camouflage. Let's get you started!",
+    "rsaAesTitle": "Hybrid Encryption 🛡️",
+    "rsaAesDesc": "Toggle between modes in the Vault panel to suit your needs.",
+    "rsaAesTip": "💡 Pro Tip: Use AES for your own files (Password protected). Use RSA to send secrets to friends (Identity Card required).",
+    "lookFor": "Look for this switch:",
+    "stegoTitle": "Invisible Ink (Steganography) 🖼️",
+    "stegoDesc": "Hide your encrypted data inside normal-looking images! Upload an image, embed your secrets, and share the PNG. It looks like a photo, but it holds a secret.",
+    "identityTitle": "Identity Cards 🪪",
+    "identityDesc": "Create your unique Digital Identity Card. Share it with friends to exchange public keys securely. Import their cards to verify who they are.",
+    "skip": "Skip Intro",
+    "next": "Next ➡",
+    "finish": "Let's Rock! 🚀"
   }
 }
