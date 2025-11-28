@@ -71,7 +71,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
       {/* Version footer */}
       <div className="absolute bottom-8 text-white/20 text-xs font-mono">
-        v0.3.2-beta
+        v1.0.3
       </div>
     </motion.div>
   )

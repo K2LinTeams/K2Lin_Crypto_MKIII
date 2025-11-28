@@ -5,6 +5,7 @@ import { GlassCard, GlassButton } from './ui/GlassComponents'
 import { Shield, Lock, Image as ImageIcon, User, ArrowRight, X, Check, Key, Unlock, UserPlus, RefreshCw } from 'lucide-react'
 import Encyclopedia from './Encyclopedia'
 import { useNotification } from './NotificationContext'
+import { useAchievements } from '../hooks/useAchievements'
 
 interface TutorialModalProps {
   onComplete: () => void
@@ -23,11 +24,12 @@ interface TutorialStep {
 export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps) {
   const { t } = useTranslation(['tutorial', 'vault', 'identity', 'encyclopedia'])
   const { addNotification } = useNotification()
+  const { unlock } = useAchievements()
   const [step, setStep] = useState(0)
 
   // Encyclopedia State
   const [showEncyclopedia, setShowEncyclopedia] = useState(false)
-  const [encyclopediaTopic, setEncyclopediaTopic] = useState('rsa')
+  const [encyclopediaTopic, setEncyclopediaTopic] = useState('ecc')
 
   const steps: TutorialStep[] = [
     // 1. Welcome
@@ -37,11 +39,11 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
       description: t('welcomeDesc', 'Your ultimate tool for secure communication and digital camouflage.'),
       icon: <Shield size={48} className="text-accent-primary" />,
     },
-    // 2. RSA Step 1: Generate Identity
+    // 2. ECC Step 1: Generate Identity
     {
-      id: 'rsa-step1',
-      title: t('rsaStep1Title', 'Start with RSA: Your Identity 🪪'),
-      description: t('rsaStep1Desc', 'First, go to the ID panel and generate your Identity Card.'),
+      id: 'ecc-step1',
+      title: t('eccStep1Title', 'Start with ECC: Your Identity 🪪'),
+      description: t('eccStep1Desc', 'First, go to the ID panel and generate your Identity Card.'),
       icon: <User size={48} className="text-accent-secondary" />,
       hasEncyclopedia: true,
       extraContent: (
@@ -68,11 +70,11 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
          </div>
       )
     },
-    // 3. RSA Step 2: Exchange
+    // 3. ECC Step 2: Exchange
     {
-      id: 'rsa-step2',
-      title: t('rsaStep2Title', 'Exchange Identity Cards 🤝'),
-      description: t('rsaStep2Desc', 'Send your card to a friend. Import theirs to verifying them.'),
+      id: 'ecc-step2',
+      title: t('eccStep2Title', 'Exchange Identity Cards 🤝'),
+      description: t('eccStep2Desc', 'Send your card to a friend. Import theirs to verifying them.'),
       icon: <UserPlus size={48} className="text-green-400" />,
       hasEncyclopedia: true,
       extraContent: (
@@ -99,11 +101,11 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
          </div>
       )
     },
-    // 4. RSA Step 3: Encrypt
+    // 4. ECC Step 3: Encrypt
     {
-      id: 'rsa-step3',
-      title: t('rsaStep3Title', 'Encrypt for a Friend 🔒'),
-      description: t('rsaStep3Desc', 'Select "Asymmetric (RSA)" in Vault and pick your friend.'),
+      id: 'ecc-step3',
+      title: t('eccStep3Title', 'Encrypt for a Friend 🔒'),
+      description: t('eccStep3Desc', 'Select "Asymmetric (ECC)" in Vault and pick your friend.'),
       icon: <Lock size={48} className="text-accent-secondary" />,
       hasEncyclopedia: true,
       extraContent: (
@@ -167,6 +169,7 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
       setStep(step + 1)
     } else {
       onComplete()
+      unlock('tutorial_complete')
     }
   }
 
@@ -182,9 +185,11 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="w-full max-w-md"
+        layout
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className={`w-full transition-all duration-300 ${showEncyclopedia ? 'max-w-3xl' : 'max-w-md'}`}
       >
-        <GlassCard className="relative overflow-hidden border-accent-primary/30 shadow-[0_0_50px_rgba(var(--accent-primary),0.15)] min-h-[500px] max-h-[85vh] flex flex-col">
+        <GlassCard className="relative overflow-hidden border-accent-primary/30 shadow-[0_0_50px_rgba(var(--accent-primary),0.15)] min-h-[500px] max-h-[85vh] flex flex-col transition-all duration-300">
 
             {/* Background Blob for visual flair */}
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-accent-primary/20 blur-[60px] rounded-full pointer-events-none" />

@@ -17,7 +17,8 @@ i18n
         settings: en.settings,
         identity: en.identity,
         tutorial: en.tutorial,
-        encyclopedia: en.encyclopedia
+        encyclopedia: en.encyclopedia,
+        achievements: en.achievements
       },
       zh: {
         common: zh.common,
@@ -26,7 +27,8 @@ i18n
         settings: zh.settings,
         identity: zh.identity,
         tutorial: zh.tutorial,
-        encyclopedia: zh.encyclopedia
+        encyclopedia: zh.encyclopedia,
+        achievements: zh.achievements
       }
     },
     fallbackLng: 'en',
