@@ -3,17 +3,33 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { GlassCard, GlassButton } from './ui/GlassComponents'
 import { Shield, Lock, Image as ImageIcon, User, ArrowRight, X, Check, Key, Unlock, UserPlus, RefreshCw } from 'lucide-react'
+import Encyclopedia from './Encyclopedia'
+import { useNotification } from './NotificationContext'
 
 interface TutorialModalProps {
   onComplete: () => void
   onSkip: () => void
 }
 
+interface TutorialStep {
+  id: string
+  title: string
+  description: string
+  icon: React.ReactNode
+  extraContent?: React.ReactNode
+  hasEncyclopedia?: boolean
+}
+
 export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps) {
-  const { t } = useTranslation(['tutorial', 'vault', 'identity'])
+  const { t } = useTranslation(['tutorial', 'vault', 'identity', 'encyclopedia'])
+  const { addNotification } = useNotification()
   const [step, setStep] = useState(0)
 
-  const steps = [
+  // Encyclopedia State
+  const [showEncyclopedia, setShowEncyclopedia] = useState(false)
+  const [encyclopediaTopic, setEncyclopediaTopic] = useState('rsa')
+
+  const steps: TutorialStep[] = [
     // 1. Welcome
     {
       id: 'welcome',
@@ -27,6 +43,7 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
       title: t('rsaStep1Title', 'Start with RSA: Your Identity 🪪'),
       description: t('rsaStep1Desc', 'First, go to the ID panel and generate your Identity Card.'),
       icon: <User size={48} className="text-accent-secondary" />,
+      hasEncyclopedia: true,
       extraContent: (
          <div className="mt-4 flex flex-col items-center gap-2 w-full">
             <div className="w-48 h-24 bg-gradient-to-br from-black/60 to-accent-primary/10 rounded-xl border border-accent-primary/30 relative overflow-hidden flex flex-col p-3 shadow-lg">
@@ -57,6 +74,7 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
       title: t('rsaStep2Title', 'Exchange Identity Cards 🤝'),
       description: t('rsaStep2Desc', 'Send your card to a friend. Import theirs to verifying them.'),
       icon: <UserPlus size={48} className="text-green-400" />,
+      hasEncyclopedia: true,
       extraContent: (
          <div className="mt-6 flex items-center justify-center gap-6 w-full relative h-16">
             {/* Card Left */}
@@ -87,6 +105,7 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
       title: t('rsaStep3Title', 'Encrypt for a Friend 🔒'),
       description: t('rsaStep3Desc', 'Select "Asymmetric (RSA)" in Vault and pick your friend.'),
       icon: <Lock size={48} className="text-accent-secondary" />,
+      hasEncyclopedia: true,
       extraContent: (
          <div className="mt-4 w-full px-6">
             <div className="flex flex-col gap-2 p-3 rounded-lg bg-black/40 border border-white/10">
@@ -108,7 +127,8 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
       title: t('aesStep1Title', 'Simple Encryption (AES) 🔑'),
       description: t('aesStep1Desc', 'Agree on a password with your friend.'),
       icon: <Key size={48} className="text-yellow-400" />,
-       extraContent: (
+      hasEncyclopedia: true,
+      extraContent: (
          <div className="mt-4 w-full px-6">
             <div className="flex flex-col gap-2 p-3 rounded-lg bg-black/40 border border-white/10">
                <div className="flex justify-between items-center text-xs text-text-secondary mb-1">
@@ -130,6 +150,7 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
       title: t('aesStep2Title', 'Decrypting with AES 🔓'),
       description: t('aesStep2Desc', 'The recipient must enter the exact same password.'),
       icon: <Unlock size={48} className="text-yellow-400" />,
+      hasEncyclopedia: true,
     },
     // 7. Stego
     {
@@ -137,6 +158,7 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
       title: t('stegoTitle', 'Invisible Ink 🖼️'),
       description: t('stegoDesc', 'Hide data inside images using Steganography.'),
       icon: <ImageIcon size={48} className="text-blue-400" />,
+      hasEncyclopedia: true,
     },
   ]
 
@@ -148,6 +170,12 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
     }
   }
 
+  const handleOpenEncyclopedia = () => {
+     setEncyclopediaTopic(steps[step].id)
+     setShowEncyclopedia(true)
+     addNotification('info', t('achievementDeeper', 'We need to go deeper 🔍'))
+  }
+
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <motion.div
@@ -156,96 +184,126 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
         exit={{ scale: 0.9, opacity: 0 }}
         className="w-full max-w-md"
       >
-        <GlassCard className="relative overflow-hidden border-accent-primary/30 shadow-[0_0_50px_rgba(var(--accent-primary),0.15)]">
+        <GlassCard className="relative overflow-hidden border-accent-primary/30 shadow-[0_0_50px_rgba(var(--accent-primary),0.15)] min-h-[500px] flex flex-col">
 
             {/* Background Blob for visual flair */}
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-accent-primary/20 blur-[60px] rounded-full pointer-events-none" />
 
-            {/* Close / Skip Button */}
-            <div className="absolute top-4 right-4 z-10">
-                 <button
-                    onClick={onSkip}
-                    className="p-2 text-text-secondary hover:text-white transition-colors"
-                    title={t('skip', 'Skip Intro')}
-                 >
-                    <X size={20} />
-                 </button>
-            </div>
+            {/* Close / Skip Button - Only show if Encyclopedia is NOT open */}
+            {!showEncyclopedia && (
+               <div className="absolute top-4 right-4 z-10">
+                  <button
+                     onClick={onSkip}
+                     className="p-2 text-text-secondary hover:text-white transition-colors"
+                     title={t('skip', 'Skip Intro')}
+                  >
+                     <X size={20} />
+                  </button>
+               </div>
+            )}
 
-            <div className="flex flex-col items-center text-center pt-8 pb-4 px-2">
+            <div className="flex flex-col items-center text-center pt-8 pb-4 px-2 flex-1">
 
-                {/* Content Transition */}
                 <AnimatePresence mode="wait">
-                    <motion.div
-                        key={step}
-                        initial={{ x: 20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        exit={{ x: -20, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="flex flex-col items-center gap-6 w-full min-h-[220px]"
-                    >
-                        <div className="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shadow-inner shrink-0">
-                            {steps[step].icon}
-                        </div>
+                    {showEncyclopedia ? (
+                        <motion.div
+                           key="encyclopedia"
+                           initial={{ x: 50, opacity: 0 }}
+                           animate={{ x: 0, opacity: 1 }}
+                           exit={{ x: 50, opacity: 0 }}
+                           className="w-full h-full flex-1"
+                        >
+                           <Encyclopedia
+                              initialTopic={encyclopediaTopic}
+                              onBack={() => setShowEncyclopedia(false)}
+                           />
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                           key={step}
+                           initial={{ x: 20, opacity: 0 }}
+                           animate={{ x: 0, opacity: 1 }}
+                           exit={{ x: -20, opacity: 0 }}
+                           transition={{ duration: 0.2 }}
+                           className="flex flex-col items-center gap-6 w-full min-h-[220px]"
+                        >
+                           <div className="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shadow-inner shrink-0">
+                                 {steps[step].icon}
+                           </div>
 
-                        <div className="space-y-2 w-full">
-                            <h2 className="text-xl font-bold text-white">
-                                {steps[step].title}
-                            </h2>
-                            <p className="text-sm text-text-secondary leading-relaxed px-4">
-                                {steps[step].description}
-                            </p>
+                           <div className="space-y-2 w-full">
+                                 <h2 className="text-xl font-bold text-white">
+                                    {steps[step].title}
+                                 </h2>
+                                 <p className="text-sm text-text-secondary leading-relaxed px-4">
+                                    {steps[step].description}
+                                 </p>
 
-                            {/* Render Extra Content if available */}
-                            {/* @ts-ignore */}
-                            {steps[step].extraContent && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.2 }}
-                                    className="flex justify-center"
-                                >
-                                    {/* @ts-ignore */}
-                                    {steps[step].extraContent}
-                                </motion.div>
-                            )}
-                        </div>
-                    </motion.div>
+                                 {/* Render Extra Content if available */}
+                                 {steps[step].extraContent && (
+                                    <motion.div
+                                       initial={{ opacity: 0, y: 10 }}
+                                       animate={{ opacity: 1, y: 0 }}
+                                       transition={{ delay: 0.2 }}
+                                       className="flex justify-center"
+                                    >
+                                       {steps[step].extraContent}
+                                    </motion.div>
+                                 )}
+                           </div>
+                        </motion.div>
+                    )}
                 </AnimatePresence>
 
-                {/* Progress Indicators */}
-                <div className="flex gap-1.5 mt-8 mb-6">
-                    {steps.map((_, i) => (
-                        <div
-                            key={i}
-                            className={`h-1 rounded-full transition-all duration-300 ${
-                                i === step ? 'w-6 bg-accent-primary' : 'w-1.5 bg-white/10'
-                            }`}
-                        />
-                    ))}
-                </div>
+                {/* Progress Indicators - Hide if Encyclopedia is open */}
+                {!showEncyclopedia && (
+                   <div className="flex gap-1.5 mt-8 mb-6">
+                       {steps.map((_, i) => (
+                           <div
+                               key={i}
+                               className={`h-1 rounded-full transition-all duration-300 ${
+                                   i === step ? 'w-6 bg-accent-primary' : 'w-1.5 bg-white/10'
+                               }`}
+                           />
+                       ))}
+                   </div>
+                )}
 
                 {/* Actions */}
-                <div className="w-full">
-                    <GlassButton
-                        variant="primary"
-                        size="lg"
-                        className="w-full justify-center group"
-                        onClick={handleNext}
-                    >
-                        {step === steps.length - 1 ? (
-                            <>
-                                {t('finish', 'Let\'s Rock! 🚀')}
-                                <Check size={18} className="ml-2" />
-                            </>
-                        ) : (
-                            <>
-                                {t('next', 'Next')}
-                                <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
-                            </>
-                        )}
-                    </GlassButton>
-                </div>
+                {!showEncyclopedia && (
+                   <div className="w-full flex flex-col gap-2">
+                       {/* Encyclopedia Button */}
+                       {steps[step].hasEncyclopedia && (
+                          <GlassButton
+                             variant="ghost"
+                             size="sm"
+                             className="w-full justify-center text-xs text-text-secondary hover:text-accent-primary"
+                             onClick={handleOpenEncyclopedia}
+                          >
+                             {t('learnHow', 'Learn how it works 🔍')}
+                          </GlassButton>
+                       )}
+
+                       <GlassButton
+                           variant="primary"
+                           size="lg"
+                           className="w-full justify-center group"
+                           onClick={handleNext}
+                       >
+                           {step === steps.length - 1 ? (
+                               <>
+                                   {t('finish', 'Let\'s Rock! 🚀')}
+                                   <Check size={18} className="ml-2" />
+                               </>
+                           ) : (
+                               <>
+                                   {t('next', 'Next')}
+                                   <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                               </>
+                           )}
+                       </GlassButton>
+                   </div>
+                )}
             </div>
 
         </GlassCard>
