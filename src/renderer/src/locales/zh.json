@@ -2,6 +2,7 @@
   "common": {
     "systemSecure": "系统安全",
     "panicMode": "伪装模式",
+    "panic": "伪装",
     "settings": "设置",
     "vault": "保险箱",
     "mimic": "伪装",
@@ -14,15 +15,19 @@
     "sessionKey": "会话密钥",
     "generateRandom": "生成随机密钥",
     "enterKey": "输入预共享密钥或密码...",
+    "enterKeyShort": "输入密钥...",
     "rawData": "原始数据 (明文)",
     "enterMessage": "输入要加密的消息...",
+    "enterMessageShort": "输入消息...",
     "encryptedPayload": "加密载荷",
     "encrypt": "加密",
     "decrypt": "解密",
     "waitingForData": "等待数据...",
     "operationFailed": "操作失败",
     "copied": "已复制到剪贴板",
-    "copy": "复制"
+    "copy": "复制",
+    "clear": "清除",
+    "clearHint": "清除以编辑"
   },
   "mimic": {
     "title": "LSB 隐写实验室",

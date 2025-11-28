@@ -160,9 +160,9 @@ function AppLayout(): React.ReactElement {
         {/* Bottom Navigation - Mobile */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-bg-secondary/80 backdrop-blur-xl border-t border-glass-border z-50 flex items-center justify-around px-2">
           {[
-            { id: 'vault', icon: Lock, label: 'Vault' },
-            { id: 'mimic', icon: ImageIcon, label: 'Mimic' },
-            { id: 'settings', icon: Settings, label: 'Config' }
+            { id: 'vault', icon: Lock, label: t('common.vault') },
+            { id: 'mimic', icon: ImageIcon, label: t('common.mimic') },
+            { id: 'settings', icon: Settings, label: t('common.config') }
           ].map((item) => (
             <button
               key={item.id}
@@ -194,7 +194,7 @@ function AppLayout(): React.ReactElement {
             <div className="p-1.5 rounded-lg bg-red-500/10">
               <EyeOff size={20} />
             </div>
-            <span className="text-[10px] font-medium">Panic</span>
+            <span className="text-[10px] font-medium">{t('common.panic')}</span>
           </button>
         </nav>
       </div>

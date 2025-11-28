@@ -2,6 +2,7 @@
   "common": {
     "systemSecure": "System Secure",
     "panicMode": "Panic Mode",
+    "panic": "Panic",
     "settings": "Settings",
     "vault": "Vault",
     "mimic": "Mimic",
@@ -14,15 +15,19 @@
     "sessionKey": "Session Key",
     "generateRandom": "Generate Random",
     "enterKey": "Enter pre-shared key or password...",
+    "enterKeyShort": "Enter key...",
     "rawData": "Raw Data (Plaintext)",
     "enterMessage": "Enter message to encrypt...",
+    "enterMessageShort": "Enter message...",
     "encryptedPayload": "Encrypted Payload",
     "encrypt": "Encrypt",
     "decrypt": "Decrypt",
     "waitingForData": "Waiting for data...",
     "operationFailed": "Operation failed",
     "copied": "Copied to clipboard",
-    "copy": "Copy"
+    "copy": "Copy",
+    "clear": "Clear",
+    "clearHint": "Clear to edit"
   },
   "mimic": {
     "title": "LSB Steganography Lab",
