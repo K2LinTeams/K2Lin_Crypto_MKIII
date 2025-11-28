@@ -8,6 +8,7 @@ import { extract } from '../../services/webStego'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNotification } from '../NotificationContext'
+import { getRandomOperator, Operator, OperatorTheme } from '../../data/operators'
 
 interface Contact {
   name: string
@@ -24,8 +25,14 @@ export default function IdentityPanel() {
   const [contacts, setContacts] = useState<Contact[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // New state for user name
+  // New state for user name and random operator
   const [myName, setMyName] = useState<string>('')
+  const [randomOperator, setRandomOperator] = useState<Operator | null>(null)
+
+  // Initialize random operator once on mount
+  useEffect(() => {
+    setRandomOperator(getRandomOperator())
+  }, [])
 
   // Load contacts/keys/name from local storage on mount
   useEffect(() => {
@@ -138,6 +145,15 @@ export default function IdentityPanel() {
     localStorage.setItem('contacts', JSON.stringify(newContacts))
   }
 
+  // Determine display values
+  // Fallback to random operator if myName is empty
+  const displayUsername = myName || (randomOperator?.name || 'AGENT')
+
+  // Theme Logic:
+  // If myName is set -> Strictly 'Rhodes Island'
+  // If myName is empty -> Use random operator's theme (fallback to Rhodes Island if something fails)
+  const displayTheme: OperatorTheme = myName ? 'Rhodes Island' : (randomOperator?.theme || 'Rhodes Island')
+
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-10">
       <div className="space-y-2">
@@ -168,7 +184,8 @@ export default function IdentityPanel() {
 
                <IdentityCardGenerator
                 publicKey={myPublicKeyPem}
-                username={myName || 'AGENT'}
+                username={displayUsername}
+                theme={displayTheme}
                 onRegenerate={handleGenerateKeys}
               />
             </div>

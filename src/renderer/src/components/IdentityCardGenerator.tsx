@@ -4,14 +4,16 @@ import { generateIdentityId } from '../services/identity'
 import { GlassButton } from './ui/GlassComponents'
 import { Download, RefreshCcw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { OperatorTheme } from '../data/operators'
 
 interface IdentityCardGeneratorProps {
   publicKey: string
   username?: string
+  theme?: OperatorTheme
   onRegenerate: () => void
 }
 
-export function IdentityCardGenerator({ publicKey, username = 'AGENT', onRegenerate }: IdentityCardGeneratorProps) {
+export function IdentityCardGenerator({ publicKey, username = 'AGENT', theme = 'Rhodes Island', onRegenerate }: IdentityCardGeneratorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -39,22 +41,79 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', onRegener
     canvas.width = width
     canvas.height = height
 
-    // Background - Flat, Minimalist, Gradient 135deg Light Blue to Light Pink
-    // 135deg is Top-Left to Bottom-Right.
+    // Define Themes
+    const themes = {
+      'Rhodes Island': {
+        bg: ['#1e293b', '#0f172a'], // slate-800 to slate-900 (Dark Blue)
+        textPrimary: '#e2e8f0', // slate-200
+        textSecondary: '#94a3b8', // slate-400
+        logoStart: '#00f2ff',
+        logoEnd: '#3b82f6'
+      },
+      'Rhine Lab': {
+        bg: ['#ffffff', '#ecfccb'], // White to lime-100 (Clinical/Greenish)
+        textPrimary: '#1a2e05', // heavy green/black
+        textSecondary: '#65a30d', // lime-600
+        logoStart: '#f97316', // orange
+        logoEnd: '#84cc16' // lime
+      },
+      'Victoria': {
+        bg: ['#450a0a', '#7f1d1d'], // red-950 to red-900
+        textPrimary: '#fef3c7', // amber-100
+        textSecondary: '#d97706', // amber-600
+        logoStart: '#fbbf24', // amber
+        logoEnd: '#ef4444' // red
+      },
+      'Penguin Logistics': {
+        bg: ['#2e1065', '#581c87'], // violet-950 to purple-900
+        textPrimary: '#f3e8ff', // purple-100
+        textSecondary: '#c084fc', // purple-400
+        logoStart: '#ffffff',
+        logoEnd: '#d8b4fe'
+      },
+      'Abyssal': {
+        bg: ['#020617', '#172554'], // slate-950 to blue-950
+        textPrimary: '#f1f5f9', // slate-100
+        textSecondary: '#ef4444', // red-500 (Blood/Eyes)
+        logoStart: '#ef4444',
+        logoEnd: '#1e40af'
+      },
+      'Kjerag': {
+        bg: ['#f8fafc', '#cbd5e1'], // slate-50 to slate-300 (Snow)
+        textPrimary: '#1e293b', // slate-800
+        textSecondary: '#64748b', // slate-500
+        logoStart: '#94a3b8',
+        logoEnd: '#bae6fd'
+      },
+      'Kazimierz': {
+        bg: ['#1c1917', '#451a03'], // dark with amber tint
+        textPrimary: '#fcd34d', // amber-300
+        textSecondary: '#fbbf24', // amber-400
+        logoStart: '#fbbf24',
+        logoEnd: '#f59e0b'
+      },
+      'Yan': {
+        bg: ['#2c1a1d', '#500724'], // Dark Red/Brown
+        textPrimary: '#fecdd3', // rose-200
+        textSecondary: '#fb7185', // rose-400
+        logoStart: '#fb7185',
+        logoEnd: '#e11d48'
+      }
+    }
+
+    const activeTheme = themes[theme] || themes['Rhodes Island']
+
+    // Background Gradient
     const gradient = ctx.createLinearGradient(0, 0, width, height)
-    gradient.addColorStop(0, '#E0F2FE') // sky-100/200ish
-    gradient.addColorStop(1, '#FCE7F3') // pink-100/200ish
+    gradient.addColorStop(0, activeTheme.bg[0])
+    gradient.addColorStop(1, activeTheme.bg[1])
     ctx.fillStyle = gradient
     ctx.fillRect(0, 0, width, height)
 
-    // Text Styles - Dark for contrast on light background
-    const textColorPrimary = '#334155' // slate-700
-    const textColorSecondary = '#64748b' // slate-500
-
     // Header: CRYPTO 3 Logo (Gradient Text)
     const logoGradient = ctx.createLinearGradient(40, 30, 200, 30)
-    logoGradient.addColorStop(0, '#00f2ff') // cyan (accent-primary approx)
-    logoGradient.addColorStop(1, '#ff00ff') // magenta (accent-secondary approx)
+    logoGradient.addColorStop(0, activeTheme.logoStart)
+    logoGradient.addColorStop(1, activeTheme.logoEnd)
 
     ctx.font = 'bold 24px "Comfortaa", "Inter", sans-serif'
     ctx.fillStyle = logoGradient
@@ -62,20 +121,20 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', onRegener
     ctx.fillText('CRYPTO 3', 40, 50)
 
     // Name
-    ctx.fillStyle = textColorPrimary
+    ctx.fillStyle = activeTheme.textPrimary
     ctx.font = 'bold 48px "Comfortaa", "Inter", sans-serif'
     ctx.textAlign = 'left'
     ctx.fillText(username.toUpperCase(), 40, 140)
 
     // ID / Key Label
-    ctx.fillStyle = textColorSecondary
+    ctx.fillStyle = activeTheme.textSecondary
     ctx.font = '16px "Comfortaa", "Inter", sans-serif'
     ctx.fillText('ID (12 DIGIT / X25519)', 40, 260)
 
     // ID Value (Generated 12-digit code)
     const identityId = await generateIdentityId(publicKey)
 
-    ctx.fillStyle = textColorPrimary
+    ctx.fillStyle = activeTheme.textPrimary
     ctx.font = '32px "Comfortaa", "Courier New", monospace'
     ctx.fillText(identityId, 40, 300)
 
@@ -122,7 +181,7 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', onRegener
       if (downloadUrl) URL.revokeObjectURL(downloadUrl)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [publicKey, username])
+  }, [publicKey, username, theme])
 
   return (
     <div className="flex flex-col gap-4 items-center">
