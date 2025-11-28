@@ -293,6 +293,9 @@ export default function VaultPanel({
       }
     } catch (error) {
       console.error(error)
+      if (mode === 'decrypt') {
+        unlock('sanity_zero')
+      }
       addNotification('error', t('operationFailed') + ': ' + (error as Error).message)
     }
   }

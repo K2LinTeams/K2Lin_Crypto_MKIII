@@ -126,7 +126,12 @@
         "tutorial_complete": { "title": "Induction Complete", "desc": "Completed the basic training protocols." },
         "identity_created": { "title": "Field Agent", "desc": "Generated a unique identity signature." },
         "stego_unlocked": { "title": "Invisible Hand", "desc": "Accessed the Steganography Lab." },
-        "first_encrypt": { "title": "Secure Comms", "desc": "Successfully encrypted a payload." }
+        "first_encrypt": { "title": "Secure Comms", "desc": "Successfully encrypted a payload." },
+        "contact_imported": { "title": "HR Department", "desc": "Successfully registered a new operator's file." },
+        "panic_mode": { "title": "Emergency Retreat", "desc": "Activate emergency defense protocols to conceal all traces." },
+        "theme_changed": { "title": "Env Simulation", "desc": "Modified combat terminal visual interface." },
+        "encyclopedia_read": { "title": "PRTS Access", "desc": "Accessed Rhodes Island tactical database." },
+        "sanity_zero": { "title": "Zero Sanity", "desc": "Decoding error encountered. Commander's sanity critical." }
     }
   },
   "tutorial": {

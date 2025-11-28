@@ -13,13 +13,19 @@ interface SettingsPanelProps {
 export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) {
   const { theme, setTheme } = useTheme()
   const { t, i18n } = useTranslation(['settings', 'achievements'])
-  const { achievements, allIds } = useAchievements()
+  const { achievements, allIds, unlock } = useAchievements()
   const [showPinConfig, setShowPinConfig] = useState(false)
   const [pinInput, setPinInput] = useState('')
   const [savedPin, setSavedPin] = useState(localStorage.getItem('panicPin') || '')
+  const [showAllAchievements, setShowAllAchievements] = useState(false)
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng)
+  }
+
+  const handleSetTheme = (newTheme: typeof theme) => {
+    setTheme(newTheme)
+    unlock('theme_changed')
   }
 
   const handleSavePin = () => {
@@ -74,7 +80,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <GlassButton
               variant={theme === 'cyberpunk' ? 'primary' : 'secondary'}
-              onClick={() => setTheme('cyberpunk')}
+              onClick={() => handleSetTheme('cyberpunk')}
               className="justify-start"
               icon={<Monitor size={16} />}
             >
@@ -82,7 +88,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
             </GlassButton>
             <GlassButton
               variant={theme === 'light' ? 'primary' : 'secondary'}
-              onClick={() => setTheme('light')}
+              onClick={() => handleSetTheme('light')}
               className="justify-start"
               icon={<Sun size={16} />}
             >
@@ -90,7 +96,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
             </GlassButton>
             <GlassButton
               variant={theme === 'midnight' ? 'primary' : 'secondary'}
-              onClick={() => setTheme('midnight')}
+              onClick={() => handleSetTheme('midnight')}
               className="justify-start"
               icon={<Moon size={16} />}
             >
@@ -98,7 +104,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
             </GlassButton>
             <GlassButton
               variant={theme === 'sakura' ? 'primary' : 'secondary'}
-              onClick={() => setTheme('sakura')}
+              onClick={() => handleSetTheme('sakura')}
               className="justify-start"
               icon={<Sparkles size={16} />}
             >
@@ -109,38 +115,59 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
 
         {/* Service Record (Achievements) */}
         <GlassCard>
-            <TechHeader title={t('achievements:title', 'Service Record')} icon={<Award size={18} />} />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {allIds.map((id) => {
-                    const isUnlocked = achievements.some(a => a.id === id)
-                    return (
-                        <div key={id} className={`relative p-3 rounded-xl border ${isUnlocked ? 'bg-accent-primary/10 border-accent-primary/30' : 'bg-black/20 border-white/5'} flex flex-col gap-2 overflow-hidden group`}>
-                            <div className="flex justify-between items-start z-10">
-                                <div className={`p-2 rounded-full ${isUnlocked ? 'bg-accent-primary text-black' : 'bg-white/5 text-white/20'}`}>
-                                    <Award size={16} />
-                                </div>
-                                {isUnlocked && <span className="text-[10px] font-mono text-accent-primary opacity-70">AUTH</span>}
-                            </div>
+          <div className="flex justify-between items-center mb-4">
+            <TechHeader title={t('achievements:title', 'Service Record')} icon={<Award size={18} />} className="mb-0" />
+            {allIds.length > 4 && (
+              <GlassButton
+                size="sm"
+                variant="ghost"
+                onClick={() => setShowAllAchievements(!showAllAchievements)}
+                className="text-xs"
+              >
+                {showAllAchievements ? t('common.hide', 'Hide') : t('common.show', 'Show All')}
+              </GlassButton>
+            )}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {(showAllAchievements ? allIds : allIds.slice(0, 4)).map((id) => {
+              const isUnlocked = achievements.some((a) => a.id === id)
+              return (
+                <div
+                  key={id}
+                  className={`relative p-3 rounded-xl border ${isUnlocked ? 'bg-accent-primary/10 border-accent-primary/30' : 'bg-black/20 border-white/5'} flex flex-col gap-2 overflow-hidden group`}
+                >
+                  <div className="flex justify-between items-start z-10">
+                    <div
+                      className={`p-2 rounded-full ${isUnlocked ? 'bg-accent-primary text-black' : 'bg-white/5 text-white/20'}`}
+                    >
+                      <Award size={16} />
+                    </div>
+                    {isUnlocked && (
+                      <span className="text-[10px] font-mono text-accent-primary opacity-70">AUTH</span>
+                    )}
+                  </div>
 
-                            <div className="z-10">
-                                <h4 className={`text-sm font-bold ${isUnlocked ? 'text-white' : 'text-white/30'}`}>
-                                    {isUnlocked ? t(`achievements:list.${id}.title`) : t('achievements:locked', 'Classified')}
-                                </h4>
-                                <p className={`text-[10px] leading-tight mt-1 ${isUnlocked ? 'text-text-secondary' : 'text-white/10'}`}>
-                                    {isUnlocked ? t(`achievements:list.${id}.desc`) : '???'}
-                                </p>
-                            </div>
+                  <div className="z-10">
+                    <h4 className={`text-sm font-bold ${isUnlocked ? 'text-white' : 'text-white/30'}`}>
+                      {isUnlocked ? t(`achievements:list.${id}.title`) : t('achievements:locked', 'Classified')}
+                    </h4>
+                    <p
+                      className={`text-[10px] leading-tight mt-1 ${isUnlocked ? 'text-text-secondary' : 'text-white/10'}`}
+                    >
+                      {isUnlocked ? t(`achievements:list.${id}.desc`) : '???'}
+                    </p>
+                  </div>
 
-                            {/* Background decoration for unlocked */}
-                            {isUnlocked && (
-                                <div className="absolute -right-4 -bottom-4 text-accent-primary/10 rotate-12 group-hover:scale-110 transition-transform duration-500">
-                                    <Award size={60} />
-                                </div>
-                            )}
-                        </div>
-                    )
-                })}
-            </div>
+                  {/* Background decoration for unlocked */}
+                  {isUnlocked && (
+                    <div className="absolute -right-4 -bottom-4 text-accent-primary/10 rotate-12 group-hover:scale-110 transition-transform duration-500">
+                      <Award size={60} />
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
         </GlassCard>
 
         {/* System Settings */}

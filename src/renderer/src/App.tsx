@@ -16,6 +16,7 @@ import { NotificationSystem } from './components/ui/NotificationSystem'
 import PanicMode from './components/PanicMode'
 import { useTranslation } from 'react-i18next'
 import './i18n' // Import i18n config
+import { useAchievements } from './hooks/useAchievements'
 
 // --- Main App Layout ---
 type Tab = 'vault' | 'mimic' | 'settings' | 'identity'
@@ -30,6 +31,7 @@ function AppLayout(): React.ReactElement {
   const [showTutorial, setShowTutorial] = useState(false)
 
   const { t } = useTranslation('common')
+  const { unlock } = useAchievements()
 
   // Shared state lifted from panels
   const [inputData, setInputData] = useState('')
@@ -123,7 +125,10 @@ function AppLayout(): React.ReactElement {
         </div>
 
         <button
-          onClick={() => setPanicMode(true)}
+          onClick={() => {
+            unlock('panic_mode')
+            setPanicMode(true)
+          }}
           className="p-3 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all mb-4"
           title={t('panicMode')}
         >
@@ -231,7 +236,10 @@ function AppLayout(): React.ReactElement {
             </button>
           ))}
           <button
-            onClick={() => setPanicMode(true)}
+            onClick={() => {
+              unlock('panic_mode')
+              setPanicMode(true)
+            }}
             className="flex flex-col items-center gap-1 p-2 text-red-500/70 hover:text-red-400"
           >
             <div className="p-1.5 rounded-lg bg-red-500/10">
