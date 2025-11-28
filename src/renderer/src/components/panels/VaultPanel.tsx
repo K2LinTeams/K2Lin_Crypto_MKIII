@@ -8,6 +8,12 @@ import { encryptAsymmetric, decryptAsymmetric, importKey } from '../../services/
 
 type Format = 'Base64' | 'Hex' | 'Natural Text (Markov)'
 
+interface CryptoPackage {
+  c3_alg: 'RSA-OAEP' | 'AES-GCM'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  payload: any
+}
+
 interface VaultPanelProps {
   inputData: string
   setInputData: (data: string) => void
@@ -44,6 +50,7 @@ export default function VaultPanel({
   const [showKey, setShowKey] = useState(false)
   const [activeTab, setActiveTab] = useState<'input' | 'output'>('input')
   const [highlightOutput, setHighlightOutput] = useState(false)
+  const [detectedAlg, setDetectedAlg] = useState<string | null>(null)
 
   // Asymmetric Encryption State
   const [useAsymmetric, setUseAsymmetric] = useState(false)
@@ -71,139 +78,190 @@ export default function VaultPanel({
     }
   }, [])
 
+  // Auto-detect algorithm from outputData
+  useEffect(() => {
+    const detect = async () => {
+      if (!outputData) {
+        setDetectedAlg(null)
+        return
+      }
+      try {
+        let decodedStr = outputData
+        if (currentFormat === 'Natural Text (Markov)') {
+          const bytes = await api.nlp.decode(outputData, i18n.language)
+          decodedStr = new TextDecoder().decode(bytes)
+        } else if (currentFormat === 'Hex') {
+          const pairs = outputData.match(/.{1,2}/g)
+          if (pairs) {
+            const bytes = new Uint8Array(pairs.map((byte) => parseInt(byte, 16)))
+            decodedStr = new TextDecoder().decode(bytes)
+          }
+        } else if (currentFormat === 'Base64') {
+          // It's already likely base64 of the JSON, so decode once to get JSON string
+          // Note: formatOutput does btoa(contentString). So we verify if it is Base64.
+          try {
+            decodedStr = atob(outputData)
+          } catch {
+            // Not base64
+          }
+        }
+
+        try {
+          const obj = JSON.parse(decodedStr)
+          if (obj && obj.c3_alg) {
+            setDetectedAlg(obj.c3_alg)
+            return
+          }
+        } catch {
+          /* Not a JSON package */
+        }
+      } catch {
+        /* Decoding failed */
+      }
+      setDetectedAlg(null)
+    }
+    detect()
+  }, [outputData, currentFormat, api.nlp, i18n.language])
+
   const handleProcess = async (mode: 'encrypt' | 'decrypt'): Promise<void> => {
     try {
       if (mode === 'decrypt') {
-        // --- Decrypt Logic ---
-        // 1. Try Asymmetric First if outputData looks like a big blob (or user selected it?)
-        // Actually, we should probably try to detect or allow user to toggle "Decrypt with My Private Key"
-
-        // Quick check if it's asymmetric? Usually RSA ciphertext is large and standard format.
-        // But for simplicity, we will assume if the user toggles "Use Asymmetric" they mean it.
-        // OR we try Symmetric first, then Asymmetric if failed?
-
         let decrypted = ''
-        let success = false;
+        let success = false
 
-        // Attempt 1: Asymmetric (if user has private key)
-        const myPrivateKeyPem = localStorage.getItem('my_private_key')
-        if (myPrivateKeyPem) {
-            try {
-                // If the data is formatted/Markov, we need to decode first?
-                // The current RSA implementation returns Base64.
-                // If it is 'Natural Text', decode it first.
-                let dataToDecrypt = outputData;
-
-                if (currentFormat === 'Natural Text (Markov)') {
-                    const decodedBytes = await api.nlp.decode(outputData, i18n.language)
-                    dataToDecrypt = new TextDecoder().decode(decodedBytes)
-                    // If it was encrypted as JSON (Symmetric), this is JSON string.
-                    // If it was encrypted as Asymmetric (String), this is Base64 string.
-                    // Let's assume Asymmetric encryption just encrypts the raw string, not a JSON package.
-                } else if (currentFormat === 'Hex') {
-                   // Convert hex to string (assuming it was base64 encoded before hex?)
-                   // Wait, our RSA encrypt returns Base64.
-                   // If Hex format was chosen, we converted Base64 -> Hex.
-                   // So reverse it.
-                   const pairs = outputData.match(/.{1,2}/g)
-                   if (pairs) {
-                      const bytes = new Uint8Array(pairs.map(byte => parseInt(byte, 16)))
-                      dataToDecrypt = new TextDecoder().decode(bytes) // This should be the Base64 ciphertext
-                   }
-                } else {
-                    // Base64
-                    dataToDecrypt = outputData;
-                }
-
-                // Now decrypt with Private Key
-                const privateKey = await importKey(myPrivateKeyPem, 'private')
-                decrypted = await decryptAsymmetric(dataToDecrypt, privateKey)
-                success = true
-            } catch (e) {
-                // Ignore, maybe it's not asymmetric
-                console.log('Asymmetric decryption failed, trying symmetric...', e)
-            }
+        // 1. Decode current format to get the underlying string/object
+        let rawPackageStr = outputData
+        if (currentFormat === 'Natural Text (Markov)') {
+          const decodedBytes = await api.nlp.decode(outputData, i18n.language)
+          rawPackageStr = new TextDecoder().decode(decodedBytes)
+        } else if (currentFormat === 'Hex') {
+          const pairs = outputData.match(/.{1,2}/g)
+          if (pairs) {
+            const bytes = new Uint8Array(pairs.map((byte) => parseInt(byte, 16)))
+            rawPackageStr = new TextDecoder().decode(bytes)
+          }
+        } else if (currentFormat === 'Base64') {
+          // Try to decode base64
+          try {
+            rawPackageStr = atob(outputData)
+          } catch {
+            /* Keep as is if failed, might be raw */
+          }
         }
 
-        // Attempt 2: Symmetric
-        if (!success) {
-             let encryptedObj = encryptedPackage
+        // 2. Parse Package
+        let pkg: CryptoPackage | null = null
+        try {
+          pkg = JSON.parse(rawPackageStr)
+        } catch {
+          // Not a JSON package, might be legacy raw data
+        }
 
-            if (!encryptedObj && outputData) {
-                // Try to parse outputData if encryptedPackage is null
-                if (currentFormat === 'Natural Text (Markov)') {
-                    const decodedBytes = await api.nlp.decode(outputData, i18n.language)
-                    const jsonString = new TextDecoder().decode(decodedBytes)
-                    try { encryptedObj = JSON.parse(jsonString) } catch { /* ignore */ }
-                } else {
-                    try {
-                        encryptedObj = JSON.parse(atob(outputData))
-                    } catch {
-                        try { encryptedObj = JSON.parse(outputData) } catch { /* ignore */ }
-                    }
-                }
+        // 3. Auto-Detect and Decrypt based on package
+        if (pkg && pkg.c3_alg === 'RSA-OAEP') {
+          // Asymmetric Auto-Detect
+          const myPrivateKeyPem = localStorage.getItem('my_private_key')
+          if (myPrivateKeyPem) {
+            const privateKey = await importKey(myPrivateKeyPem, 'private')
+            // Payload is Base64 ciphertext string
+            decrypted = await decryptAsymmetric(pkg.payload, privateKey)
+            success = true
+          } else {
+            throw new Error(t('identity.noIdentityCard') || 'No Identity Card found')
+          }
+        } else if (pkg && pkg.c3_alg === 'AES-GCM') {
+          // Symmetric Auto-Detect
+          if (secretKey) {
+            decrypted = await api.crypto.decrypt(
+              pkg.payload.ciphertext,
+              pkg.payload.iv,
+              pkg.payload.salt,
+              pkg.payload.tag,
+              secretKey
+            )
+            success = true
+          }
+        } else {
+          // Fallback / Legacy Logic
+          console.warn('Unknown package format, trying legacy methods...')
+
+          // Legacy Asymmetric Check (User must have selected Asymmetric mode or we try blindly)
+          // If we are here, it's not a tagged package.
+          // Try Asymmetric first if it looks like Base64 and we have a key?
+          const myPrivateKeyPem = localStorage.getItem('my_private_key')
+          if (myPrivateKeyPem && !success) {
+            try {
+              const privateKey = await importKey(myPrivateKeyPem, 'private')
+              // rawPackageStr should be the Base64 ciphertext if it was just Base64'd
+              decrypted = await decryptAsymmetric(rawPackageStr, privateKey)
+              success = true
+            } catch {
+              /* Not asymmetric */
             }
+          }
 
-            if (encryptedObj && secretKey) {
+          // Legacy Symmetric Check
+          if (!success) {
+             // eslint-disable-next-line @typescript-eslint/no-explicit-any
+             let legacyObj: any = null
+             try { legacyObj = JSON.parse(rawPackageStr) } catch { /* ignore */ }
+
+             // If legacyObj has ciphertext/iv etc.
+             if (legacyObj && legacyObj.ciphertext && secretKey) {
                 decrypted = await api.crypto.decrypt(
-                    encryptedObj.ciphertext,
-                    encryptedObj.iv,
-                    encryptedObj.salt,
-                    encryptedObj.tag,
+                    legacyObj.ciphertext,
+                    legacyObj.iv,
+                    legacyObj.salt,
+                    legacyObj.tag,
                     secretKey
                 )
                 success = true
-            }
+             }
+          }
         }
 
         if (success) {
-            setInputData(decrypted)
-            setIsEncrypted(false)
-            setOutputData('')
-            setEncryptedPackage(null)
-            setActiveTab('input')
+          setInputData(decrypted)
+          setIsEncrypted(false)
+          setOutputData('')
+          setEncryptedPackage(null)
+          setActiveTab('input')
         } else {
-             alert(t('noDataToDecrypt') + ' or Key Invalid')
+          alert(t('noDataToDecrypt') + ' or Key Invalid')
         }
-
       } else {
         // --- Encrypt Logic ---
         if (!inputData) return
 
+        let finalPackage: CryptoPackage
+
         if (useAsymmetric && selectedContact) {
-            // Asymmetric Encryption
-            const publicKey = await importKey(selectedContact, 'public')
-            const ciphertextBase64 = await encryptAsymmetric(inputData, publicKey)
+          // Asymmetric Encryption
+          const publicKey = await importKey(selectedContact, 'public')
+          const ciphertextBase64 = await encryptAsymmetric(inputData, publicKey)
 
-            // For Asymmetric, we don't have a "package" with salt/iv/etc exposed the same way
-            // (OAEP handles randomization internally).
-            // We just treat the Base64 ciphertext as the result.
-            // But to fit our "formatOutput" logic which expects an object or string...
-            // Let's just pass the string.
-
-            setEncryptedPackage(ciphertextBase64) // It's just a string
-            setIsEncrypted(true)
-            setInputData('')
-
-            // Format it
-            // Note: formatOutput expects 'any'. If it's a string, JSON.stringify adds quotes.
-            // We might want to handle raw string differently in formatOutput?
-            // Actually, let's wrap it to be consistent: { asymmetric: true, data: ... }?
-            // Or just pass the string.
-            formatOutput(ciphertextBase64, currentFormat)
-
+          finalPackage = {
+            c3_alg: 'RSA-OAEP',
+            payload: ciphertextBase64
+          }
         } else {
-             // Symmetric Encryption (Standard)
-            if (!secretKey) {
-                alert('Please enter a Session Key')
-                return
-            }
-            const result = await api.crypto.encrypt(inputData, secretKey)
-            setEncryptedPackage(result)
-            setIsEncrypted(true)
-            setInputData('') // Clear input for security
-            formatOutput(result, currentFormat)
+          // Symmetric Encryption (Standard)
+          if (!secretKey) {
+            alert('Please enter a Session Key')
+            return
+          }
+          const result = await api.crypto.encrypt(inputData, secretKey)
+
+          finalPackage = {
+            c3_alg: 'AES-GCM',
+            payload: result
+          }
         }
+
+        setEncryptedPackage(finalPackage)
+        setIsEncrypted(true)
+        setInputData('') // Clear input for security
+        formatOutput(finalPackage, currentFormat)
       }
     } catch (error) {
       console.error(error)
@@ -437,7 +495,14 @@ export default function VaultPanel({
               }`}
             >
               <div className="flex justify-between items-center mb-4">
-                  <TechHeader title={t('encryptedPayload')} icon={<Code size={18} />} className="mb-0" />
+                  <div className="flex items-center gap-3">
+                    <TechHeader title={t('encryptedPayload')} icon={<Code size={18} />} className="mb-0" />
+                    {detectedAlg && (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-accent-primary text-black shadow-[0_0_10px_rgba(var(--accent-primary),0.5)] animate-pulse">
+                        {detectedAlg}
+                      </span>
+                    )}
+                  </div>
                   <div className="flex gap-1">
                     <button
                       onClick={() => copyToClipboard(outputData)}
