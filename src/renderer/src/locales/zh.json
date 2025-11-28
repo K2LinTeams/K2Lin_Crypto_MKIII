@@ -126,7 +126,12 @@
         "tutorial_complete": { "title": "入职培训", "desc": "完成基础操作指引。" },
         "identity_created": { "title": "外勤特工", "desc": "生成唯一的数字身份标识。" },
         "stego_unlocked": { "title": "无形之手", "desc": "获得隐写实验室访问权限。" },
-        "first_encrypt": { "title": "安全链路", "desc": "成功完成一次加密操作。" }
+        "first_encrypt": { "title": "安全链路", "desc": "成功完成一次加密操作。" },
+        "contact_imported": { "title": "人事部", "desc": "成功录入一名新干员的识别档案。" },
+        "panic_mode": { "title": "紧急撤离", "desc": "启动紧急防御协议，掩盖所有行踪。" },
+        "theme_changed": { "title": "环境模拟", "desc": "更改作战终端的视觉接口配置。" },
+        "encyclopedia_read": { "title": "PRTS 权限", "desc": "深入访问罗德岛战术数据库。" },
+        "sanity_zero": { "title": "理智归零", "desc": "遭遇解码错误，指挥官理智受到打击。" }
     }
   },
   "tutorial": {

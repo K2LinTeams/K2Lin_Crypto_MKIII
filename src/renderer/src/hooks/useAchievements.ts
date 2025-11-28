@@ -11,7 +11,12 @@ const ACHIEVEMENT_IDS = [
   'tutorial_complete',
   'identity_created',
   'stego_unlocked',
-  'first_encrypt'
+  'first_encrypt',
+  'contact_imported',
+  'panic_mode',
+  'theme_changed',
+  'encyclopedia_read',
+  'sanity_zero'
 ] as const
 
 export type AchievementId = typeof ACHIEVEMENT_IDS[number]

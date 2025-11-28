@@ -131,6 +131,7 @@ export default function IdentityPanel() {
         setContacts(newContacts)
         localStorage.setItem('contacts', JSON.stringify(newContacts))
         addNotification('success', t('importSuccess'))
+        unlock('contact_imported')
       } else {
         addNotification('error', t('importInvalid'))
       }

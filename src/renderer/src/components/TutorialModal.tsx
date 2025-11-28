@@ -177,6 +177,7 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
      setEncyclopediaTopic(steps[step].id)
      setShowEncyclopedia(true)
      addNotification('info', t('achievementDeeper', 'We need to go deeper 🔍'))
+     unlock('encyclopedia_read')
   }
 
   return (
