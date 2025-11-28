@@ -24,6 +24,14 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', onRegener
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    // Ensure font is loaded
+    try {
+      await document.fonts.load('bold 48px "Comfortaa"')
+      await document.fonts.load('16px "Comfortaa"')
+    } catch (e) {
+      console.warn('Font loading failed, falling back', e)
+    }
+
     // 1. Draw Visuals
     const width = 600
     const height = 350
@@ -42,21 +50,35 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', onRegener
     const textColorPrimary = '#334155' // slate-700
     const textColorSecondary = '#64748b' // slate-500
 
+    // Header: CRYPTO 3 Logo (Gradient Text)
+    const logoGradient = ctx.createLinearGradient(40, 30, 200, 30)
+    logoGradient.addColorStop(0, '#00f2ff') // cyan (accent-primary approx)
+    logoGradient.addColorStop(1, '#ff00ff') // magenta (accent-secondary approx)
+
+    ctx.font = 'bold 24px "Comfortaa", "Inter", sans-serif'
+    ctx.fillStyle = logoGradient
+    ctx.textAlign = 'left'
+    ctx.fillText('CRYPTO 3', 40, 50)
+
     // Name
     ctx.fillStyle = textColorPrimary
-    ctx.font = 'bold 48px "Inter", "Segoe UI", sans-serif'
+    ctx.font = 'bold 48px "Comfortaa", "Inter", sans-serif'
     ctx.textAlign = 'left'
-    ctx.fillText(username.toUpperCase(), 40, 100)
+    ctx.fillText(username.toUpperCase(), 40, 140)
 
     // ID / Key Label
     ctx.fillStyle = textColorSecondary
-    ctx.font = '16px "Inter", "Segoe UI", sans-serif'
+    ctx.font = '16px "Comfortaa", "Inter", sans-serif'
     ctx.fillText('ID / PUBLIC KEY HASH', 40, 260)
 
-    // ID Value (Shortened)
+    // ID Value (Shortened for aesthetics)
+    // Extract start and end of clean key (strip header/footer if present or just raw)
+    const cleanKey = publicKey.replace(/-----BEGIN PUBLIC KEY-----|-----END PUBLIC KEY-----|\n|\r/g, '')
+    const shortKey = cleanKey.substring(0, 8) + '...' + cleanKey.substring(cleanKey.length - 8)
+
     ctx.fillStyle = textColorPrimary
-    ctx.font = '24px "Courier New", monospace'
-    ctx.fillText(publicKey.substring(30, 54) + '...', 40, 290)
+    ctx.font = '24px "Comfortaa", "Courier New", monospace'
+    ctx.fillText(shortKey, 40, 290)
 
     // 2. Embed Data (Steganography)
     try {
@@ -65,7 +87,13 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', onRegener
       if (!blob) throw new Error('Failed to create blob')
 
       const imageBuffer = await blob.arrayBuffer()
-      const dataBuffer = new TextEncoder().encode(publicKey).buffer
+
+      // New Payload: JSON Object
+      const payload = JSON.stringify({
+        name: username,
+        publicKey: publicKey
+      })
+      const dataBuffer = new TextEncoder().encode(payload).buffer
 
       // Embed logic returns a Uint8Array representing the NEW PNG with data
       const pngData = await embed(imageBuffer, dataBuffer)

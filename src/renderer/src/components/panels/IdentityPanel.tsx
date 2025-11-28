@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { generateKeyPair, exportKey } from '../../services/rsa'
 import { IdentityCardGenerator } from '../IdentityCardGenerator'
 import { GlassCard, GlassButton, TechHeader, GlassInput } from '../ui/GlassComponents'
 import { User, Shield, Upload, UserPlus, Trash2 } from 'lucide-react'
 import { extract } from '../../services/webStego'
 import { useTranslation } from 'react-i18next'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface Contact {
   name: string
@@ -17,6 +18,7 @@ export default function IdentityPanel() {
   const [, setMyKeys] = useState<{ publicKey: CryptoKey; privateKey: CryptoKey } | null>(null)
   const [myPublicKeyPem, setMyPublicKeyPem] = useState<string | null>(null)
   const [contacts, setContacts] = useState<Contact[]>([])
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // New state for user name
   const [myName, setMyName] = useState<string>('')
@@ -65,10 +67,29 @@ export default function IdentityPanel() {
       const buffer = await file.arrayBuffer()
       const data = await extract(buffer)
       const textDecoder = new TextDecoder()
-      const publicKey = textDecoder.decode(data)
+      const decodedString = textDecoder.decode(data)
 
-      if (publicKey.includes('BEGIN PUBLIC KEY')) {
-        const name = prompt(t('enterContactName')) || t('unknownAgent')
+      let name = ''
+      let publicKey = ''
+
+      try {
+        // Try parsing as JSON (New Format)
+        const jsonPayload = JSON.parse(decodedString)
+        if (jsonPayload.publicKey && jsonPayload.name) {
+          name = jsonPayload.name
+          publicKey = jsonPayload.publicKey
+        } else {
+          throw new Error('Invalid JSON structure')
+        }
+      } catch {
+        // Fallback to Raw String (Legacy Format)
+        if (decodedString.includes('BEGIN PUBLIC KEY')) {
+          publicKey = decodedString
+          name = prompt(t('enterContactName')) || t('unknownAgent')
+        }
+      }
+
+      if (publicKey && publicKey.includes('BEGIN PUBLIC KEY')) {
         const newContact: Contact = { name, publicKey, addedAt: Date.now() }
         const newContacts = [...contacts, newContact]
         setContacts(newContacts)
@@ -80,6 +101,9 @@ export default function IdentityPanel() {
     } catch (err) {
       console.error(err)
       alert(t('importFailed'))
+    } finally {
+      // Reset input so same file can be selected again
+      if (e.target) e.target.value = ''
     }
   }
 
@@ -140,49 +164,88 @@ export default function IdentityPanel() {
         <GlassCard className="space-y-6 flex flex-col h-full">
           <div className="flex justify-between items-center">
             <TechHeader title={t('knownAssociates')} icon={<UserPlus size={18} />} />
-            <div className="relative">
+            <div>
               <input
+                ref={fileInputRef}
                 type="file"
                 accept="image/png"
                 onChange={handleImportContact}
-                className="absolute inset-0 opacity-0 cursor-pointer"
+                className="hidden"
               />
-              <GlassButton size="sm" icon={<Upload size={14} />}>
+              <GlassButton
+                size="sm"
+                icon={<Upload size={14} />}
+                onClick={() => fileInputRef.current?.click()}
+              >
                 {t('import')}
               </GlassButton>
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto space-y-3 max-h-[400px] pr-2 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto overflow-x-visible pt-4 pl-4 pr-4 pb-10 min-h-[400px] custom-scrollbar flex flex-col items-center">
             {contacts.length === 0 ? (
-              <div className="text-center text-text-secondary/50 py-10 italic">
+              <div className="text-center text-text-secondary/50 py-10 italic w-full">
                 {t('noContacts')}
               </div>
             ) : (
-              contacts.map((contact, idx) => (
-                <div
-                  key={idx}
-                  className="bg-black/20 border border-white/5 rounded-lg p-3 flex items-center justify-between group hover:border-accent-primary/30 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent-primary/20 to-accent-secondary/20 flex items-center justify-center text-accent-primary font-bold">
-                      {contact.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <div className="font-bold text-sm">{contact.name}</div>
-                      <div className="text-[10px] text-text-secondary font-mono">
-                        {contact.publicKey.substring(30, 50)}...
+              <AnimatePresence initial={false}>
+                {contacts.map((contact, idx) => (
+                  <motion.div
+                    key={`${contact.name}-${contact.addedAt}`}
+                    className="relative w-full max-w-sm"
+                    initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
+                    style={{
+                      marginTop: idx === 0 ? 0 : -60, // Stack overlap
+                      zIndex: idx,
+                    }}
+                    whileHover={{
+                      y: -70, // Pull card up significantly on hover
+                      zIndex: 100, // Bring to front
+                      scale: 1.05,
+                      rotateX: 10,
+                      transition: { type: 'spring', stiffness: 300, damping: 20 }
+                    }}
+                    transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+                  >
+                    <div className="group relative bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 shadow-xl overflow-hidden">
+                      {/* Gradient Background Effect */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-accent-primary/10 to-accent-secondary/10 opacity-50 group-hover:opacity-100 transition-opacity" />
+
+                      <div className="relative z-10 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-accent-primary to-accent-secondary flex items-center justify-center text-white font-bold text-xl shadow-lg border border-white/20">
+                            {contact.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <div className="font-bold text-lg text-white drop-shadow-sm">{contact.name}</div>
+                            <div className="text-[10px] text-white/60 font-mono tracking-wider">
+                              {contact.publicKey.substring(30, 46)}...{contact.publicKey.substring(contact.publicKey.length - 8)}
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleDeleteContact(idx)
+                          }}
+                          className="p-2 text-white/40 hover:text-red-400 hover:bg-white/10 rounded-full transition-all"
+                          title={t('delete')}
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+
+                      {/* Decorative Elements */}
+                      <div className="absolute -bottom-4 -right-4 text-white/5 rotate-12">
+                         <Shield size={100} />
                       </div>
                     </div>
-                  </div>
-                  <button
-                    onClick={() => handleDeleteContact(idx)}
-                    className="p-2 text-text-secondary hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              ))
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             )}
           </div>
         </GlassCard>
