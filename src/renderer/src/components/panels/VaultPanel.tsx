@@ -310,7 +310,6 @@ export default function VaultPanel({
           {/* Right: Output Area */}
           <div className={`flex flex-col ${activeTab === 'output' ? 'flex' : 'hidden lg:flex'}`}>
             <GlassCard
-              floating={isEncrypted && window.innerWidth >= 1024}
               className={`flex-1 flex flex-col min-h-[350px] lg:h-[450px] relative group transition-all duration-500 ${
                 highlightOutput ? 'ring-1 ring-accent-primary/50 shadow-[0_0_30px_rgba(var(--accent-primary),0.2)]' : ''
               }`}
@@ -341,7 +340,7 @@ export default function VaultPanel({
               />
 
               {outputData && (
-                <div className="absolute top-0 left-0 w-full h-0.5 bg-accent-primary/50 shadow-[0_0_15px_rgba(var(--accent-primary),0.5)] animate-[scan_3s_linear_infinite] pointer-events-none opacity-50"></div>
+                <div className="absolute top-0 left-0 w-full h-0.5 bg-accent-primary/50 shadow-[0_0_15px_rgba(var(--accent-primary),0.5)] animate-[scan_2s_ease-in-out_forwards] pointer-events-none opacity-50"></div>
               )}
 
               {/* Mobile Actions embedded at bottom of output card */}
