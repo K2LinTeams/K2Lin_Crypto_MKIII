@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
-type Theme = 'cyberpunk' | 'light' | 'midnight'
+type Theme = 'cyberpunk' | 'light' | 'midnight' | 'sakura'
 
 interface ThemeContextType {
   theme: Theme

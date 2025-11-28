@@ -9,9 +9,18 @@
     "config": "配置",
     "dailyTasks": "每日清单",
     "addTask": "添加新任务...",
-    "simpleNotes": "简易笔记 v1.0.2 © 2024"
+    "simpleNotes": "简易笔记 v1.0.2 © 2024",
+    "hide": "隐藏",
+    "show": "显示"
   },
   "vault": {
+    "subtitle": "AES-256-GCM",
+    "noDataToDecrypt": "未找到可解密的加密数据。",
+    "formats": {
+      "base64": "Base64",
+      "hex": "Hex",
+      "markov": "自然文本 (马尔可夫)"
+    },
     "sessionKey": "会话密钥",
     "generateRandom": "生成随机密钥",
     "enterKey": "输入预共享密钥或密码...",
@@ -53,13 +62,15 @@
     "panicModePin": "伪装模式 PIN",
     "panicModePinDesc": "退出伪装模式需要 PIN 码",
     "configure": "配置",
+    "dangerZone": "危险区域",
     "emergencyWipe": "紧急销毁",
     "emergencyWipeDesc": "立即销毁所有本地密钥和缓存",
     "execute": "执行",
     "themes": {
       "cyberpunk": "赛博朋克",
       "light": "SaaS / 亮色",
-      "midnight": "深空"
+      "midnight": "深空",
+      "sakura": "樱花"
     },
     "language": "语言"
   }

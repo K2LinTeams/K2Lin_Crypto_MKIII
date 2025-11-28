@@ -45,6 +45,19 @@
   --glass-highlight: rgba(217, 70, 239, 0.1);
 }
 
+/* Sakura Theme */
+[data-theme='sakura'] {
+  --bg-primary: #1f1b20;
+  --bg-secondary: #2a252e;
+  --accent-primary: #f472b6; /* pink-400 */
+  --accent-secondary: #c084fc; /* purple-400 */
+  --text-primary: #fce7f3; /* pink-50 */
+  --text-secondary: #dbcfd6;
+  --glass-border: rgba(244, 114, 182, 0.15);
+  --glass-bg: rgba(42, 37, 46, 0.6);
+  --glass-highlight: rgba(244, 114, 182, 0.1);
+}
+
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
