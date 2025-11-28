@@ -1,4 +1,4 @@
-export type OperatorTheme = 'Rhodes Island' | 'Rhine Lab' | 'Victoria' | 'Penguin Logistics' | 'Abyssal' | 'Kjerag' | 'Kazimierz' | 'Yan';
+export type OperatorTheme = 'Rhodes Island' | 'Rhine Lab' | 'Victoria' | 'Penguin Logistics' | 'Abyssal' | 'Kjerag' | 'Kazimierz' | 'Yan' | 'cyberpunk' | 'light' | 'midnight' | 'sakura';
 
 export interface Operator {
   name: string;
