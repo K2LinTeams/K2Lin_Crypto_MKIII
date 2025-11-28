@@ -15,14 +15,16 @@ i18n
         vault: en.vault,
         mimic: en.mimic,
         settings: en.settings,
-        identity: en.identity
+        identity: en.identity,
+        tutorial: en.tutorial
       },
       zh: {
         common: zh.common,
         vault: zh.vault,
         mimic: zh.mimic,
         settings: zh.settings,
-        identity: zh.identity
+        identity: zh.identity,
+        tutorial: zh.tutorial
       }
     },
     fallbackLng: 'en',

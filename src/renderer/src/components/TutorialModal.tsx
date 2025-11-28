@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { GlassCard, GlassButton } from './ui/GlassComponents'
-import { Shield, Lock, Image as ImageIcon, User, ArrowRight, X, Check, ArrowLeft } from 'lucide-react'
+import { Shield, Lock, Image as ImageIcon, User, ArrowRight, X, Check, Key, Unlock, UserPlus, RefreshCw } from 'lucide-react'
 
 interface TutorialModalProps {
   onComplete: () => void
@@ -10,65 +10,133 @@ interface TutorialModalProps {
 }
 
 export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps) {
-  const { t } = useTranslation('common')
+  const { t } = useTranslation(['tutorial', 'vault', 'identity'])
   const [step, setStep] = useState(0)
 
   const steps = [
+    // 1. Welcome
     {
       id: 'welcome',
-      title: t('tutorial.welcomeTitle', 'Welcome to Crypto3! 👋'),
-      description: t('tutorial.welcomeDesc', 'Your ultimate tool for secure communication and digital camouflage.'),
+      title: t('welcomeTitle', 'Welcome to Crypto3! 👋'),
+      description: t('welcomeDesc', 'Your ultimate tool for secure communication and digital camouflage.'),
       icon: <Shield size={48} className="text-accent-primary" />,
     },
+    // 2. RSA Step 1: Generate Identity
     {
-      id: 'rsa-aes',
-      title: t('tutorial.rsaAesTitle', 'Hybrid Encryption 🛡️'),
-      description: t('tutorial.rsaAesDesc', 'We combine AES speed with RSA security.'),
-      icon: <Lock size={48} className="text-accent-secondary" />,
-      // Extra content for RSA/AES specific view
+      id: 'rsa-step1',
+      title: t('rsaStep1Title', 'Start with RSA: Your Identity 🪪'),
+      description: t('rsaStep1Desc', 'First, go to the ID panel and generate your Identity Card.'),
+      icon: <User size={48} className="text-accent-secondary" />,
       extraContent: (
-        <div className="mt-4 w-full flex flex-col items-center gap-4">
-           {/* Mock Toggle Switch */}
-           <div className="flex flex-col items-center gap-2">
-              <span className="text-xs text-text-secondary uppercase tracking-wider">{t('tutorial.lookFor', 'Look for this switch:')}</span>
-              <div className="flex p-1 bg-black/40 rounded-xl border border-white/5 relative">
-                 <div className="px-3 py-1.5 rounded-lg bg-accent-primary/20 text-accent-primary text-xs font-bold border border-accent-primary/30 shadow-[0_0_10px_rgba(var(--accent-primary),0.2)]">
-                    {t('vault.symmetricAES', 'Symmetric (AES)')}
-                 </div>
-                 <div className="px-3 py-1.5 rounded-lg text-text-secondary/50 text-xs font-medium">
-                    {t('vault.asymmetricRSA', 'Asymmetric (RSA)')}
-                 </div>
-                 {/* Animated Pointer */}
-                 <motion.div
-                    className="absolute -right-8 top-1/2 -translate-y-1/2 text-accent-primary"
-                    animate={{ x: [0, -5, 0] }}
-                    transition={{ repeat: Infinity, duration: 1.5 }}
-                 >
-                    <ArrowLeft size={24} />
-                 </motion.div>
-              </div>
-           </div>
-
-           {/* Pro Tip Box */}
-           <div className="bg-accent-secondary/5 border border-accent-secondary/10 rounded-lg p-3 text-left w-full">
-              <p className="text-xs text-text-secondary leading-relaxed">
-                 {t('tutorial.rsaAesTip', 'Pro Tip: AES for personal files, RSA for sharing secrets.')}
-              </p>
-           </div>
-        </div>
+         <div className="mt-4 flex flex-col items-center gap-2 w-full">
+            <div className="w-48 h-24 bg-gradient-to-br from-black/60 to-accent-primary/10 rounded-xl border border-accent-primary/30 relative overflow-hidden flex flex-col p-3 shadow-lg">
+               <div className="flex justify-between items-start">
+                   <div className="w-8 h-8 rounded-full bg-accent-primary/20 flex items-center justify-center">
+                       <User size={16} className="text-accent-primary" />
+                   </div>
+                   <div className="text-[10px] text-accent-primary font-mono opacity-70">CRYPTO3 ID</div>
+               </div>
+               <div className="mt-auto">
+                   <div className="h-1.5 w-2/3 bg-white/10 rounded mb-1"></div>
+                   <div className="h-1.5 w-1/2 bg-white/10 rounded"></div>
+               </div>
+               {/* Shine effect */}
+               <motion.div
+                  className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12"
+                  animate={{ left: ['100%', '-100%'] }}
+                  transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut', delay: 1 }}
+               />
+            </div>
+            <p className="text-[10px] text-text-secondary opacity-70">{t('identity:title', 'Digital Identity')}</p>
+         </div>
       )
     },
+    // 3. RSA Step 2: Exchange
+    {
+      id: 'rsa-step2',
+      title: t('rsaStep2Title', 'Exchange Identity Cards 🤝'),
+      description: t('rsaStep2Desc', 'Send your card to a friend. Import theirs to verifying them.'),
+      icon: <UserPlus size={48} className="text-green-400" />,
+      extraContent: (
+         <div className="mt-6 flex items-center justify-center gap-6 w-full relative h-16">
+            {/* Card Left */}
+            <motion.div
+               className="w-12 h-16 bg-white/5 border border-white/10 rounded flex items-center justify-center absolute left-10"
+               animate={{ x: [0, 60, 0], opacity: [1, 0, 1] }}
+               transition={{ duration: 3, repeat: Infinity, times: [0, 0.5, 1] }}
+            >
+               <User size={20} className="text-accent-primary" />
+            </motion.div>
+
+            {/* Card Right */}
+             <motion.div
+               className="w-12 h-16 bg-white/5 border border-white/10 rounded flex items-center justify-center absolute right-10"
+               animate={{ x: [0, -60, 0], opacity: [1, 0, 1] }}
+               transition={{ duration: 3, repeat: Infinity, times: [0, 0.5, 1], delay: 1.5 }}
+            >
+               <User size={20} className="text-accent-secondary" />
+            </motion.div>
+
+            <RefreshCw size={20} className="text-text-secondary animate-spin-slow opacity-30" />
+         </div>
+      )
+    },
+    // 4. RSA Step 3: Encrypt
+    {
+      id: 'rsa-step3',
+      title: t('rsaStep3Title', 'Encrypt for a Friend 🔒'),
+      description: t('rsaStep3Desc', 'Select "Asymmetric (RSA)" in Vault and pick your friend.'),
+      icon: <Lock size={48} className="text-accent-secondary" />,
+      extraContent: (
+         <div className="mt-4 w-full px-6">
+            <div className="flex flex-col gap-2 p-3 rounded-lg bg-black/40 border border-white/10">
+               <div className="flex justify-between items-center text-xs text-text-secondary mb-1">
+                  <span>{t('vault:targetRecipient', 'Target Recipient')}</span>
+               </div>
+               <div className="h-8 bg-white/5 rounded border border-white/10 flex items-center px-3 gap-2 text-sm text-accent-primary">
+                  <User size={14} />
+                  <span>Alice (Verified)</span>
+                  <Check size={12} className="ml-auto text-green-400" />
+               </div>
+            </div>
+         </div>
+      )
+    },
+    // 5. AES Step 1: Shared Password
+    {
+      id: 'aes-step1',
+      title: t('aesStep1Title', 'Simple Encryption (AES) 🔑'),
+      description: t('aesStep1Desc', 'Agree on a password with your friend.'),
+      icon: <Key size={48} className="text-yellow-400" />,
+       extraContent: (
+         <div className="mt-4 w-full px-6">
+            <div className="flex flex-col gap-2 p-3 rounded-lg bg-black/40 border border-white/10">
+               <div className="flex justify-between items-center text-xs text-text-secondary mb-1">
+                  <span>{t('vault:enterKeyShort', 'Enter key...')}</span>
+               </div>
+               <div className="h-8 bg-white/5 rounded border border-white/10 flex items-center px-3 text-sm tracking-widest text-text-primary">
+                  ••••••••••••
+               </div>
+               <div className="text-[10px] text-text-secondary text-right">
+                  AES-256-GCM
+               </div>
+            </div>
+         </div>
+      )
+    },
+    // 6. AES Step 2: Decrypt
+    {
+      id: 'aes-step2',
+      title: t('aesStep2Title', 'Decrypting with AES 🔓'),
+      description: t('aesStep2Desc', 'The recipient must enter the exact same password.'),
+      icon: <Unlock size={48} className="text-yellow-400" />,
+    },
+    // 7. Stego
     {
       id: 'stego',
-      title: t('tutorial.stegoTitle', 'Invisible Ink 🖼️'),
-      description: t('tutorial.stegoDesc', 'Hide data inside images using Steganography.'),
+      title: t('stegoTitle', 'Invisible Ink 🖼️'),
+      description: t('stegoDesc', 'Hide data inside images using Steganography.'),
       icon: <ImageIcon size={48} className="text-blue-400" />,
-    },
-    {
-      id: 'identity',
-      title: t('tutorial.identityTitle', 'Identity Cards 🪪'),
-      description: t('tutorial.identityDesc', 'Create and verify digital identities.'),
-      icon: <User size={48} className="text-purple-400" />,
     },
   ]
 
@@ -98,7 +166,7 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
                  <button
                     onClick={onSkip}
                     className="p-2 text-text-secondary hover:text-white transition-colors"
-                    title={t('tutorial.skip', 'Skip Intro')}
+                    title={t('skip', 'Skip Intro')}
                  >
                     <X size={20} />
                  </button>
@@ -114,27 +182,28 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
                         animate={{ x: 0, opacity: 1 }}
                         exit={{ x: -20, opacity: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="flex flex-col items-center gap-6 w-full"
+                        className="flex flex-col items-center gap-6 w-full min-h-[220px]"
                     >
                         <div className="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shadow-inner shrink-0">
                             {steps[step].icon}
                         </div>
 
                         <div className="space-y-2 w-full">
-                            <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
+                            <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
                                 {steps[step].title}
                             </h2>
-                            <p className="text-text-secondary leading-relaxed">
+                            <p className="text-sm text-text-secondary leading-relaxed px-4">
                                 {steps[step].description}
                             </p>
 
-                            {/* Render Extra Content if available (e.g. for RSA/AES) */}
+                            {/* Render Extra Content if available */}
                             {/* @ts-ignore */}
                             {steps[step].extraContent && (
                                 <motion.div
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.2 }}
+                                    className="flex justify-center"
                                 >
                                     {/* @ts-ignore */}
                                     {steps[step].extraContent}
@@ -145,11 +214,11 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
                 </AnimatePresence>
 
                 {/* Progress Indicators */}
-                <div className="flex gap-2 mt-8 mb-6">
+                <div className="flex gap-1.5 mt-8 mb-6">
                     {steps.map((_, i) => (
                         <div
                             key={i}
-                            className={`h-1.5 rounded-full transition-all duration-300 ${
+                            className={`h-1 rounded-full transition-all duration-300 ${
                                 i === step ? 'w-6 bg-accent-primary' : 'w-1.5 bg-white/10'
                             }`}
                         />
@@ -166,12 +235,12 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
                     >
                         {step === steps.length - 1 ? (
                             <>
-                                {t('tutorial.finish', 'Let\'s Rock! 🚀')}
+                                {t('finish', 'Let\'s Rock! 🚀')}
                                 <Check size={18} className="ml-2" />
                             </>
                         ) : (
                             <>
-                                {t('tutorial.next', 'Next ➡')}
+                                {t('next', 'Next ➡')}
                                 <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
                             </>
                         )}
