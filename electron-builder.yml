@@ -1,6 +1,7 @@
 appId: com.electron.app
 productName: k2lin-crypto3
 directories:
+  output: dist
   buildResources: build
 files:
   - '!**/.vscode/*'
@@ -12,6 +13,8 @@ files:
 asarUnpack:
   - resources/**
 win:
+  target: portable
+  icon: resources/icon.png
   executableName: k2lin-crypto3
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
