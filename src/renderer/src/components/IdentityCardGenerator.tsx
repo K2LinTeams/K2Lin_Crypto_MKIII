@@ -181,8 +181,8 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', theme = '
         }
       } else {
         // Custom name - use theme specific icons
-        if (theme === 'sakura' && LucideIcons['Cherry']) IconComponent = LucideIcons['Cherry']
-        else if (theme === 'sakura' && LucideIcons['Flower2']) IconComponent = LucideIcons['Flower2']
+        if (theme === 'sakura' && LucideIcons['Flower2']) IconComponent = LucideIcons['Flower2']
+        else if (theme === 'sakura' && LucideIcons['Flower']) IconComponent = LucideIcons['Flower']
         else if (theme === 'cyberpunk' && LucideIcons['Zap']) IconComponent = LucideIcons['Zap']
         else if (theme === 'light' && LucideIcons['Sun']) IconComponent = LucideIcons['Sun']
         else if (theme === 'midnight' && LucideIcons['Moon']) IconComponent = LucideIcons['Moon']
