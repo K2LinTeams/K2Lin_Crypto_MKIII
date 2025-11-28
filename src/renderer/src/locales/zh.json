@@ -39,7 +39,14 @@
     "clearHint": "清除以编辑",
     "symmetricAES": "对称加密 (AES)",
     "asymmetricRSA": "非对称加密 (RSA)",
-    "targetRecipient": "目标接收者"
+    "targetRecipient": "目标接收者",
+    "decryptionComplete": "解密成功。",
+    "encryptionComplete": "加密成功。",
+    "selectContact": "选择联系人...",
+    "contactImported": "联系人导入成功。",
+    "contactExists": "联系人已存在。",
+    "noDataOrInvalidKey": "未找到可解密的加密数据或密钥无效。",
+    "enterSessionKey": "请输入会话密钥。"
   },
   "identity": {
     "title": "数字身份",
@@ -85,7 +92,8 @@
     "outputPreview": "输出预览",
     "stegoEncoded": ":: 隐写编码图像 ::",
     "downloadResult": "下载结果",
-    "noOutput": "未生成输出"
+    "noOutput": "未生成输出",
+    "enterEmbedText": "请输入要嵌入的文本。"
   },
   "settings": {
     "title": "系统配置",
