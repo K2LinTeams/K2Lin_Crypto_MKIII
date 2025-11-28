@@ -1,4 +1,6 @@
-import { scrypt } from 'scrypt-js'
+// Remove direct scrypt import to avoid main thread blocking
+// import { scrypt } from 'scrypt-js'
+import KeyDerivationWorker from './keyDerivation.worker?worker'
 
 const ALGORITHM = 'AES-GCM'
 const SALT_LENGTH = 16
@@ -44,7 +46,33 @@ async function deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey>
   const p = 1
   const dkLen = KEY_LENGTH
 
-  const derivedKeyBytes = await scrypt(passwordBuffer, salt, N, r, p, dkLen)
+  // Offload to Worker
+  const derivedKeyBytes = await new Promise<Uint8Array>((resolve, reject) => {
+    const worker = new KeyDerivationWorker()
+
+    worker.onmessage = (e) => {
+      if (e.data.success) {
+        resolve(e.data.key)
+      } else {
+        reject(new Error(e.data.error))
+      }
+      worker.terminate()
+    }
+
+    worker.onerror = (err) => {
+      reject(err)
+      worker.terminate()
+    }
+
+    worker.postMessage({
+      password: passwordBuffer,
+      salt,
+      N,
+      r,
+      p,
+      dkLen
+    })
+  })
 
   return await window.crypto.subtle.importKey(
     'raw',
