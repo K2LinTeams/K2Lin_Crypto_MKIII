@@ -1,5 +1,5 @@
 import React from 'react'
-import { motion, HTMLMotionProps } from 'framer-motion'
+import { motion, HTMLMotionProps, TargetAndTransition } from 'framer-motion'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { Sparkles, Terminal } from 'lucide-react'
@@ -22,7 +22,7 @@ interface TechHeaderProps {
 export function TechHeader({ title, subtitle, icon, className }: TechHeaderProps) {
   return (
     <div className={cn('flex items-center gap-3 mb-4 select-none', className)}>
-      <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-accent-primary/10 border border-accent-primary/20 text-accent-primary shadow-[0_0_10px_rgba(var(--accent-primary),0.2)]">
+      <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-accent-primary/5 border border-accent-primary/10 text-accent-primary shadow-[0_0_10px_rgba(var(--accent-primary),0.1)]">
         {icon || <Terminal size={16} />}
       </div>
       <div className="flex flex-col">
@@ -32,9 +32,9 @@ export function TechHeader({ title, subtitle, icon, className }: TechHeaderProps
         {subtitle && <span className="text-xs text-text-secondary uppercase tracking-widest font-mono opacity-70">{subtitle}</span>}
       </div>
       {/* Decorative Line */}
-      <div className="flex-1 h-px bg-gradient-to-r from-accent-primary/50 to-transparent ml-4" />
+      <div className="flex-1 h-px bg-gradient-to-r from-accent-primary/30 to-transparent ml-4 opacity-50" />
       {/* End Cap */}
-      <div className="w-1.5 h-1.5 bg-accent-primary/50 rotate-45" />
+      <div className="w-1.5 h-1.5 bg-accent-primary/30 rotate-45" />
     </div>
   )
 }
@@ -57,7 +57,7 @@ export function MobileTabSwitcher<T extends string>({
   className
 }: MobileTabSwitcherProps<T>) {
   return (
-    <div className={cn('flex p-1 bg-black/20 backdrop-blur-md rounded-xl border border-glass-border', className)}>
+    <div className={cn('flex p-1 bg-black/10 backdrop-blur-md rounded-xl border border-glass-border', className)}>
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id
         return (
@@ -72,7 +72,7 @@ export function MobileTabSwitcher<T extends string>({
             {isActive && (
               <motion.div
                 layoutId="activeTabBg"
-                className="absolute inset-0 bg-accent-primary/20 border border-accent-primary/30 rounded-lg"
+                className="absolute inset-0 bg-accent-primary/10 border border-accent-primary/20 rounded-lg"
                 initial={false}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
               />
@@ -96,23 +96,41 @@ interface GlassCardProps extends HTMLMotionProps<'div'> {
   children: React.ReactNode
   className?: string
   gradient?: boolean
+  floating?: boolean
 }
 
-export function GlassCard({ children, className, gradient = false, ...props }: GlassCardProps) {
+export function GlassCard({ children, className, gradient = false, floating = false, ...props }: GlassCardProps) {
+  const floatingAnimation: TargetAndTransition = {
+    y: [0, -10, 0],
+    transition: {
+      duration: 6,
+      ease: "easeInOut",
+      repeat: Infinity,
+    }
+  };
+
+  const initialEnterAnimation: TargetAndTransition = { opacity: 1, y: 0 };
+
+  const animateProp = floating
+    ? { opacity: 1, ...floatingAnimation } as TargetAndTransition
+    : initialEnterAnimation;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      animate={animateProp}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
       className={cn(
-        'glass-panel rounded-2xl p-6 relative overflow-hidden group',
+        'glass-panel rounded-2xl p-6 relative overflow-hidden group border border-white/5 shadow-2xl backdrop-blur-xl bg-black/20',
         gradient &&
           'before:absolute before:inset-0 before:bg-gradient-to-br before:from-accent-primary/5 before:to-transparent before:pointer-events-none',
         className
       )}
       {...props}
     >
+      {/* Subtle sheen effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
       {children}
     </motion.div>
   )
@@ -138,11 +156,11 @@ export function GlassButton({
 }: MotionButtonProps) {
   const variants = {
     primary:
-      'bg-accent-primary/20 hover:bg-accent-primary/30 text-accent-primary border border-accent-primary/50 shadow-[0_0_15px_rgba(var(--accent-primary),0.3)]',
+      'bg-accent-primary/20 hover:bg-accent-primary/30 text-accent-primary border border-accent-primary/30 shadow-[0_0_15px_rgba(var(--accent-primary),0.2)]',
     secondary:
-      'bg-bg-secondary/50 hover:bg-bg-secondary/70 text-text-secondary border border-glass-border',
-    danger: 'bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/30',
-    ghost: 'hover:bg-glass-highlight text-text-secondary hover:text-text-primary'
+      'bg-white/5 hover:bg-white/10 text-text-secondary border border-white/10',
+    danger: 'bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20',
+    ghost: 'hover:bg-white/5 text-text-secondary hover:text-text-primary'
   }
 
   const sizes = {
@@ -194,7 +212,7 @@ export function GlassInput({ className, label, error, ...props }: GlassInputProp
       )}
       <input
         className={cn(
-          'glass-input w-full rounded-xl px-3 py-2 text-text-primary placeholder-text-secondary/50 focus:outline-none focus:border-accent-primary/50 focus:ring-1 focus:ring-accent-primary/50 transition-all font-mono text-sm',
+          'glass-input w-full rounded-xl px-3 py-2 text-text-primary placeholder-text-secondary/40 focus:outline-none focus:border-accent-primary/30 focus:ring-1 focus:ring-accent-primary/30 transition-all font-mono text-sm bg-black/20 border border-white/5',
           error && 'border-danger/50 focus:border-danger focus:ring-danger',
           className
         )}
