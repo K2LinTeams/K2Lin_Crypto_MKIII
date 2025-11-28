@@ -5,14 +5,14 @@ import { GlassDropdown } from '../ui/GlassDropdown'
 import { motion } from 'framer-motion'
 import { useApi } from '../../useApi'
 import { useTranslation } from 'react-i18next'
-import { encryptAsymmetric, decryptAsymmetric, importKey } from '../../services/rsa'
+import { encryptAsymmetric, decryptAsymmetric, importKey } from '../../services/asymmetric'
 import { useNotification } from '../NotificationContext'
 
 type Format = 'Base64' | 'Hex' | 'Natural Text (Markov)'
 
 interface CryptoPackage {
   c3_type?: 'identity' | 'data'
-  c3_alg?: 'RSA-OAEP' | 'AES-GCM'
+  c3_alg?: 'RSA-OAEP' | 'AES-GCM' | 'ECC-X25519'
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any
 }
@@ -196,14 +196,29 @@ export default function VaultPanel({
              } else {
                  return // User cancelled
              }
-        } else if (pkg && pkg.c3_alg === 'RSA-OAEP') {
-          // Asymmetric Auto-Detect
+        } else if (pkg && pkg.c3_alg === 'ECC-X25519') {
+          // Asymmetric Auto-Detect (ECC)
           const myPrivateKeyPem = localStorage.getItem('my_private_key')
           if (myPrivateKeyPem) {
             const privateKey = await importKey(myPrivateKeyPem, 'private')
-            // Payload is Base64 ciphertext string
+            // Payload is Base64 string of the JSON internal package
             decrypted = await decryptAsymmetric(pkg.payload, privateKey)
             success = true
+          } else {
+             throw new Error(t('identity.noIdentityCard') || 'No Identity Card found')
+          }
+        } else if (pkg && pkg.c3_alg === 'RSA-OAEP') {
+           // LEGACY SUPPORT: Asymmetric Auto-Detect (RSA)
+          const myPrivateKeyPem = localStorage.getItem('my_private_key')
+          if (myPrivateKeyPem) {
+            // Check if key is old RSA key (starts with ----BEGIN)
+            if (myPrivateKeyPem.startsWith('-----BEGIN')) {
+                 // We can't actually import RSA here easily because we removed rsa.ts.
+                 // But user said "Directly deprecate RSA", so we just show error or ignore.
+                 // For safety:
+                 throw new Error('RSA Legacy format deprecated. Please regenerate keys.')
+            }
+             throw new Error('Key mismatch: Received RSA package but you have ECC keys.')
           } else {
             throw new Error(t('identity.noIdentityCard') || 'No Identity Card found')
           }
@@ -223,20 +238,7 @@ export default function VaultPanel({
           // Fallback / Legacy Logic
           console.warn('Unknown package format, trying legacy methods...')
 
-          // Legacy Asymmetric Check (User must have selected Asymmetric mode or we try blindly)
-          // If we are here, it's not a tagged package.
-          // Try Asymmetric first if it looks like Base64 and we have a key?
-          const myPrivateKeyPem = localStorage.getItem('my_private_key')
-          if (myPrivateKeyPem && !success) {
-            try {
-              const privateKey = await importKey(myPrivateKeyPem, 'private')
-              // rawPackageStr should be the Base64 ciphertext if it was just Base64'd
-              decrypted = await decryptAsymmetric(rawPackageStr, privateKey)
-              success = true
-            } catch {
-              /* Not asymmetric */
-            }
-          }
+          // Legacy Asymmetric Check - Removed as RSA is deprecated and ECC requires structured package
 
           // Legacy Symmetric Check
           if (!success) {
@@ -280,7 +282,7 @@ export default function VaultPanel({
           const ciphertextBase64 = await encryptAsymmetric(inputData, publicKey)
 
           finalPackage = {
-            c3_alg: 'RSA-OAEP',
+            c3_alg: 'ECC-X25519',
             payload: ciphertextBase64
           }
         } else {

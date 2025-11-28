@@ -70,7 +70,7 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', onRegener
     // ID / Key Label
     ctx.fillStyle = textColorSecondary
     ctx.font = '16px "Comfortaa", "Inter", sans-serif'
-    ctx.fillText('ID (12 DIGIT / RSA)', 40, 260)
+    ctx.fillText('ID (12 DIGIT / X25519)', 40, 260)
 
     // ID Value (Generated 12-digit code)
     const identityId = await generateIdentityId(publicKey)
