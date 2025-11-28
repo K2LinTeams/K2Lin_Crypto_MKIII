@@ -138,7 +138,7 @@
     "stegoTitle": "隐写术 (Steganography) 🖼️",
     "stegoDesc": "将加密数据隐藏在看似普通的图片中！上传图片，嵌入秘密，然后分享这张 PNG。",
     "skip": "跳过介绍",
-    "next": "下一步 ➡",
+    "next": "下一步",
     "finish": "开始体验! 🚀"
   }
 }

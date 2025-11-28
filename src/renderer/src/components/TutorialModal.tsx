@@ -240,7 +240,7 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
                             </>
                         ) : (
                             <>
-                                {t('next', 'Next ➡')}
+                                {t('next', 'Next')}
                                 <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
                             </>
                         )}
