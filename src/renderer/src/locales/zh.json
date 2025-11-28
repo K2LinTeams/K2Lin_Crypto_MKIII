@@ -36,7 +36,30 @@
     "copied": "已复制到剪贴板",
     "copy": "复制",
     "clear": "清除",
-    "clearHint": "清除以编辑"
+    "clearHint": "清除以编辑",
+    "symmetricAES": "对称加密 (AES)",
+    "asymmetricRSA": "非对称加密 (RSA)",
+    "targetRecipient": "目标接收者"
+  },
+  "identity": {
+    "title": "数字身份",
+    "description": "管理您的加密身份和已验证的联系人。",
+    "myIdentity": "我的身份",
+    "noIdentity": "未检测到身份。生成安全的 RSA 密钥对以创建您的访问卡。",
+    "generate": "生成身份",
+    "knownAssociates": "已知联系人",
+    "import": "导入身份卡",
+    "noContacts": "暂无已验证联系人。导入身份卡以开始安全通讯。",
+    "name": "姓名",
+    "enterName": "输入您的姓名...",
+    "id": "ID",
+    "regenerate": "重新生成密钥",
+    "download": "下载身份卡",
+    "importSuccess": "身份验证成功，联系人已添加。",
+    "importInvalid": "无效的身份卡。",
+    "importFailed": "读取身份卡失败。请确保它是由此应用生成的有效 PNG。",
+    "enterContactName": "为此联系人输入名称：",
+    "unknownAgent": "未知特工"
   },
   "mimic": {
     "title": "LSB 隐写实验室",
