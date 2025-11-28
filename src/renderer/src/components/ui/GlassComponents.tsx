@@ -103,7 +103,7 @@ export function GlassCard({ children, className, gradient = false, floating = fa
   const floatingAnimation: TargetAndTransition = {
     y: [0, -10, 0],
     transition: {
-      duration: 6,
+      duration: 2,
       ease: "easeInOut",
       repeat: Infinity,
     }

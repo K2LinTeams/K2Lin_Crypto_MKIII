@@ -10,7 +10,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('cyberpunk')
+  const [theme, setTheme] = useState<Theme>('sakura')
 
   useEffect(() => {
     // Apply theme to document root
