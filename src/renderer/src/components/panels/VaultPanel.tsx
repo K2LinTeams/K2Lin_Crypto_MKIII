@@ -42,8 +42,19 @@ export default function VaultPanel({
 }: VaultPanelProps) {
   const [showKey, setShowKey] = useState(false)
   const [activeTab, setActiveTab] = useState<'input' | 'output'>('input')
+  const [highlightOutput, setHighlightOutput] = useState(false)
   const api = useApi()
   const { t, i18n } = useTranslation('vault')
+
+  useEffect(() => {
+    if (isEncrypted) {
+      setActiveTab('output')
+      setHighlightOutput(true)
+      const timer = setTimeout(() => setHighlightOutput(false), 2000)
+      return () => clearTimeout(timer)
+    }
+    return undefined
+  }, [isEncrypted])
 
   const handleProcess = async (mode: 'encrypt' | 'decrypt'): Promise<void> => {
     if (!secretKey) return
@@ -94,7 +105,7 @@ export default function VaultPanel({
         setIsEncrypted(true)
         setInputData('') // Clear input for security
         formatOutput(result, currentFormat)
-        setActiveTab('output') // Switch to output to see result
+        // Tab switch handled by useEffect now
       }
     } catch (error) {
       console.error(error)
@@ -119,6 +130,7 @@ export default function VaultPanel({
       const text = await api.nlp.encode(buffer.buffer, i18n.language)
       setOutputData(text)
     }
+    return Promise.resolve()
   }
 
   useEffect(() => {
@@ -144,6 +156,14 @@ export default function VaultPanel({
     setTimeout(() => setShowKey(false), 3000)
   }
 
+  const handleClear = () => {
+    setInputData('')
+    setOutputData('')
+    setEncryptedPackage(null)
+    setIsEncrypted(false)
+    setActiveTab('input')
+  }
+
   return (
     <div className="flex flex-col gap-4 max-w-7xl mx-auto h-full px-2 lg:px-4">
       {/* Top Section: Key Management */}
@@ -159,7 +179,7 @@ export default function VaultPanel({
             type={showKey ? 'text' : 'password'}
             value={secretKey}
             onChange={(e) => setSecretKey(e.target.value)}
-            placeholder={t('enterKey')}
+            placeholder={t('enterKeyShort')}
             className="pr-24 font-mono text-sm tracking-wide"
           />
           <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
@@ -208,12 +228,28 @@ export default function VaultPanel({
         {/* Left: Input Area */}
         <div className={`h-full flex flex-col ${activeTab === 'input' ? 'flex' : 'hidden lg:flex'}`}>
           <GlassCard className="flex-1 flex flex-col min-h-[300px] h-full">
-            <TechHeader title={t('rawData')} icon={<Keyboard size={18} />} />
+            <div className="flex justify-between items-start mb-2">
+              <TechHeader title={t('rawData')} icon={<Keyboard size={18} />} className="mb-0" />
+              {isEncrypted && (
+                <button
+                  onClick={handleClear}
+                  className="px-2 py-1 text-xs bg-accent-primary/10 text-accent-primary rounded hover:bg-accent-primary/20 transition-colors flex items-center gap-1"
+                >
+                  <Trash2 size={12} />
+                  {t('clear')}
+                </button>
+              )}
+            </div>
+            {isEncrypted && (
+              <div className="text-xs text-text-secondary/70 mb-2 italic border-l-2 border-accent-primary pl-2">
+                {t('clearHint')}
+              </div>
+            )}
             <textarea
               value={inputData}
               onChange={(e) => setInputData(e.target.value)}
               disabled={isEncrypted}
-              placeholder={t('enterMessage')}
+              placeholder={t('enterMessageShort')}
               className="flex-1 bg-transparent border-none resize-none focus:outline-none text-text-primary placeholder-text-secondary/30 font-mono text-sm leading-relaxed"
             ></textarea>
             {/* Mobile Actions embedded at bottom of input card */}
@@ -268,7 +304,11 @@ export default function VaultPanel({
 
         {/* Right: Output Area */}
         <div className={`h-full flex flex-col ${activeTab === 'output' ? 'flex' : 'hidden lg:flex'}`}>
-          <GlassCard className="flex-1 flex flex-col min-h-[300px] h-full relative group">
+          <GlassCard
+            className={`flex-1 flex flex-col min-h-[300px] h-full relative group transition-all duration-500 ${
+              highlightOutput ? 'ring-2 ring-accent-primary shadow-[0_0_30px_rgba(var(--accent-primary),0.3)]' : ''
+            }`}
+          >
              <div className="flex justify-between items-start mb-2">
                 <TechHeader title={t('encryptedPayload')} icon={<Code size={18} />} className="mb-0" />
                 <div className="flex gap-1">
@@ -279,12 +319,7 @@ export default function VaultPanel({
                     <Copy size={16} />
                   </button>
                   <button
-                    onClick={() => {
-                      setOutputData('')
-                      setEncryptedPackage(null)
-                      setIsEncrypted(false)
-                      setActiveTab('input')
-                    }}
+                    onClick={handleClear}
                     className="p-1.5 hover:bg-glass-highlight rounded-md text-text-secondary hover:text-danger transition-colors"
                   >
                     <Trash2 size={16} />
