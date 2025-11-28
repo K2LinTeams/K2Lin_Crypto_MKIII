@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Eye, Copy, Trash2, Key, Unlock, Send, Image as ImageIcon, Keyboard, Code, Shield, User } from 'lucide-react'
 import { GlassCard, GlassButton, GlassInput, TechHeader, MobileTabSwitcher } from '../ui/GlassComponents'
+import { GlassDropdown } from '../ui/GlassDropdown'
 import { motion } from 'framer-motion'
 import { useApi } from '../../useApi'
 import { useTranslation } from 'react-i18next'
 import { encryptAsymmetric, decryptAsymmetric, importKey } from '../../services/rsa'
+import { useNotification } from '../NotificationContext'
 
 type Format = 'Base64' | 'Hex' | 'Natural Text (Markov)'
 
@@ -60,6 +62,7 @@ export default function VaultPanel({
 
   const api = useApi()
   const { t, i18n } = useTranslation('vault')
+  const { addNotification } = useNotification()
 
   useEffect(() => {
     if (isEncrypted) {
@@ -182,9 +185,9 @@ export default function VaultPanel({
                     const updatedContacts = [...currentContacts, newContact]
                     localStorage.setItem('contacts', JSON.stringify(updatedContacts))
                     setContacts(updatedContacts) // Update local state so it appears in dropdown immediately
-                    alert('Contact imported successfully.')
+                    addNotification('success', 'Contact imported successfully.')
                 } else {
-                    alert('Contact already exists.')
+                    addNotification('info', 'Contact already exists.')
                 }
 
                 // Clear the UI as the "decryption" action (processing) is done
@@ -261,8 +264,9 @@ export default function VaultPanel({
           setOutputData('')
           setEncryptedPackage(null)
           setActiveTab('input')
+          addNotification('success', t('decryptionComplete'))
         } else {
-          alert(t('noDataToDecrypt') + ' or Key Invalid')
+          addNotification('error', t('noDataToDecrypt') + ' or Key Invalid')
         }
       } else {
         // --- Encrypt Logic ---
@@ -282,7 +286,7 @@ export default function VaultPanel({
         } else {
           // Symmetric Encryption (Standard)
           if (!secretKey) {
-            alert('Please enter a Session Key')
+            addNotification('error', 'Please enter a Session Key')
             return
           }
           const result = await api.crypto.encrypt(inputData, secretKey)
@@ -297,10 +301,11 @@ export default function VaultPanel({
         setIsEncrypted(true)
         setInputData('') // Clear input for security
         formatOutput(finalPackage, currentFormat)
+        addNotification('success', t('encryptionComplete'))
       }
     } catch (error) {
       console.error(error)
-      alert(t('operationFailed') + ': ' + (error as Error).message)
+      addNotification('error', t('operationFailed') + ': ' + (error as Error).message)
     }
   }
 
@@ -393,16 +398,17 @@ export default function VaultPanel({
                     icon={<User size={18} />}
                     className="mb-0 hidden md:flex"
                 />
-                <select
-                    className="flex-1 glass-input rounded-lg px-3 py-2 text-sm focus:outline-none bg-black/40 border-white/10"
-                    value={selectedContact}
-                    onChange={(e) => setSelectedContact(e.target.value)}
-                >
-                    <option value="">Select a contact...</option>
-                    {contacts.map((c, i) => (
-                        <option key={i} value={c.publicKey}>{c.name}</option>
-                    ))}
-                </select>
+                <GlassDropdown
+                  className="flex-1"
+                  value={selectedContact}
+                  onChange={setSelectedContact}
+                  placeholder={t('selectContact') || 'Select a contact...'}
+                  options={contacts.map((c) => ({
+                    label: c.name,
+                    value: c.publicKey,
+                    subLabel: `...${c.publicKey.slice(-8)}`
+                  }))}
+                />
              </div>
           ) : (
              <div className="flex-1 w-full flex items-center gap-3">
