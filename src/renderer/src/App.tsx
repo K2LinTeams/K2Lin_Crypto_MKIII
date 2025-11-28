@@ -30,8 +30,13 @@ function AppLayout(): React.ReactElement {
   const [showSplash, setShowSplash] = useState(true)
   const [showTutorial, setShowTutorial] = useState(false)
 
-  const { t } = useTranslation('common')
+  const { t, i18n } = useTranslation('common')
   const { unlock } = useAchievements()
+
+  // Update HTML lang attribute when language changes
+  React.useEffect(() => {
+    document.documentElement.lang = i18n.language
+  }, [i18n.language])
 
   // Shared state lifted from panels
   const [inputData, setInputData] = useState('')
@@ -103,6 +108,7 @@ function AppLayout(): React.ReactElement {
               key={item.id}
               onClick={() => setActiveTab(item.id as Tab)}
               title={item.label}
+              aria-label={item.label}
               className={clsx(
                 'relative p-3 rounded-xl transition-all group flex items-center justify-center',
                 activeTab === item.id
@@ -131,6 +137,7 @@ function AppLayout(): React.ReactElement {
           }}
           className="p-3 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all mb-4"
           title={t('panicMode')}
+          aria-label={t('panicMode')}
         >
           <EyeOff size={22} />
         </button>

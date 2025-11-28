@@ -288,6 +288,7 @@ export default function IdentityPanel() {
                           }}
                           className="p-2 text-white/40 hover:text-red-400 hover:bg-white/10 rounded-full transition-all"
                           title={t('delete')}
+                          aria-label={t('delete')}
                         >
                           <Trash2 size={18} />
                         </button>

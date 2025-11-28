@@ -124,12 +124,14 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
                 <div className="flex p-1 bg-black/20 rounded-lg border border-glass-border mb-6">
                   <button
                     onClick={() => setManualMode(false)}
+                    aria-label={t('extraction')}
                     className={`flex-1 py-2 text-xs font-mono uppercase tracking-wide rounded-md transition-all ${!manualMode ? 'bg-accent-primary/20 text-accent-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'}`}
                   >
                     {t('extraction')}
                   </button>
                   <button
                     onClick={() => setManualMode(true)}
+                    aria-label={t('manualEmbed')}
                     className={`flex-1 py-2 text-xs font-mono uppercase tracking-wide rounded-md transition-all ${manualMode ? 'bg-accent-primary/20 text-accent-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'}`}
                   >
                     {t('manualEmbed')}
