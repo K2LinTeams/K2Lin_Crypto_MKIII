@@ -52,7 +52,17 @@
     "dataFound": "发现数据！切换到保险箱进行解密。",
     "noDataFound": "未发现有效数据或读取图像错误。",
     "outputGenerated": "生成结果",
-    "download": "下载隐写图像"
+    "download": "下载隐写图像",
+    "config": "配置",
+    "extraction": "提取模式",
+    "manualEmbed": "手动嵌入",
+    "secretPayload": "秘密载荷",
+    "enterPayload": "输入要隐藏在图像中的文本...",
+    "payloadReady": "载荷就绪 :: 等待载体图像",
+    "outputPreview": "输出预览",
+    "stegoEncoded": ":: 隐写编码图像 ::",
+    "downloadResult": "下载结果",
+    "noOutput": "未生成输出"
   },
   "settings": {
     "title": "系统配置",
@@ -61,6 +71,7 @@
     "clipboardMonitorDesc": "自动检测 'Crypto3' 格式数据",
     "panicModePin": "伪装模式 PIN",
     "panicModePinDesc": "退出伪装模式需要 PIN 码",
+    "enterKeyShort": "输入 PIN...",
     "configure": "配置",
     "dangerZone": "危险区域",
     "emergencyWipe": "紧急销毁",

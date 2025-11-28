@@ -108,7 +108,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
         {/* Left Column: Configuration & Upload */}
         <div className={`h-full flex flex-col gap-6 ${activeTab === 'setup' ? 'flex' : 'hidden lg:flex'}`}>
            <GlassCard className="flex-1 flex flex-col">
-              <TechHeader title="Configuration" icon={<Settings size={18} />} />
+              <TechHeader title={t('config')} icon={<Settings size={18} />} />
 
               {/* Mode Toggle */}
               {!isEncrypted && (
@@ -117,13 +117,13 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
                     onClick={() => setManualMode(false)}
                     className={`flex-1 py-2 text-xs font-mono uppercase tracking-wide rounded-md transition-all ${!manualMode ? 'bg-accent-primary/20 text-accent-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'}`}
                   >
-                    Extraction
+                    {t('extraction')}
                   </button>
                   <button
                     onClick={() => setManualMode(true)}
                     className={`flex-1 py-2 text-xs font-mono uppercase tracking-wide rounded-md transition-all ${manualMode ? 'bg-accent-primary/20 text-accent-primary shadow-sm' : 'text-text-secondary hover:text-text-primary'}`}
                   >
-                    Manual Embed
+                    {t('manualEmbed')}
                   </button>
                 </div>
               )}
@@ -137,11 +137,11 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
                     exit={{ opacity: 0, height: 0 }}
                     className="mb-6"
                   >
-                    <label className="text-xs text-text-secondary font-bold uppercase mb-2 block">Secret Payload</label>
+                    <label className="text-xs text-text-secondary font-bold uppercase mb-2 block">{t('secretPayload')}</label>
                     <textarea
                       value={manualInput}
                       onChange={(e) => setManualInput(e.target.value)}
-                      placeholder="Enter text to hide in image..."
+                      placeholder={t('enterPayload')}
                       className="w-full h-32 bg-black/20 rounded-xl border border-glass-border focus:border-accent-primary outline-none resize-none text-sm p-2 font-mono"
                     />
                   </motion.div>
@@ -156,7 +156,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
                   className="mb-4 flex items-center gap-2 text-accent-primary bg-accent-primary/10 px-4 py-3 rounded-xl text-xs font-mono border border-accent-primary/20"
                 >
                   <ArrowRight size={14} />
-                  <span>PAYLOAD READY :: WAITING FOR CARRIER IMAGE</span>
+                  <span>{t('payloadReady')}</span>
                 </motion.div>
               )}
 
@@ -192,7 +192,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
                     }>
                       {isEncrypted || (manualMode && manualInput) ? t('clickToEmbed') : t('uploadToExtract')}
                    </div>
-                   <div className="text-xs text-text-secondary mt-1">Supports PNG / JPG</div>
+                   <div className="text-xs text-text-secondary mt-1">{t('supports')}</div>
                 </div>
               </motion.div>
 
@@ -210,7 +210,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
         <div className={`h-full flex flex-col ${activeTab === 'preview' ? 'flex' : 'hidden lg:flex'}`}>
            <GlassCard className="flex-1 flex flex-col items-center justify-center relative bg-black/20">
               <div className="absolute top-6 left-6 right-6">
-                 <TechHeader title="Output Preview" icon={<Eye size={18} />} />
+                 <TechHeader title={t('outputPreview')} icon={<Eye size={18} />} />
               </div>
 
               {stegoImage ? (
@@ -222,7 +222,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
                   <div className="relative group rounded-xl overflow-hidden border border-glass-border shadow-2xl max-w-full max-h-[400px]">
                      <img src={stegoImage} alt="Stego Output" className="max-w-full max-h-[400px] object-contain" />
                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center p-4">
-                        <span className="text-white text-xs font-mono">:: STEGO_ENCODED_IMAGE ::</span>
+                        <span className="text-white text-xs font-mono">{t('stegoEncoded')}</span>
                      </div>
                   </div>
 
@@ -239,7 +239,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
                     icon={<Download size={18} />}
                     className="w-full max-w-xs"
                   >
-                    Download Result
+                    {t('downloadResult')}
                   </GlassButton>
                 </motion.div>
               ) : (
@@ -247,7 +247,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
                    <div className="w-16 h-16 rounded-full border-2 border-dashed border-current flex items-center justify-center">
                       <Image size={32} />
                    </div>
-                   <span className="font-mono text-xs uppercase tracking-widest">No Output Generated</span>
+                   <span className="font-mono text-xs uppercase tracking-widest">{t('noOutput')}</span>
                 </div>
               )}
 

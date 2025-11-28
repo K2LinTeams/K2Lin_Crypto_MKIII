@@ -52,7 +52,17 @@
     "dataFound": "Data found! Switch to Vault to decrypt.",
     "noDataFound": "No valid data found or error reading image.",
     "outputGenerated": "Output Generated",
-    "download": "Download Stego Image"
+    "download": "Download Stego Image",
+    "config": "Configuration",
+    "extraction": "Extraction",
+    "manualEmbed": "Manual Embed",
+    "secretPayload": "Secret Payload",
+    "enterPayload": "Enter text to hide in image...",
+    "payloadReady": "PAYLOAD READY :: WAITING FOR CARRIER IMAGE",
+    "outputPreview": "Output Preview",
+    "stegoEncoded": ":: STEGO_ENCODED_IMAGE ::",
+    "downloadResult": "Download Result",
+    "noOutput": "No Output Generated"
   },
   "settings": {
     "title": "System Configuration",
@@ -61,6 +71,7 @@
     "clipboardMonitorDesc": "Auto-detect 'Crypto3' formatted data",
     "panicModePin": "Panic Mode Pin",
     "panicModePinDesc": "Require PIN to exit camouflage mode",
+    "enterKeyShort": "Enter PIN...",
     "configure": "Configure",
     "dangerZone": "Danger Zone",
     "emergencyWipe": "Emergency Wipe",

@@ -1,14 +1,31 @@
-import { GlassCard, GlassButton, TechHeader } from '../ui/GlassComponents'
+import { useState } from 'react'
+import { GlassCard, GlassButton, TechHeader, GlassInput } from '../ui/GlassComponents'
 import { useTheme } from '../ThemeContext'
-import { Moon, Sun, Monitor, AlertTriangle, Languages, Sliders, Shield, Zap, Sparkles } from 'lucide-react'
+import { Moon, Sun, Monitor, AlertTriangle, Languages, Sliders, Shield, Zap, Sparkles, X, Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function SettingsPanel() {
   const { theme, setTheme } = useTheme()
   const { t, i18n } = useTranslation('settings')
+  const [showPinConfig, setShowPinConfig] = useState(false)
+  const [pinInput, setPinInput] = useState('')
+  const [savedPin, setSavedPin] = useState(localStorage.getItem('panicPin') || '')
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng)
+  }
+
+  const handleSavePin = () => {
+    if (pinInput) {
+      localStorage.setItem('panicPin', pinInput)
+      setSavedPin(pinInput)
+    } else {
+      localStorage.removeItem('panicPin')
+      setSavedPin('')
+    }
+    setPinInput('')
+    setShowPinConfig(false)
   }
 
   return (
@@ -86,7 +103,7 @@ export default function SettingsPanel() {
 
         {/* System Settings */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-           <GlassCard className="flex flex-col justify-between">
+           <GlassCard className="flex flex-col justify-between overflow-hidden relative">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex gap-3">
                    <div className="p-2 bg-accent-primary/10 rounded-lg text-accent-primary">
@@ -111,13 +128,67 @@ export default function SettingsPanel() {
                    </div>
                    <div>
                       <div className="text-text-primary font-bold font-mono text-sm">{t('panicModePin')}</div>
-                      <div className="text-text-secondary text-xs mt-1">{t('panicModePinDesc')}</div>
+                      <div className="text-text-secondary text-xs mt-1">
+                        {savedPin ? `${t('panicModePinDesc')} (ON)` : t('panicModePinDesc')}
+                      </div>
                    </div>
                 </div>
               </div>
-              <GlassButton size="sm" variant="secondary" className="self-end w-full">
-                {t('configure')}
-              </GlassButton>
+
+              <AnimatePresence mode="wait">
+                {showPinConfig ? (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="flex flex-col gap-2 w-full"
+                  >
+                     <GlassInput
+                        placeholder={t('enterKeyShort')}
+                        value={pinInput}
+                        onChange={(e) => setPinInput(e.target.value)}
+                        autoFocus
+                     />
+                     <div className="flex gap-2">
+                        <GlassButton
+                          size="sm"
+                          variant="secondary"
+                          className="flex-1"
+                          onClick={() => setShowPinConfig(false)}
+                          icon={<X size={14} />}
+                        >
+                        </GlassButton>
+                        <GlassButton
+                          size="sm"
+                          variant="primary"
+                          className="flex-1"
+                          onClick={handleSavePin}
+                          icon={<Check size={14} />}
+                        >
+                        </GlassButton>
+                     </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="w-full"
+                  >
+                    <GlassButton
+                      size="sm"
+                      variant={savedPin ? "primary" : "secondary"}
+                      className="self-end w-full"
+                      onClick={() => {
+                        setPinInput(savedPin)
+                        setShowPinConfig(true)
+                      }}
+                    >
+                      {t('configure')}
+                    </GlassButton>
+                  </motion.div>
+                )}
+              </AnimatePresence>
            </GlassCard>
         </div>
 
