@@ -1,6 +1,6 @@
 {
   "name": "k2lin-crypto3",
-  "version": "0.3.2",
+  "version": "1.0.3",
   "description": "A secure crypto messaging application.",
   "main": "./out/main/index.js",
   "author": "k2lin.com",

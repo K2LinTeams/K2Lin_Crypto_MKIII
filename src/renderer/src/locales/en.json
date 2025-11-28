@@ -5,7 +5,7 @@
     "panic": "Panic",
     "settings": "Settings",
     "vault": "Crypt",
-    "mimic": "Mimic",
+    "mimic": "Stego",
     "config": "Config",
     "dailyTasks": "Daily Tasks",
     "addTask": "Add a new task...",
@@ -38,7 +38,7 @@
     "clear": "Clear",
     "clearHint": "Clear to edit",
     "symmetricAES": "Symmetric (AES)",
-    "asymmetricRSA": "Asymmetric (ECC)",
+    "asymmetricECC": "Asymmetric (ECC)",
     "targetRecipient": "Target Recipient",
     "decryptionComplete": "Decryption successful.",
     "encryptionComplete": "Encryption successful.",
@@ -118,6 +118,17 @@
     "replayTutorial": "Replay Tutorial",
     "replayTutorialDesc": "Watch the introduction again"
   },
+  "achievements": {
+    "title": "Service Record",
+    "unlocked": "Medals Awarded",
+    "locked": "Classified",
+    "list": {
+        "tutorial_complete": { "title": "Induction Complete", "desc": "Completed the basic training protocols." },
+        "identity_created": { "title": "Field Agent", "desc": "Generated a unique identity signature." },
+        "stego_unlocked": { "title": "Invisible Hand", "desc": "Accessed the Steganography Lab." },
+        "first_encrypt": { "title": "Secure Comms", "desc": "Successfully encrypted a payload." }
+    }
+  },
   "tutorial": {
     "welcomeTitle": "Welcome to Crypto3! 👋",
     "welcomeDesc": "Your ultimate tool for secure communication and digital camouflage. Let's get you started!",
@@ -125,12 +136,12 @@
     "rsaAesDesc": "Toggle between modes in the Crypt panel to suit your needs.",
     "rsaAesTip": "💡 Pro Tip: Use AES (Symmetric) for your own files. Use ECC (Asymmetric) to send secrets to friends.",
     "lookFor": "Look for this switch:",
-    "rsaStep1Title": "Start with ECC: Your Identity 🪪",
-    "rsaStep1Desc": "First, go to the ID panel and generate your Identity Card. This allows others to send you secure messages using X25519.",
-    "rsaStep2Title": "Exchange Identity Cards 🤝",
-    "rsaStep2Desc": "Send your card file to a friend. When they send you theirs, click 'Import Card'. They will appear in your contacts.",
-    "rsaStep3Title": "Encrypt for a Friend 🔒",
-    "rsaStep3Desc": "In the Crypt panel, select 'Asymmetric (ECC)'. Pick your friend from the list. Now, only *they* can decrypt the message.",
+    "eccStep1Title": "Start with ECC: Your Identity 🪪",
+    "eccStep1Desc": "First, go to the ID panel and generate your Identity Card. This allows others to send you secure messages using X25519.",
+    "eccStep2Title": "Exchange Identity Cards 🤝",
+    "eccStep2Desc": "Send your card file to a friend. When they send you theirs, click 'Import Card'. They will appear in your contacts.",
+    "eccStep3Title": "Encrypt for a Friend 🔒",
+    "eccStep3Desc": "In the Crypt panel, select 'Asymmetric (ECC)'. Pick your friend from the list. Now, only *they* can decrypt the message.",
     "aesStep1Title": "Symmetric Encryption (AES) 🔑",
     "aesStep1Desc": "Uses the same key for encryption and decryption. Ideal for personal files or quick sharing.",
     "aesStep2Title": "Decrypting with AES 🔓",
@@ -146,7 +157,7 @@
   "encyclopedia": {
     "back": "Return to Mission",
     "tabs": {
-      "rsa": "ECC Protocols",
+      "ecc": "ECC Protocols",
       "aes": "AES Channel",
       "stego": "Visual Arts",
       "diff": "Tactical Analysis",
@@ -157,12 +168,12 @@
       "analogyTitle": "Auth Protocol",
       "analogy": "Every operator needs a certified profile. This profile (public key) is public, but only your private seal (private key) can sign it. Exchanging cards is exchanging trust.",
       "techTitle": "PRTS Data Structure",
-      "tech": "The ID card is a JSON container with an RSA-2048 public key and name, plus a SHA-256 signature. The system verifies this signature on import to prevent tampering."
+      "tech": "The ID card is a JSON container with an X25519 public key and name, plus a digital signature. The system verifies this signature on import to prevent tampering."
     },
-    "rsa": {
+    "ecc": {
       "title": "ECC: X25519 Exchange",
       "analogyTitle": "Rhodes Island Command Link",
-      "analogy": "Think of it as a public drop-box for Operator reports. Any Operator can deposit a report (Public Key), but only the Doctor with the command clearance (Private Key) can unlock and read it.",
+      "analogy": "Think of it as mixing colors. You have a private color, and there is a public color. By mixing them (mathematically), you create a shared secret color that no one else can replicate without your private base.",
       "techTitle": "PRTS Technical Data",
       "tech": "X25519 is a high-speed Elliptic Curve protocol. Unlike the ancient RSA (slow Arts), ECC is lightweight and extremely fast, generating shared secrets (ECDH) to establish secure channels instantly."
     },
@@ -183,13 +194,13 @@
     "diff": {
       "title": "Tactical Comparison",
       "speed": "Casting Speed",
-      "speedRsa": "Fast (Standard Arts)",
+      "speedEcc": "Very Fast (Modern Arts)",
       "speedAes": "Instant (Standard Comms)",
       "keys": "Clearance Required",
-      "keysRsa": "Dual (Public/Private)",
+      "keysEcc": "Dual (Public/Private)",
       "keysAes": "Single (Shared Freq)",
       "useCase": "Mission Profile",
-      "useCaseRsa": "Identity & Key Exchange",
+      "useCaseEcc": "Identity & Key Exchange",
       "useCaseAes": "Bulk Data Transmission"
     }
   }
