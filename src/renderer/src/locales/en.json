@@ -9,9 +9,18 @@
     "config": "Config",
     "dailyTasks": "Daily Tasks",
     "addTask": "Add a new task...",
-    "simpleNotes": "SimpleNotes v1.0.2 © 2024"
+    "simpleNotes": "SimpleNotes v1.0.2 © 2024",
+    "hide": "Hide",
+    "show": "Show"
   },
   "vault": {
+    "subtitle": "AES-256-GCM",
+    "noDataToDecrypt": "No encrypted data found to decrypt.",
+    "formats": {
+      "base64": "Base64",
+      "hex": "Hex",
+      "markov": "Natural Text (Markov)"
+    },
     "sessionKey": "Session Key",
     "generateRandom": "Generate Random",
     "enterKey": "Enter pre-shared key or password...",
@@ -53,13 +62,15 @@
     "panicModePin": "Panic Mode Pin",
     "panicModePinDesc": "Require PIN to exit camouflage mode",
     "configure": "Configure",
+    "dangerZone": "Danger Zone",
     "emergencyWipe": "Emergency Wipe",
     "emergencyWipeDesc": "Destroy all local keys and cache immediately",
     "execute": "Execute",
     "themes": {
       "cyberpunk": "Cyberpunk",
       "light": "SaaS / Light",
-      "midnight": "Deep Space"
+      "midnight": "Deep Space",
+      "sakura": "Sakura"
     },
     "language": "Language"
   }

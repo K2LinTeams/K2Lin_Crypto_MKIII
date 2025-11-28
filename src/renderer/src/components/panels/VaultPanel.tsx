@@ -80,7 +80,7 @@ export default function VaultPanel({
         }
 
         if (!encryptedObj) {
-          alert('No encrypted data found to decrypt.')
+          alert(t('noDataToDecrypt'))
           return
         }
 
@@ -171,7 +171,7 @@ export default function VaultPanel({
         <div className="flex flex-col md:flex-row items-center gap-4">
           <TechHeader
             title={t('sessionKey')}
-            subtitle="AES-256-GCM"
+            subtitle={t('subtitle')}
             icon={<Shield size={18} />}
             className="mb-0 flex-1 w-full"
           />
@@ -198,7 +198,7 @@ export default function VaultPanel({
              <button
               className="p-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-glass-highlight"
               onClick={handleShowKey}
-              title={showKey ? 'Hide' : 'Show'}
+              title={showKey ? t('common:hide') : t('common:show')}
             >
               <Eye size={16} className={showKey ? 'text-accent-primary' : ''} />
             </button>
@@ -234,7 +234,6 @@ export default function VaultPanel({
           {/* Left: Input Area */}
           <div className={`flex flex-col ${activeTab === 'input' ? 'flex' : 'hidden lg:flex'}`}>
             <GlassCard
-              floating={!isEncrypted && window.innerWidth >= 1024}
               className="flex-1 flex flex-col min-h-[350px] lg:h-[450px]"
             >
               <div className="flex justify-between items-center mb-4">
@@ -375,7 +374,9 @@ export default function VaultPanel({
                     : 'bg-transparent text-text-secondary border-transparent hover:bg-white/5'
                 }`}
               >
-                {fmt}
+                {fmt === 'Base64' && t('formats.base64')}
+                {fmt === 'Hex' && t('formats.hex')}
+                {fmt === 'Natural Text (Markov)' && t('formats.markov')}
               </button>
             ))}
           </div>

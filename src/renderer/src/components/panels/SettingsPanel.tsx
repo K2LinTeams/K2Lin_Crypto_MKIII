@@ -1,6 +1,6 @@
 import { GlassCard, GlassButton, TechHeader } from '../ui/GlassComponents'
 import { useTheme } from '../ThemeContext'
-import { Moon, Sun, Monitor, AlertTriangle, Languages, Sliders, Shield, Zap } from 'lucide-react'
+import { Moon, Sun, Monitor, AlertTriangle, Languages, Sliders, Shield, Zap, Sparkles } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 export default function SettingsPanel() {
@@ -73,6 +73,14 @@ export default function SettingsPanel() {
             >
               {t('themes.midnight')}
             </GlassButton>
+            <GlassButton
+              variant={theme === 'sakura' ? 'primary' : 'secondary'}
+              onClick={() => setTheme('sakura')}
+              className="justify-start"
+              icon={<Sparkles size={16} />}
+            >
+              {t('themes.sakura')}
+            </GlassButton>
           </div>
         </GlassCard>
 
@@ -115,7 +123,7 @@ export default function SettingsPanel() {
 
         {/* Danger Zone */}
         <GlassCard className="border-red-500/20 bg-red-500/5">
-          <TechHeader title="Danger Zone" icon={<AlertTriangle size={18} />} className="text-red-500" />
+          <TechHeader title={t('dangerZone')} icon={<AlertTriangle size={18} />} className="text-red-500" />
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-red-400/80 text-xs leading-relaxed">
               {t('emergencyWipeDesc')}

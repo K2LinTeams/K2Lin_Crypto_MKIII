@@ -76,7 +76,8 @@ function AppLayout(): React.ReactElement {
               {activeTab === item.id && (
                 <motion.div
                   layoutId="active-indicator"
-                  className="absolute -right-[18px] top-1/2 -translate-y-1/2 w-1 h-8 bg-accent-primary rounded-l-full"
+                  className="absolute right-0 translate-x-[150%] top-1/2 -translate-y-1/2 w-1 h-8 bg-accent-primary rounded-l-full"
+                  style={{ right: '-12px' }}
                 />
               )}
             </button>
