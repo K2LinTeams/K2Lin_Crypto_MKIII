@@ -101,6 +101,34 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', theme = '
         textSecondary: '#fb7185', // rose-400
         logoStart: '#fb7185',
         logoEnd: '#e11d48'
+      },
+      'sakura': {
+        bg: ['#fbcfe8', '#f472b6'], // pink-200 to pink-400 (Soft Pink)
+        textPrimary: '#831843', // pink-900 (Deep Pink text)
+        textSecondary: '#be185d', // pink-700
+        logoStart: '#db2777',
+        logoEnd: '#ffffff'
+      },
+      'cyberpunk': {
+        bg: ['#facc15', '#020617'], // yellow-400 to slate-950 (Cyberpunk High Contrast)
+        textPrimary: '#fef08a', // yellow-200
+        textSecondary: '#38bdf8', // sky-400 (Neon Blue)
+        logoStart: '#ef4444', // red
+        logoEnd: '#22d3ee' // cyan
+      },
+      'light': {
+        bg: ['#f1f5f9', '#cbd5e1'], // slate-100 to slate-300
+        textPrimary: '#0f172a', // slate-900
+        textSecondary: '#64748b', // slate-500
+        logoStart: '#334155',
+        logoEnd: '#94a3b8'
+      },
+      'midnight': {
+        bg: ['#0f172a', '#020617'], // slate-900 to slate-950
+        textPrimary: '#e2e8f0', // slate-200
+        textSecondary: '#64748b', // slate-500
+        logoStart: '#3b82f6',
+        logoEnd: '#6366f1'
       }
     }
 
@@ -151,6 +179,13 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', theme = '
         if (operator && operator.icon && LucideIcons[operator.icon]) {
           IconComponent = LucideIcons[operator.icon]
         }
+      } else {
+        // Custom name - use theme specific icons
+        if (theme === 'sakura' && LucideIcons['Cherry']) IconComponent = LucideIcons['Cherry']
+        else if (theme === 'sakura' && LucideIcons['Flower2']) IconComponent = LucideIcons['Flower2']
+        else if (theme === 'cyberpunk' && LucideIcons['Zap']) IconComponent = LucideIcons['Zap']
+        else if (theme === 'light' && LucideIcons['Sun']) IconComponent = LucideIcons['Sun']
+        else if (theme === 'midnight' && LucideIcons['Moon']) IconComponent = LucideIcons['Moon']
       }
 
       const svgString = renderToStaticMarkup(
@@ -175,7 +210,8 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', theme = '
       ctx.save()
       ctx.globalAlpha = 0.1 // Semi-transparent
       // Position bottom right, rotated
-      ctx.translate(width - 80, height - 30)
+      // Shifted more towards center (width - 120, height - 70)
+      ctx.translate(width - 120, height - 70)
       ctx.rotate(-15 * Math.PI / 180)
       // Draw centered at the translated point
       ctx.drawImage(img, -150, -150, 300, 300)

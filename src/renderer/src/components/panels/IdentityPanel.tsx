@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNotification } from '../NotificationContext'
 import { useAchievements } from '../../hooks/useAchievements'
+import { useTheme } from '../ThemeContext'
 import { getRandomOperator, Operator, OperatorTheme } from '../../data/operators'
 
 interface Contact {
@@ -153,11 +154,12 @@ export default function IdentityPanel() {
   // Determine display values
   // Fallback to random operator if myName is empty
   const displayUsername = myName || (randomOperator?.name || 'AGENT')
+  const { theme: currentSystemTheme } = useTheme()
 
   // Theme Logic:
-  // If myName is set -> Strictly 'Rhodes Island'
+  // If myName is set -> Use current system theme
   // If myName is empty -> Use random operator's theme (fallback to Rhodes Island if something fails)
-  const displayTheme: OperatorTheme = myName ? 'Rhodes Island' : (randomOperator?.theme || 'Rhodes Island')
+  const displayTheme: OperatorTheme = myName ? (currentSystemTheme as OperatorTheme) : (randomOperator?.theme || 'Rhodes Island')
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-10">
