@@ -1,20 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { generateKeyPair, exportKey } from '../../services/rsa'
 import { IdentityCardGenerator } from '../IdentityCardGenerator'
+import { generateIdentityId } from '../../services/identity'
 import { GlassCard, GlassButton, TechHeader, GlassInput } from '../ui/GlassComponents'
 import { User, Shield, Upload, UserPlus, Trash2 } from 'lucide-react'
 import { extract } from '../../services/webStego'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useNotification } from '../NotificationContext'
 
 interface Contact {
   name: string
   publicKey: string
   addedAt: number
+  id?: string
 }
 
 export default function IdentityPanel() {
   const { t } = useTranslation('identity')
+  const { addNotification } = useNotification()
   const [, setMyKeys] = useState<{ publicKey: CryptoKey; privateKey: CryptoKey } | null>(null)
   const [myPublicKeyPem, setMyPublicKeyPem] = useState<string | null>(null)
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -27,7 +31,29 @@ export default function IdentityPanel() {
   useEffect(() => {
     const savedContacts = localStorage.getItem('contacts')
     if (savedContacts) {
-      setContacts(JSON.parse(savedContacts))
+      const parsedContacts: Contact[] = JSON.parse(savedContacts)
+
+      // Lazy migration: Generate ID if missing
+      const migrateContacts = async () => {
+        let updated = false
+        const migratedContacts = await Promise.all(
+          parsedContacts.map(async (contact) => {
+            if (!contact.id) {
+              updated = true
+              const id = await generateIdentityId(contact.publicKey)
+              return { ...contact, id }
+            }
+            return contact
+          })
+        )
+
+        setContacts(migratedContacts)
+        if (updated) {
+          localStorage.setItem('contacts', JSON.stringify(migratedContacts))
+        }
+      }
+
+      migrateContacts()
     }
 
     const savedName = localStorage.getItem('my_identity_name')
@@ -98,7 +124,7 @@ export default function IdentityPanel() {
            publicKey = decodedString
            name = prompt(t('enterContactName')) || t('unknownAgent')
         } else {
-            alert(t('importInvalid'))
+            addNotification('error', t('importInvalid'))
             return
         }
       }
@@ -108,13 +134,13 @@ export default function IdentityPanel() {
         const newContacts = [...contacts, newContact]
         setContacts(newContacts)
         localStorage.setItem('contacts', JSON.stringify(newContacts))
-        alert(t('importSuccess'))
+        addNotification('success', t('importSuccess'))
       } else {
-        alert(t('importInvalid'))
+        addNotification('error', t('importInvalid'))
       }
     } catch (err) {
       console.error(err)
-      alert(t('importFailed'))
+      addNotification('error', t('importFailed'))
     } finally {
       // Reset input so same file can be selected again
       if (e.target) e.target.value = ''
@@ -234,7 +260,12 @@ export default function IdentityPanel() {
                           </div>
                           <div>
                             <div className="font-bold text-lg text-white drop-shadow-sm">{contact.name}</div>
-                            <div className="text-[10px] text-white/60 font-mono tracking-wider">
+                            {contact.id && (
+                              <div className="text-[11px] text-accent-primary font-mono tracking-widest opacity-80 mb-0.5">
+                                {contact.id}
+                              </div>
+                            )}
+                            <div className="text-[9px] text-white/40 font-mono tracking-wider">
                               {contact.publicKey.substring(30, 46)}...{contact.publicKey.substring(contact.publicKey.length - 8)}
                             </div>
                           </div>

@@ -4,6 +4,7 @@ import { GlassCard, GlassButton, TechHeader, MobileTabSwitcher } from '../ui/Gla
 import { motion, AnimatePresence } from 'framer-motion'
 import { useApi } from '../../useApi'
 import { useTranslation } from 'react-i18next'
+import { useNotification } from '../NotificationContext'
 
 interface MimicPanelProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,6 +22,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
   const fileInputRef = useRef<HTMLInputElement>(null)
   const api = useApi()
   const { t } = useTranslation('mimic')
+  const { addNotification } = useNotification()
 
   // Auto-switch to preview when image is ready
   useEffect(() => {
@@ -53,8 +55,11 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
         const url = URL.createObjectURL(blob)
         setStegoImage(url)
         setStegoStatus(t('encryptionComplete'))
+        addNotification('success', t('encryptionComplete'))
       } catch (err) {
-        setStegoStatus('Error: ' + (err as Error).message)
+        const errMsg = 'Error: ' + (err as Error).message
+        setStegoStatus(errMsg)
+        addNotification('error', errMsg)
       }
     } else {
       // Extraction mode
@@ -64,9 +69,10 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
         const payloadStr = new TextDecoder().decode(payloadBuffer)
         onExtract(payloadStr)
         setStegoStatus(t('dataFound'))
-        alert(t('dataFound')) // Alert user since we might not switch view if no image is generated
+        addNotification('success', t('dataFound'))
       } catch {
         setStegoStatus(t('noDataFound'))
+        addNotification('error', t('noDataFound'))
       }
     }
   }
@@ -171,7 +177,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
                 }`}
                 onClick={() => {
                   if (manualMode && !manualInput) {
-                    alert('Please enter some text to embed first.')
+                    addNotification('error', 'Please enter some text to embed first.')
                     return
                   }
                   fileInputRef.current?.click()

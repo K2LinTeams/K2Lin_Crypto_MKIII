@@ -39,7 +39,10 @@
     "clearHint": "Clear to edit",
     "symmetricAES": "Symmetric (AES)",
     "asymmetricRSA": "Asymmetric (RSA)",
-    "targetRecipient": "Target Recipient"
+    "targetRecipient": "Target Recipient",
+    "decryptionComplete": "Decryption successful.",
+    "encryptionComplete": "Encryption successful.",
+    "selectContact": "Select a contact..."
   },
   "identity": {
     "title": "Digital Identity",

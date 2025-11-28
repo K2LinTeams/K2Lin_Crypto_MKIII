@@ -9,6 +9,8 @@ import MimicPanel from './components/panels/MimicPanel'
 import SettingsPanel from './components/panels/SettingsPanel'
 import IdentityPanel from './components/panels/IdentityPanel' // Import new panel
 import { ThemeProvider } from './components/ThemeContext'
+import { NotificationProvider } from './components/NotificationContext'
+import { NotificationSystem } from './components/ui/NotificationSystem'
 import PanicMode from './components/PanicMode'
 import { useTranslation } from 'react-i18next'
 import './i18n' // Import i18n config
@@ -213,7 +215,10 @@ function AppLayout(): React.ReactElement {
 export default function App() {
   return (
     <ThemeProvider>
-      <AppLayout />
+      <NotificationProvider>
+        <NotificationSystem />
+        <AppLayout />
+      </NotificationProvider>
     </ThemeProvider>
   )
 }
