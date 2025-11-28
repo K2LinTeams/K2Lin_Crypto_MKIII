@@ -14,7 +14,7 @@ Whether you are a privacy enthusiast, a developer, or an agent in the field, thi
 
 ## 🚀 Key Features
 
-*   **🛡️ Hybrid Vault**: seamless switching between **Symmetric (AES-256-GCM)** for personal storage and **Asymmetric (RSA-OAEP 2048-bit)** for secure peer-to-peer communication.
+*   **🛡️ Hybrid Vault**: seamless switching between **Symmetric (AES-256-GCM)** for personal storage and **Asymmetric (X25519 + AES-GCM)** for secure peer-to-peer communication.
 *   **🪪 Digital Identity**: Generate unique, cryptographically secure Identity Cards to verify contacts and exchange public keys without exposing secrets.
 *   **🖼️ Mimic Panel (Steganography)**: Hide encrypted payloads inside innocuous images using **LSB (Least Significant Bit)** encoding.
 *   **🎭 NLP Camouflage**: Transform ciphertext into natural-looking text (Markov Chains) to evade heuristic scanning.
@@ -38,18 +38,18 @@ The Vault is the core of the operation. It supports two modes:
         5.  The output can be copied as Base64, Hex, or camouflaged text.
         6.  To **Decrypt**, simply paste the encrypted data and enter the same password.
 
-*   **Asymmetric (RSA-OAEP)**:
+*   **Asymmetric (X25519 / ECC)**:
     *   **Best for**: Sending messages to a specific person without sharing a password.
     *   **Usage**:
-        1.  Select **Asymmetric (RSA)**.
+        1.  Select **Asymmetric (ECC)**.
         2.  **Target Recipient**: Choose a verified contact from your list (see Identity below).
         3.  Enter message and **Encrypt**.
         4.  Only the recipient (using their private key) can decrypt this message.
 
 ### 2. Digital Identity
-To use RSA encryption, you must first establish an identity.
+To use Asymmetric encryption, you must first establish an identity.
 
-*   **Generate**: Go to the **Identity** tab and click **Generate Identity**. This creates a local RSA Keypair.
+*   **Generate**: Go to the **Identity** tab and click **Generate Identity**. This creates a local X25519 Keypair.
 *   **Export**: Click **Download Card** to save your public identity as a PNG image. Share this image with friends!
 *   **Import**: When you receive a friend's card, click **Import Card**. They will be added to your "Known Associates" wallet. You can now send them encrypted messages.
 
@@ -137,7 +137,7 @@ The project uses `electron-builder` for desktop and `vite` for web.
 *   **Styling**: [Tailwind CSS](https://tailwindcss.com/), [Framer Motion](https://www.framer.com/motion/) (Animations)
 *   **Encryption**:
     *   **AES-256-GCM**: Native Node `crypto` (Desktop) / Web Crypto API (Web).
-    *   **RSA-OAEP**: Web Crypto API (Standardized across platforms).
+    *   **X25519 (ECDH)**: Key exchange for asymmetric encryption.
     *   **Scrypt**: Key derivation.
 *   **Steganography**:
     *   **Sharp**: High-performance image processing (Desktop).
