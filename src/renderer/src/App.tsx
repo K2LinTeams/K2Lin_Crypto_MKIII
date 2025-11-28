@@ -28,6 +28,7 @@ function AppLayout(): React.ReactElement {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [encryptedPackage, setEncryptedPackage] = useState<any>(null)
   const [currentFormat, setCurrentFormat] = useState<Format>('Base64')
+  const [secretKey, setSecretKey] = useState('')
 
   const handleExtract = (data: string) => {
     setOutputData(data)
@@ -61,7 +62,7 @@ function AppLayout(): React.ReactElement {
             { id: 'mimic', icon: ImageIcon, label: 'Mimic' },
             { id: 'settings', icon: Settings, label: 'Config' }
           ].map((item) => (
-             <button
+            <button
               key={item.id}
               onClick={() => setActiveTab(item.id as Tab)}
               className={clsx(
@@ -73,10 +74,10 @@ function AppLayout(): React.ReactElement {
             >
               <item.icon size={22} className="relative z-10" />
               {activeTab === item.id && (
-                  <motion.div
-                    layoutId="active-indicator"
-                    className="absolute -right-[18px] top-1/2 -translate-y-1/2 w-1 h-8 bg-accent-primary rounded-l-full"
-                  />
+                <motion.div
+                  layoutId="active-indicator"
+                  className="absolute -right-[18px] top-1/2 -translate-y-1/2 w-1 h-8 bg-accent-primary rounded-l-full"
+                />
               )}
             </button>
           ))}
@@ -110,45 +111,48 @@ function AppLayout(): React.ReactElement {
             </span>
           </div>
           <div className="flex items-center gap-2 text-xs text-success">
-             <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-             <span>{t('systemSecure')}</span>
+            <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+            <span>{t('systemSecure')}</span>
           </div>
         </header>
 
         {/* Dynamic Content Panel */}
         <main className="flex-1 p-6 overflow-hidden z-10">
           <AnimatePresence mode="wait">
-             <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, x: 20, filter: 'blur(10px)' }}
-                animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, x: -20, filter: 'blur(10px)' }}
-                transition={{ duration: 0.3, ease: 'easeOut' }}
-                className="h-full overflow-y-auto"
-             >
-                {activeTab === 'vault' && (
-                  <VaultPanel
-                    inputData={inputData}
-                    setInputData={setInputData}
-                    outputData={outputData}
-                    setOutputData={setOutputData}
-                    isEncrypted={isEncrypted}
-                    setIsEncrypted={setIsEncrypted}
-                    encryptedPackage={encryptedPackage}
-                    setEncryptedPackage={setEncryptedPackage}
-                    currentFormat={currentFormat}
-                    setCurrentFormat={setCurrentFormat}
-                  />
-                )}
-                {activeTab === 'mimic' && (
-                  <MimicPanel
-                    encryptedPackage={encryptedPackage}
-                    isEncrypted={isEncrypted}
-                    onExtract={handleExtract}
-                  />
-                )}
-                {activeTab === 'settings' && <SettingsPanel />}
-             </motion.div>
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, x: 20, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, x: -20, filter: 'blur(10px)' }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="h-full overflow-y-auto"
+            >
+              {activeTab === 'vault' && (
+                <VaultPanel
+                  inputData={inputData}
+                  setInputData={setInputData}
+                  outputData={outputData}
+                  setOutputData={setOutputData}
+                  isEncrypted={isEncrypted}
+                  setIsEncrypted={setIsEncrypted}
+                  encryptedPackage={encryptedPackage}
+                  setEncryptedPackage={setEncryptedPackage}
+                  currentFormat={currentFormat}
+                  setCurrentFormat={setCurrentFormat}
+                  secretKey={secretKey}
+                  setSecretKey={setSecretKey}
+                  onSwitchToStego={() => setActiveTab('mimic')}
+                />
+              )}
+              {activeTab === 'mimic' && (
+                <MimicPanel
+                  encryptedPackage={encryptedPackage}
+                  isEncrypted={isEncrypted}
+                  onExtract={handleExtract}
+                />
+              )}
+              {activeTab === 'settings' && <SettingsPanel />}
+            </motion.div>
           </AnimatePresence>
         </main>
       </div>

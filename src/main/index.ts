@@ -74,11 +74,11 @@ app.whenReady().then(() => {
   })
 
   // NLP
-  ipcMain.handle('nlp:encode', async (_, dataBuffer) => {
-    return encode(Buffer.from(dataBuffer))
+  ipcMain.handle('nlp:encode', async (_, dataBuffer, lang) => {
+    return encode(Buffer.from(dataBuffer), lang)
   })
-  ipcMain.handle('nlp:decode', async (_, text) => {
-    const res = decode(text)
+  ipcMain.handle('nlp:decode', async (_, text, lang) => {
+    const res = decode(text, lang)
     return new Uint8Array(res)
   })
 

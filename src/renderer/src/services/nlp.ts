@@ -1,6 +1,6 @@
 // A simple corpus of "corporate speak" and "spam" words
 // Shared implementation for Renderer (Web)
-const CORPUS = [
+const CORPUS_EN = [
   'meeting',
   'synch',
   'leverage',
@@ -150,11 +150,146 @@ const CORPUS = [
   'guide'
 ]
 
-const DICTIONARY = CORPUS.slice(0, 128)
+const CORPUS_ZH = [
+  '抓手',
+  '赋能',
+  '心智',
+  '闭环',
+  '沉淀',
+  '打通',
+  '链路',
+  '痛点',
+  '复盘',
+  '颗粒度',
+  '对齐',
+  '底层逻辑',
+  '方法论',
+  '组合拳',
+  '引爆点',
+  '护城河',
+  '生态',
+  '场景',
+  '维度',
+  '格局',
+  '形态',
+  '势能',
+  '矩阵',
+  '联动',
+  '共建',
+  '共创',
+  '落地',
+  '下沉',
+  '裂变',
+  '导流',
+  '拉新',
+  '留存',
+  '促活',
+  '转化',
+  '迭代',
+  '重构',
+  '复用',
+  '解耦',
+  '封装',
+  '抽象',
+  '中台',
+  '微服务',
+  '分布式',
+  '高并发',
+  '高可用',
+  '弹性',
+  '扩展性',
+  '鲁棒性',
+  '敏捷',
+  '精益',
+  '看板',
+  '站会',
+  '冲刺',
+  '里程碑',
+  '交付物',
+  '验收',
+  '上线',
+  '回滚',
+  '灰度',
+  '全量',
+  '监控',
+  '告警',
+  '埋点',
+  '画像',
+  '千人千面',
+  '长尾',
+  '头部',
+  '腰部',
+  '垂直',
+  '细分',
+  '蓝海',
+  '红海',
+  '风口',
+  '赛道',
+  '独角兽',
+  '去中心化',
+  '元宇宙',
+  'Web3',
+  '区块链',
+  '智能合约',
+  '算力',
+  '算法',
+  '模型',
+  '训练',
+  '推理',
+  '端侧',
+  '云端',
+  '边缘计算',
+  '物联网',
+  '大数据',
+  '云计算',
+  '人工智能',
+  '机器学习',
+  '深度学习',
+  '神经网络',
+  '自然语言处理',
+  '计算机视觉',
+  '知识图谱',
+  '用户体验',
+  '交互设计',
+  '视觉设计',
+  '品牌调性',
+  '差异化',
+  '同质化',
+  '内卷',
+  '躺平',
+  '摸鱼',
+  '划水',
+  '甩锅',
+  '背锅',
+  '画饼',
+  'PUA',
+  '996',
+  '007',
+  '福报',
+  '优化',
+  '毕业',
+  '输送人才',
+  '降本增效',
+  '开源节流',
+  '战略定力',
+  '长期主义',
+  '价值创造',
+  '客户第一',
+  '拥抱变化',
+  '结果导向',
+  '顶层设计',
+  '协同',
+  '兼容',
+  '架构'
+]
+
+const DICTIONARY_EN = CORPUS_EN.slice(0, 128)
+const DICTIONARY_ZH = CORPUS_ZH.slice(0, 128)
 
 // In Web, Buffer is not available by default. We use Uint8Array.
-export function encode(buffer: ArrayBuffer): string {
+export function encode(buffer: ArrayBuffer, lang: string = 'en'): string {
   const bytes = new Uint8Array(buffer)
+  const dictionary = lang.startsWith('zh') ? DICTIONARY_ZH : DICTIONARY_EN
 
   // Convert buffer to bits
   let bits = ''
@@ -171,28 +306,63 @@ export function encode(buffer: ArrayBuffer): string {
   for (let i = 0; i < bits.length; i += 7) {
     const chunk = bits.substring(i, i + 7)
     const index = parseInt(chunk, 2)
-    words.push(DICTIONARY[index])
+    words.push(dictionary[index])
   }
 
-  return formatAsSentences(words)
+  return formatAsSentences(words, lang)
 }
 
-export function decode(text: string): Uint8Array {
-  // Clean the text
-  const cleanText = text
-    .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '')
-    .replace(/\s{2,}/g, ' ')
-    .toLowerCase()
-  const words = cleanText.trim().split(' ')
+export function decode(text: string, lang: string = 'en'): Uint8Array {
+  const dictionary = lang.startsWith('zh') ? DICTIONARY_ZH : DICTIONARY_EN
+
+  // Clean the text based on language
+  let cleanText = text
+  if (lang.startsWith('zh')) {
+    // For Chinese, remove standard punctuation including Chinese punctuation
+    cleanText = text
+      .replace(/[.,/#!$%^&*;:{}=\-_`~()，。、；：？！“”‘’（）【】《》]/g, '')
+      .replace(/\s+/g, '') // Chinese usually doesn't need spaces for segmentation if we match by dictionary
+  } else {
+    cleanText = text
+      .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '')
+      .replace(/\s{2,}/g, ' ')
+      .toLowerCase()
+  }
 
   let bits = ''
 
-  for (const word of words) {
-    const index = DICTIONARY.indexOf(word)
-    if (index === -1) {
-      continue
+  if (lang.startsWith('zh')) {
+    // Greedy matching for Chinese
+    let remaining = cleanText
+    while (remaining.length > 0) {
+      let found = false
+      // Try to find the longest matching word from dictionary
+      // Since our dictionary words are mostly 2-4 chars
+      for (let len = 4; len >= 1; len--) {
+        if (remaining.length < len) continue
+        const sub = remaining.substring(0, len)
+        const index = dictionary.indexOf(sub)
+        if (index !== -1) {
+          bits += index.toString(2).padStart(7, '0')
+          remaining = remaining.substring(len)
+          found = true
+          break
+        }
+      }
+      if (!found) {
+        // Skip character if not found (garbage/formatting)
+        remaining = remaining.substring(1)
+      }
     }
-    bits += index.toString(2).padStart(7, '0')
+  } else {
+    const words = cleanText.trim().split(' ')
+    for (const word of words) {
+      const index = dictionary.indexOf(word)
+      if (index === -1) {
+        continue
+      }
+      bits += index.toString(2).padStart(7, '0')
+    }
   }
 
   // Convert bits back to bytes
@@ -207,7 +377,39 @@ export function decode(text: string): Uint8Array {
   return new Uint8Array(bytes)
 }
 
-function formatAsSentences(words: string[]): string {
+function formatAsSentences(words: string[], lang: string = 'en'): string {
+  if (lang.startsWith('zh')) {
+    let result = ''
+    let sentenceLength = 0
+
+    // Connectives to make it sound more "smooth"
+    const connectives = ['我们', '需要', '进行', '实现', '以', '来', '从而', '进而', '完成', '打造']
+
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i]
+
+      // Randomly insert a connective/filler occasionally
+      if (Math.random() > 0.7 && sentenceLength > 0) {
+        result += connectives[Math.floor(Math.random() * connectives.length)]
+      }
+
+      result += word
+      sentenceLength++
+
+      if (sentenceLength > 4 && (Math.random() > 0.7 || sentenceLength > 10)) {
+        result += '，' // Chinese comma
+        sentenceLength = 0
+        if (Math.random() > 0.6) {
+          result = result.slice(0, -1) + '。' // Period
+        }
+      }
+    }
+
+    if (!result.endsWith('。')) result += '。'
+    return result
+  }
+
+  // English formatting
   let result = ''
   let sentenceLength = 0
 

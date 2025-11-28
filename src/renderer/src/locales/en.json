@@ -52,9 +52,9 @@
     "emergencyWipeDesc": "Destroy all local keys and cache immediately",
     "execute": "Execute",
     "themes": {
-        "cyberpunk": "Cyberpunk",
-        "light": "SaaS / Light",
-        "midnight": "Deep Space"
+      "cyberpunk": "Cyberpunk",
+      "light": "SaaS / Light",
+      "midnight": "Deep Space"
     },
     "language": "Language"
   }

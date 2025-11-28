@@ -22,8 +22,8 @@ export interface ApiService {
     extract: (imageBuffer: ArrayBuffer) => Promise<Uint8Array>
   }
   nlp: {
-    encode: (dataBuffer: ArrayBuffer) => Promise<string>
-    decode: (text: string) => Promise<Uint8Array>
+    encode: (dataBuffer: ArrayBuffer, lang?: string) => Promise<string>
+    decode: (text: string, lang?: string) => Promise<Uint8Array>
   }
   store: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,8 +48,8 @@ export const api: ApiService = isElectron
         extract
       },
       nlp: {
-        encode: async (buf): Promise<string> => encode(buf),
-        decode: async (text): Promise<Uint8Array> => decode(text)
+        encode: async (buf, lang): Promise<string> => encode(buf, lang),
+        decode: async (text, lang): Promise<Uint8Array> => decode(text, lang)
       },
       store: {
         get: (key) => webStore.get(key),
