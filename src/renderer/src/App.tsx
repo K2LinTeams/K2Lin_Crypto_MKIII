@@ -51,7 +51,7 @@ function AppLayout(): React.ReactElement {
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary font-sans selection:bg-accent-primary/30 selection:text-text-primary flex overflow-hidden">
       {/* Sidebar Navigation - Desktop */}
-      <nav className="hidden md:flex w-20 bg-bg-secondary/50 border-r border-glass-border flex-col items-center py-6 gap-8 z-50 backdrop-blur-xl">
+      <nav className="hidden md:flex w-20 bg-black/10 border-r border-white/5 flex-col items-center py-6 gap-8 z-50 backdrop-blur-xl">
         <div className="w-10 h-10 bg-accent-primary/10 rounded-xl flex items-center justify-center border border-accent-primary/20 shadow-[0_0_15px_rgba(var(--accent-primary),0.2)]">
           <Shield size={24} className="text-accent-primary" />
         </div>
@@ -69,7 +69,7 @@ function AppLayout(): React.ReactElement {
                 'relative p-3 rounded-xl transition-all group flex items-center justify-center',
                 activeTab === item.id
                   ? 'bg-accent-primary/20 text-accent-primary shadow-[0_0_15px_rgba(var(--accent-primary),0.2)]'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-glass-highlight'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-white/5'
               )}
             >
               <item.icon size={22} className="relative z-10" />
@@ -94,19 +94,22 @@ function AppLayout(): React.ReactElement {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col relative overflow-hidden pb-16 md:pb-0">
-        {/* Animated Background Blobs */}
+        {/* Animated Background Blobs & Grid */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent-primary/20 blur-[120px] rounded-full animate-pulse"></div>
-          <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-accent-secondary/10 blur-[100px] rounded-full"></div>
+          {/* Subtle Grid */}
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgNDBMMCAwTDQwIDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-20"></div>
+
+          <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] bg-accent-primary/10 blur-[150px] rounded-full animate-[pulse_8s_ease-in-out_infinite]"></div>
+          <div className="absolute bottom-[-20%] right-[-20%] w-[50%] h-[50%] bg-accent-secondary/5 blur-[120px] rounded-full animate-[pulse_10s_ease-in-out_infinite]"></div>
         </div>
 
         {/* Top Bar */}
-        <header className="h-16 border-b border-glass-border flex items-center justify-between px-4 md:px-8 backdrop-blur-sm z-40 bg-bg-primary/30">
+        <header className="h-16 border-b border-white/5 flex items-center justify-between px-4 md:px-8 backdrop-blur-sm z-40 bg-black/10">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-accent-primary to-accent-secondary">
               CRYPTO<span className="font-light">3</span>
             </h1>
-            <span className="text-[10px] bg-bg-secondary text-text-secondary px-2 py-0.5 rounded border border-glass-border">
+            <span className="text-[10px] bg-white/5 text-text-secondary px-2 py-0.5 rounded border border-white/5">
               v0.2.0-beta
             </span>
           </div>
@@ -118,7 +121,7 @@ function AppLayout(): React.ReactElement {
         </header>
 
         {/* Dynamic Content Panel */}
-        <main className="flex-1 p-4 md:p-6 overflow-hidden z-10">
+        <main className="flex-1 p-0 md:p-6 overflow-hidden z-10 flex flex-col">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -158,11 +161,11 @@ function AppLayout(): React.ReactElement {
         </main>
 
         {/* Bottom Navigation - Mobile */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-bg-secondary/80 backdrop-blur-xl border-t border-glass-border z-50 flex items-center justify-around px-2">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-black/20 backdrop-blur-xl border-t border-white/10 z-50 flex items-center justify-around px-2">
           {[
-            { id: 'vault', icon: Lock, label: t('common.vault') },
-            { id: 'mimic', icon: ImageIcon, label: t('common.mimic') },
-            { id: 'settings', icon: Settings, label: t('common.config') }
+            { id: 'vault', icon: Lock, label: t('vault') },
+            { id: 'mimic', icon: ImageIcon, label: t('mimic') },
+            { id: 'settings', icon: Settings, label: t('config') }
           ].map((item) => (
             <button
               key={item.id}
@@ -194,7 +197,7 @@ function AppLayout(): React.ReactElement {
             <div className="p-1.5 rounded-lg bg-red-500/10">
               <EyeOff size={20} />
             </div>
-            <span className="text-[10px] font-medium">{t('common.panic')}</span>
+            <span className="text-[10px] font-medium">{t('panic')}</span>
           </button>
         </nav>
       </div>
