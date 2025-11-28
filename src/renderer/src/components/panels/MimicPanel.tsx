@@ -97,8 +97,8 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
           activeTab={activeTab}
           onTabChange={setActiveTab}
           tabs={[
-            { id: 'setup', label: 'Configuration', icon: <Settings size={16} /> },
-            { id: 'preview', label: 'Output Preview', icon: <Eye size={16} /> }
+            { id: 'setup', label: t('config'), icon: <Settings size={16} /> },
+            { id: 'preview', label: t('outputPreview'), icon: <Eye size={16} /> }
           ]}
         />
       </div>

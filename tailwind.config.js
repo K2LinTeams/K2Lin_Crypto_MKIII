@@ -25,7 +25,7 @@ module.exports = {
         success: 'var(--success)'
       },
       fontFamily: {
-        sans: ['Comfortaa', 'sans-serif'],
+        sans: ['Comfortaa', 'ZCOOL KuaiLe', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace']
       }
     }

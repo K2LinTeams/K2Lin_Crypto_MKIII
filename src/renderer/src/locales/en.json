@@ -53,7 +53,7 @@
     "noDataFound": "No valid data found or error reading image.",
     "outputGenerated": "Output Generated",
     "download": "Download Stego Image",
-    "config": "Configuration",
+    "config": "Config",
     "extraction": "Extraction",
     "manualEmbed": "Manual Embed",
     "secretPayload": "Secret Payload",
