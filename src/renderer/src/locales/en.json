@@ -139,6 +139,50 @@
     "stegoDesc": "Hide your encrypted data inside normal-looking images! Upload an image, embed your secrets, and share the PNG.",
     "skip": "Skip Intro",
     "next": "Next",
-    "finish": "Let's Rock! 🚀"
+    "finish": "Let's Rock! 🚀",
+    "learnHow": "Access PRTS Archives 🔍",
+    "achievementDeeper": "PRTS: Clearance Level Upgraded 🔍"
+  },
+  "encyclopedia": {
+    "back": "Return to Mission",
+    "tabs": {
+      "rsa": "RSA Protocols",
+      "aes": "AES Channel",
+      "stego": "Visual Arts",
+      "diff": "Tactical Analysis"
+    },
+    "rsa": {
+      "title": "RSA: Public Channel",
+      "analogyTitle": "Rhodes Island Command Link",
+      "analogy": "Think of it as a public drop-box for Operator reports. Any Operator can deposit a report (Public Key), but only the Doctor with the command clearance (Private Key) can unlock and read it.",
+      "techTitle": "PRTS Technical Data",
+      "tech": "RSA relies on complex factorization algorithms, similar to decoding ancient Originium patterns. It is computationally heavy (slow Arts), so we use it primarily to securely exchange the tactical frequencies (AES keys)."
+    },
+    "aes": {
+      "title": "AES: Secure Frequency",
+      "analogyTitle": "Squad Comms Link",
+      "analogy": "A direct, encrypted radio frequency between two Operators. You both must tune to the exact same frequency (Key). The challenge is sharing that frequency without Reunion intercepting it.",
+      "techTitle": "PRTS Technical Data",
+      "tech": "AES (Advanced Encryption Standard) scrambles data like a fast-cast Arts barrier. It is extremely efficient, perfect for transmitting large combat data logs once the secure link is established."
+    },
+    "stego": {
+      "title": "LSB Camouflage",
+      "analogyTitle": "Optical Arts Cloaking",
+      "analogy": "We modulate the color values of an image so slightly that the naked eye sees nothing amiss. Like Manticore's invisibility, the data is hidden in plain sight, waiting for a scanner to reveal it.",
+      "techTitle": "PRTS Technical Data",
+      "tech": "We manipulate the Least Significant Bit of each pixel's Originium color value. Modifying a Red value from 255 to 254 is invisible to standard observation. Warning: Compression (like JPEG) disrupts this delicate Arts weave."
+    },
+    "diff": {
+      "title": "Tactical Comparison",
+      "speed": "Casting Speed",
+      "speedRsa": "Slow (Heavy Arts)",
+      "speedAes": "Instant (Standard Comms)",
+      "keys": "Clearance Required",
+      "keysRsa": "Dual (Public/Private)",
+      "keysAes": "Single (Shared Freq)",
+      "useCase": "Mission Profile",
+      "useCaseRsa": "Identity & Key Exchange",
+      "useCaseAes": "Bulk Data Transmission"
+    }
   }
 }

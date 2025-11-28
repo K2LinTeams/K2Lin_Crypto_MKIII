@@ -16,7 +16,8 @@ i18n
         mimic: en.mimic,
         settings: en.settings,
         identity: en.identity,
-        tutorial: en.tutorial
+        tutorial: en.tutorial,
+        encyclopedia: en.encyclopedia
       },
       zh: {
         common: zh.common,
@@ -24,7 +25,8 @@ i18n
         mimic: zh.mimic,
         settings: zh.settings,
         identity: zh.identity,
-        tutorial: zh.tutorial
+        tutorial: zh.tutorial,
+        encyclopedia: zh.encyclopedia
       }
     },
     fallbackLng: 'en',
