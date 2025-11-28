@@ -60,6 +60,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
               onClick={() => changeLanguage('en')}
               icon={<span className="font-mono font-bold text-xs">EN</span>}
               className="justify-start"
+              aria-label="Switch to English"
             >
               English
             </GlassButton>
@@ -68,6 +69,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
               onClick={() => changeLanguage('zh')}
               icon={<span className="font-mono font-bold text-xs">CN</span>}
               className="justify-start"
+              aria-label="切换到中文"
             >
               中文
             </GlassButton>
@@ -83,6 +85,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
               onClick={() => handleSetTheme('cyberpunk')}
               className="justify-start"
               icon={<Monitor size={16} />}
+              aria-label={t('themes.cyberpunk')}
             >
               {t('themes.cyberpunk')}
             </GlassButton>
@@ -91,6 +94,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
               onClick={() => handleSetTheme('light')}
               className="justify-start"
               icon={<Sun size={16} />}
+              aria-label={t('themes.light')}
             >
               {t('themes.light')}
             </GlassButton>
@@ -99,6 +103,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
               onClick={() => handleSetTheme('midnight')}
               className="justify-start"
               icon={<Moon size={16} />}
+              aria-label={t('themes.midnight')}
             >
               {t('themes.midnight')}
             </GlassButton>
@@ -107,6 +112,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
               onClick={() => handleSetTheme('sakura')}
               className="justify-start"
               icon={<Sparkles size={16} />}
+              aria-label={t('themes.sakura')}
             >
               {t('themes.sakura')}
             </GlassButton>
@@ -231,6 +237,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
                           className="flex-1"
                           onClick={() => setShowPinConfig(false)}
                           icon={<X size={14} />}
+                          aria-label={t('cancel')}
                         >
                         </GlassButton>
                         <GlassButton
@@ -239,6 +246,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
                           className="flex-1"
                           onClick={handleSavePin}
                           icon={<Check size={14} />}
+                          aria-label={t('confirm')}
                         >
                         </GlassButton>
                      </div>

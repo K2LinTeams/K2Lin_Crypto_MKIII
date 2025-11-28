@@ -15,6 +15,17 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src')
       }
     },
-    plugins: [react()]
+    plugins: [react()],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom'],
+            'ui-vendor': ['framer-motion', 'lucide-react', 'clsx', 'tailwind-merge'],
+            'i18n-vendor': ['i18next', 'react-i18next']
+          }
+        }
+      }
+    }
   }
 })

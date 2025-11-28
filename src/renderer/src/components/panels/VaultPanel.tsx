@@ -417,8 +417,8 @@ export default function VaultPanel({
                         className="pr-20 font-mono text-sm tracking-wide text-center"
                     />
                      <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                        <button onClick={handleShowKey} className="p-1.5 text-text-secondary hover:text-white"><Eye size={14} /></button>
-                        <button onClick={generateRandomKey} className="p-1.5 text-text-secondary hover:text-accent-primary"><Key size={14} /></button>
+                        <button onClick={handleShowKey} aria-label={t('showKey')} className="p-1.5 text-text-secondary hover:text-white"><Eye size={14} /></button>
+                        <button onClick={generateRandomKey} aria-label={t('generateKey')} className="p-1.5 text-text-secondary hover:text-accent-primary"><Key size={14} /></button>
                      </div>
                 </div>
              </div>
@@ -501,6 +501,7 @@ export default function VaultPanel({
                   : 'bg-accent-primary text-white shadow-[0_0_30px_rgba(var(--accent-primary),0.3)] hover:shadow-[0_0_40px_rgba(var(--accent-primary),0.5)]'
                 }`}
                 title={t('encrypt')}
+                aria-label={t('encrypt')}
               >
                 <Send size={24} />
               </button>
@@ -513,6 +514,7 @@ export default function VaultPanel({
                 onClick={() => handleProcess('decrypt')}
                 className="w-16 h-16 rounded-2xl bg-black/40 border border-white/10 text-text-secondary hover:text-white hover:border-accent-primary/50 transition-all shadow-xl backdrop-blur-md flex items-center justify-center"
                 title={t('decrypt')}
+                aria-label={t('decrypt')}
               >
                 <Unlock size={24} />
               </button>
@@ -539,12 +541,14 @@ export default function VaultPanel({
                     <button
                       onClick={() => copyToClipboard(outputData)}
                       className="p-1.5 hover:bg-white/10 rounded-md text-text-secondary hover:text-accent-primary transition-colors"
+                      aria-label={t('copy')}
                     >
                       <Copy size={16} />
                     </button>
                     <button
                       onClick={handleClear}
                       className="p-1.5 hover:bg-white/10 rounded-md text-text-secondary hover:text-danger transition-colors"
+                      aria-label={t('clear')}
                     >
                       <Trash2 size={16} />
                     </button>
