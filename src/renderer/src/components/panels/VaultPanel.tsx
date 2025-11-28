@@ -280,13 +280,13 @@ export default function VaultPanel({
                 onClick={() => setUseAsymmetric(false)}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${!useAsymmetric ? 'bg-accent-primary text-white shadow-lg' : 'text-text-secondary hover:text-white'}`}
             >
-                Symmetric (AES)
+                {t('symmetricAES')}
             </button>
             <button
                 onClick={() => setUseAsymmetric(true)}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${useAsymmetric ? 'bg-accent-primary text-white shadow-lg' : 'text-text-secondary hover:text-white'}`}
             >
-                Asymmetric (RSA)
+                {t('asymmetricRSA')}
             </button>
           </div>
 
@@ -296,7 +296,7 @@ export default function VaultPanel({
           {useAsymmetric ? (
              <div className="flex-1 w-full flex items-center gap-3">
                 <TechHeader
-                    title="Target Recipient"
+                    title={t('targetRecipient')}
                     icon={<User size={18} />}
                     className="mb-0 hidden md:flex"
                 />

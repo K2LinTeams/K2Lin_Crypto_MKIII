@@ -14,13 +14,15 @@ i18n
         common: en.common,
         vault: en.vault,
         mimic: en.mimic,
-        settings: en.settings
+        settings: en.settings,
+        identity: en.identity
       },
       zh: {
         common: zh.common,
         vault: zh.vault,
         mimic: zh.mimic,
-        settings: zh.settings
+        settings: zh.settings,
+        identity: zh.identity
       }
     },
     fallbackLng: 'en',
