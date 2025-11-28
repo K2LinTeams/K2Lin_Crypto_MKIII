@@ -7,6 +7,7 @@ import { useApi } from '../../useApi'
 import { useTranslation } from 'react-i18next'
 import { encryptAsymmetric, decryptAsymmetric, importKey } from '../../services/asymmetric'
 import { useNotification } from '../NotificationContext'
+import { useAchievements } from '../../hooks/useAchievements'
 
 type Format = 'Base64' | 'Hex' | 'Natural Text (Markov)'
 
@@ -63,6 +64,7 @@ export default function VaultPanel({
   const api = useApi()
   const { t, i18n } = useTranslation('vault')
   const { addNotification } = useNotification()
+  const { unlock } = useAchievements()
 
   useEffect(() => {
     if (isEncrypted) {
@@ -207,21 +209,6 @@ export default function VaultPanel({
           } else {
              throw new Error(t('identity.noIdentityCard') || 'No Identity Card found')
           }
-        } else if (pkg && pkg.c3_alg === 'RSA-OAEP') {
-           // LEGACY SUPPORT: Asymmetric Auto-Detect (RSA)
-          const myPrivateKeyPem = localStorage.getItem('my_private_key')
-          if (myPrivateKeyPem) {
-            // Check if key is old RSA key (starts with ----BEGIN)
-            if (myPrivateKeyPem.startsWith('-----BEGIN')) {
-                 // We can't actually import RSA here easily because we removed rsa.ts.
-                 // But user said "Directly deprecate RSA", so we just show error or ignore.
-                 // For safety:
-                 throw new Error('RSA Legacy format deprecated. Please regenerate keys.')
-            }
-             throw new Error('Key mismatch: Received RSA package but you have ECC keys.')
-          } else {
-            throw new Error(t('identity.noIdentityCard') || 'No Identity Card found')
-          }
         } else if (pkg && pkg.c3_alg === 'AES-GCM') {
           // Symmetric Auto-Detect
           if (secretKey) {
@@ -237,8 +224,6 @@ export default function VaultPanel({
         } else {
           // Fallback / Legacy Logic
           console.warn('Unknown package format, trying legacy methods...')
-
-          // Legacy Asymmetric Check - Removed as RSA is deprecated and ECC requires structured package
 
           // Legacy Symmetric Check
           if (!success) {
@@ -304,6 +289,7 @@ export default function VaultPanel({
         setInputData('') // Clear input for security
         formatOutput(finalPackage, currentFormat)
         addNotification('success', t('encryptionComplete'))
+        unlock('first_encrypt')
       }
     } catch (error) {
       console.error(error)
@@ -386,7 +372,7 @@ export default function VaultPanel({
                 onClick={() => setUseAsymmetric(true)}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${useAsymmetric ? 'bg-accent-primary text-white shadow-lg' : 'text-text-secondary hover:text-white'}`}
             >
-                {t('asymmetricRSA')}
+                {t('asymmetricECC')}
             </button>
           </div>
 

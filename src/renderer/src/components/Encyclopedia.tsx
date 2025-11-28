@@ -10,18 +10,18 @@ interface EncyclopediaProps {
 
 export default function Encyclopedia({ initialTopic, onBack }: EncyclopediaProps) {
   const { t } = useTranslation(['encyclopedia', 'tutorial'])
-  // Map initial topic 'rsa-step1' etc to simple keys
+  // Map initial topic 'ecc-step1' etc to simple keys
   const getTabFromTopic = (topic: string) => {
-    if (topic.includes('rsa')) return 'rsa'
+    if (topic.includes('ecc')) return 'ecc'
     if (topic.includes('aes')) return 'aes'
     if (topic.includes('stego')) return 'stego'
-    return 'rsa'
+    return 'ecc'
   }
 
   const [activeTab, setActiveTab] = useState(getTabFromTopic(initialTopic))
 
   const tabs = [
-    { id: 'rsa', label: t('tabs.rsa') },
+    { id: 'ecc', label: t('tabs.ecc') },
     { id: 'aes', label: t('tabs.aes') },
     { id: 'stego', label: t('tabs.stego') },
     { id: 'diff', label: t('tabs.diff') },
@@ -66,7 +66,7 @@ export default function Encyclopedia({ initialTopic, onBack }: EncyclopediaProps
             transition={{ duration: 0.2 }}
             className="h-full flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar"
           >
-            {activeTab === 'rsa' && <RSABlock t={t} />}
+            {activeTab === 'ecc' && <ECCBlock t={t} />}
             {activeTab === 'aes' && <AESBlock t={t} />}
             {activeTab === 'stego' && <StegoBlock t={t} />}
             {activeTab === 'diff' && <DiffBlock t={t} />}
@@ -80,62 +80,69 @@ export default function Encyclopedia({ initialTopic, onBack }: EncyclopediaProps
 
 /* --- Content Blocks --- */
 
-function RSABlock({ t }: { t: any }) {
+function ECCBlock({ t }: { t: any }) {
   return (
     <>
       <h2 className="text-xl font-bold text-accent-secondary flex items-center gap-2">
-        <Shield size={24} /> {t('rsa.title')}
+        <Shield size={24} /> {t('ecc.title')}
       </h2>
 
-      {/* Animation: Mailbox */}
+      {/* Animation: Color Mixing / ECDH */}
       <div className="w-full h-40 bg-white/5 rounded-lg flex items-center justify-center relative overflow-hidden border border-white/10 my-2">
-         {/* Mailbox Body */}
-         <div className="relative">
-            <motion.div
-               className="w-16 h-20 bg-white/10 rounded-t-full border-2 border-white/20 flex items-center justify-center"
-            >
-               <div className="w-12 h-1 bg-black/50 mt-4 rounded-full" />
-            </motion.div>
+         <div className="flex items-center gap-8 relative z-10">
+            {/* Alice */}
+            <div className="flex flex-col items-center gap-2">
+                <span className="text-[10px] text-white/50">Alice (Priv)</span>
+                <motion.div
+                   className="w-8 h-8 rounded-full bg-red-500 border-2 border-white/20"
+                   animate={{ scale: [1, 1.1, 1] }}
+                   transition={{ repeat: Infinity, duration: 2 }}
+                />
+            </div>
 
-            {/* Letter (Public Input) */}
-            <motion.div
-              className="absolute -top-10 left-1/2 -translate-x-1/2"
-              animate={{ y: [0, 45, 45, 0], opacity: [0, 1, 0, 0], scale: [1, 0.5, 0, 0] }}
-              transition={{ repeat: Infinity, duration: 4, times: [0, 0.2, 0.3, 1] }}
-            >
-               <div className="w-8 h-6 bg-accent-primary rounded flex items-center justify-center text-[8px] text-black font-bold">MSG</div>
-            </motion.div>
+            {/* Public Base */}
+            <div className="flex flex-col items-center gap-2">
+                <span className="text-[10px] text-white/50">Public</span>
+                <motion.div
+                   className="w-6 h-6 rounded-full bg-yellow-400 border-2 border-white/20"
+                />
+            </div>
 
-            {/* Lock (Public Key) */}
-            <motion.div
-               className="absolute -right-8 top-0 text-accent-secondary"
-               animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-               transition={{ repeat: Infinity, duration: 2 }}
-            >
-               <Lock size={16} />
-               <span className="text-[8px] block text-center">Pub</span>
-            </motion.div>
+            {/* Bob */}
+            <div className="flex flex-col items-center gap-2">
+                <span className="text-[10px] text-white/50">Bob (Priv)</span>
+                <motion.div
+                   className="w-8 h-8 rounded-full bg-blue-500 border-2 border-white/20"
+                   animate={{ scale: [1, 1.1, 1] }}
+                   transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
+                />
+            </div>
+         </div>
 
-             {/* Key (Private Key) */}
-             <motion.div
-               className="absolute -left-8 bottom-0 text-accent-primary"
-               animate={{ rotate: [0, -45, 0], x: [0, 5, 0] }}
-               transition={{ repeat: Infinity, duration: 2, delay: 1 }}
-            >
-               <Key size={16} />
-               <span className="text-[8px] block text-center">Priv</span>
-            </motion.div>
+         {/* Mixing Animation Lines */}
+         <motion.div
+            className="absolute top-1/2 left-1/2 w-full h-1 bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 opacity-50 blur-md"
+            style={{ transform: 'translate(-50%, -50%)' }}
+            animate={{ opacity: [0.2, 0.6, 0.2] }}
+            transition={{ repeat: Infinity, duration: 3 }}
+         />
+
+         <div className="absolute bottom-4 flex gap-4 text-xs font-mono">
+             <div className="flex items-center gap-1">
+                 <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                 <span className="text-purple-300">Shared Secret</span>
+             </div>
          </div>
       </div>
 
       <div className="space-y-4">
         <div className="bg-white/5 p-3 rounded-lg border-l-2 border-accent-secondary">
-          <h3 className="text-sm font-bold text-white mb-1">{t('rsa.analogyTitle')}</h3>
-          <p className="text-sm text-text-secondary leading-relaxed">{t('rsa.analogy')}</p>
+          <h3 className="text-sm font-bold text-white mb-1">{t('ecc.analogyTitle')}</h3>
+          <p className="text-sm text-text-secondary leading-relaxed">{t('ecc.analogy')}</p>
         </div>
         <div className="bg-white/5 p-3 rounded-lg border-l-2 border-white/20">
-          <h3 className="text-sm font-bold text-white mb-1">{t('rsa.techTitle')}</h3>
-          <p className="text-xs text-text-secondary leading-relaxed font-mono">{t('rsa.tech')}</p>
+          <h3 className="text-sm font-bold text-white mb-1">{t('ecc.techTitle')}</h3>
+          <p className="text-xs text-text-secondary leading-relaxed font-mono">{t('ecc.tech')}</p>
         </div>
       </div>
     </>
@@ -333,14 +340,14 @@ function DiffBlock({ t }: { t: any }) {
       </h2>
 
       <div className="grid grid-cols-2 gap-4 h-full">
-         {/* RSA Column */}
+         {/* ECC Column */}
          <div className="bg-white/5 rounded-lg p-3 border border-white/10 flex flex-col items-center text-center gap-3">
-            <h3 className="font-bold text-accent-secondary">RSA</h3>
+            <h3 className="font-bold text-accent-secondary">ECC</h3>
             <Shield size={32} className="text-accent-secondary" />
 
             <div className="w-full bg-black/20 rounded p-2 text-xs">
                <div className="text-white/50 mb-1">{t('diff.speed')}</div>
-               <div className="text-red-300 font-mono">{t('diff.speedRsa')}</div>
+               <div className="text-red-300 font-mono">{t('diff.speedEcc')}</div>
             </div>
 
             <div className="w-full bg-black/20 rounded p-2 text-xs">
@@ -348,11 +355,11 @@ function DiffBlock({ t }: { t: any }) {
                <div className="text-accent-secondary font-mono flex justify-center gap-2">
                   <Key size={12} /><Key size={12} className="text-accent-primary" />
                </div>
-               <div className="text-white/80 mt-1">{t('diff.keysRsa')}</div>
+               <div className="text-white/80 mt-1">{t('diff.keysEcc')}</div>
             </div>
 
             <div className="mt-auto text-[10px] text-text-secondary">
-               {t('diff.useCaseRsa')}
+               {t('diff.useCaseEcc')}
             </div>
          </div>
 

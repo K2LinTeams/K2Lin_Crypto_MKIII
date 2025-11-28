@@ -100,6 +100,7 @@ function AppLayout(): React.ReactElement {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as Tab)}
+              title={item.label}
               className={clsx(
                 'relative p-3 rounded-xl transition-all group flex items-center justify-center',
                 activeTab === item.id
@@ -148,7 +149,7 @@ function AppLayout(): React.ReactElement {
               CRYPTO<span className="font-light">3</span>
             </h1>
             <span className="text-[10px] bg-white/5 text-text-secondary px-2 py-0.5 rounded border border-white/5">
-              v0.3.2-beta
+              v1.0.3
             </span>
           </div>
           <div className="flex items-center gap-2 text-xs text-success">

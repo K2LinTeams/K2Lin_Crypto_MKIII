@@ -5,7 +5,7 @@
     "panic": "伪装",
     "settings": "设置",
     "vault": "加解密",
-    "mimic": "伪装",
+    "mimic": "隐写",
     "config": "配置",
     "dailyTasks": "每日清单",
     "addTask": "添加新任务...",
@@ -38,7 +38,7 @@
     "clear": "清除",
     "clearHint": "清除以编辑",
     "symmetricAES": "对称加密 (AES)",
-    "asymmetricRSA": "非对称加密 (ECC)",
+    "asymmetricECC": "非对称加密 (ECC)",
     "targetRecipient": "目标接收者",
     "decryptionComplete": "解密成功。",
     "encryptionComplete": "加密成功。",
@@ -59,7 +59,7 @@
     "noContacts": "暂无已验证联系人。导入身份卡以开始安全通讯。",
     "name": "姓名",
     "enterName": "输入您的姓名...",
-    "id": "ID",
+    "id": "身份卡",
     "regenerate": "重新生成密钥",
     "download": "下载身份卡",
     "importSuccess": "身份验证成功，联系人已添加。",
@@ -118,6 +118,17 @@
     "replayTutorial": "重播教程",
     "replayTutorialDesc": "再次观看介绍动画"
   },
+  "achievements": {
+    "title": "服役记录",
+    "unlocked": "已授勋章",
+    "locked": "机密档案",
+    "list": {
+        "tutorial_complete": { "title": "入职培训", "desc": "完成基础操作指引。" },
+        "identity_created": { "title": "外勤特工", "desc": "生成唯一的数字身份标识。" },
+        "stego_unlocked": { "title": "无形之手", "desc": "获得隐写实验室访问权限。" },
+        "first_encrypt": { "title": "安全链路", "desc": "成功完成一次加密操作。" }
+    }
+  },
   "tutorial": {
     "welcomeTitle": "欢迎使用 Crypto3! 👋",
     "welcomeDesc": "您的终极安全通信与数字伪装工具。让我们开始吧！",
@@ -125,12 +136,12 @@
     "rsaAesDesc": "在加解密面板中切换模式以满足您的需求。",
     "rsaAesTip": "💡 专家提示：个人文件使用 AES (对称加密)。给朋友发送绝密信息使用 ECC (非对称加密)。",
     "lookFor": "寻找此开关：",
-    "rsaStep1Title": "ECC 第一步：您的身份 🪪",
-    "rsaStep1Desc": "首先，在“身份”面板生成您的身份卡。这把“公钥”让其他人能给您发送加密信息 (X25519)。",
-    "rsaStep2Title": "交换身份卡 🤝",
-    "rsaStep2Desc": "将您的卡片文件发给朋友。当他们把卡片发给您时，点击“导入身份卡”。他们会出现在您的联系人列表中。",
-    "rsaStep3Title": "给朋友加密 🔒",
-    "rsaStep3Desc": "在加解密面板中，选择“非对称 (ECC)”。从列表中选择您的朋友。现在，只有*他们*能解密这条消息。",
+    "eccStep1Title": "ECC 第一步：您的身份 🪪",
+    "eccStep1Desc": "首先，在“身份”面板生成您的身份卡。这把“公钥”让其他人能给您发送加密信息 (X25519)。",
+    "eccStep2Title": "交换身份卡 🤝",
+    "eccStep2Desc": "将您的卡片文件发给朋友。当他们把卡片发给您时，点击“导入身份卡”。他们会出现在您的联系人列表中。",
+    "eccStep3Title": "给朋友加密 🔒",
+    "eccStep3Desc": "在加解密面板中，选择“非对称 (ECC)”。从列表中选择您的朋友。现在，只有*他们*能解密这条消息。",
     "aesStep1Title": "对称加密 (AES) 🔑",
     "aesStep1Desc": "加密和解密使用相同的密钥。适用于个人文件保护或持有共享密码的通信。",
     "aesStep2Title": "AES 解密 🔓",
@@ -146,7 +157,7 @@
   "encyclopedia": {
     "back": "返回任务",
     "tabs": {
-      "rsa": "ECC 协议",
+      "ecc": "ECC 协议",
       "aes": "AES 频道",
       "stego": "光学伪装",
       "diff": "战术分析",
@@ -156,6 +167,13 @@
       "title": "ECC: X25519 交换",
       "analogyTitle": "罗德岛指令链路",
       "analogy": "这就好比一个公共的干员报告箱。任何干员都可以投入报告（使用公钥），但只有拥有最高指挥权限的博士（私钥）才能解锁并读取内容。",
+      "techTitle": "PRTS 技术数据",
+      "tech": "X25519 是高速椭圆曲线协议。与古老的 RSA（施法慢）不同，ECC 轻量且极快，可瞬间生成共享秘密（ECDH）以建立安全通讯频道。"
+    },
+    "ecc": {
+      "title": "ECC: X25519 交换",
+      "analogyTitle": "罗德岛指令链路",
+      "analogy": "想象一下混合颜料。你有一种私人颜料，也有一种公开颜料。通过（数学）混合它们，你可以创造出一种共享的秘密颜色，没有你的私人底色，任何人都无法复制它。",
       "techTitle": "PRTS 技术数据",
       "tech": "X25519 是高速椭圆曲线协议。与古老的 RSA（施法慢）不同，ECC 轻量且极快，可瞬间生成共享秘密（ECDH）以建立安全通讯频道。"
     },
@@ -176,13 +194,13 @@
     "diff": {
       "title": "战术性能对比",
       "speed": "施法速度",
-      "speedRsa": "快 (标准法术)",
+      "speedEcc": "极快 (现代源石技艺)",
       "speedAes": "即时 (标准通讯)",
       "keys": "所需权限",
-      "keysRsa": "双重 (公钥/私钥)",
+      "keysEcc": "双重 (公钥/私钥)",
       "keysAes": "单一 (共享频率)",
       "useCase": "任务配置",
-      "useCaseRsa": "身份识别 & 密钥交换",
+      "useCaseEcc": "身份识别 & 密钥交换",
       "useCaseAes": "大容量数据传输"
     },
     "id": {
@@ -190,7 +208,7 @@
       "analogyTitle": "身份识别协议",
       "analogy": "这是您在网络中的唯一标识。就像罗德岛的干员档案一样，公开部分（公钥）用于确认身份，加密部分（私钥）用于签署命令。",
       "techTitle": "PRTS 技术数据",
-      "tech": "基于 RSA-2048 的非对称加密身份。身份卡包含您的公钥和数字签名，确保通信来源的不可抵赖性。"
+      "tech": "基于 X25519 的非对称加密身份。身份卡包含您的公钥和数字签名，确保通信来源的不可抵赖性。"
     }
   }
 }

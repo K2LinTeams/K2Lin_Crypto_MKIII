@@ -8,6 +8,7 @@ import { extract } from '../../services/webStego'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNotification } from '../NotificationContext'
+import { useAchievements } from '../../hooks/useAchievements'
 
 interface Contact {
   name: string
@@ -19,6 +20,7 @@ interface Contact {
 export default function IdentityPanel() {
   const { t } = useTranslation('identity')
   const { addNotification } = useNotification()
+  const { unlock } = useAchievements()
   const [, setMyKeys] = useState<{ publicKey: CryptoKey; privateKey: CryptoKey } | null>(null)
   const [myPublicKeyPem, setMyPublicKeyPem] = useState<string | null>(null)
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -83,6 +85,8 @@ export default function IdentityPanel() {
     const privPem = await exportKey(keys.privateKey)
     localStorage.setItem('my_private_key', privPem)
     localStorage.setItem('my_public_key', pubPem)
+
+    unlock('identity_created')
   }
 
   const handleImportContact = async (e: React.ChangeEvent<HTMLInputElement>) => {

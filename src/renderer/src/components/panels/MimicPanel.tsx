@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useApi } from '../../useApi'
 import { useTranslation } from 'react-i18next'
 import { useNotification } from '../NotificationContext'
+import { useAchievements } from '../../hooks/useAchievements'
 
 interface MimicPanelProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,6 +24,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
   const api = useApi()
   const { t } = useTranslation('mimic')
   const { addNotification } = useNotification()
+  const { unlock } = useAchievements()
 
   // Auto-switch to preview when image is ready
   useEffect(() => {
@@ -56,6 +58,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
         setStegoImage(url)
         setStegoStatus(t('encryptionComplete'))
         addNotification('success', t('encryptionComplete'))
+        unlock('stego_unlocked')
       } catch (err) {
         const errMsg = 'Error: ' + (err as Error).message
         setStegoStatus(errMsg)
