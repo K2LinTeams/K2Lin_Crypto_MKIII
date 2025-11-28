@@ -70,13 +70,22 @@ async function decrypt(ciphertext, iv, salt, tag, password) {
   }
 }
 const HEADER_PREFIX = Buffer.from([67, 51]);
+const OBFUSCATION_KEY = Buffer.from([122, 33, 159, 77]);
+function applyMask(data) {
+  const masked = Buffer.alloc(data.length);
+  for (let i = 0; i < data.length; i++) {
+    masked[i] = data[i] ^ OBFUSCATION_KEY[i % OBFUSCATION_KEY.length];
+  }
+  return masked;
+}
 async function embed(imageBuffer, dataBuffer) {
   const length = dataBuffer.length;
   if (length > 65535) {
     throw new Error("Data too large for this implementation (max 64KB)");
   }
   const header = Buffer.concat([HEADER_PREFIX, Buffer.from([length >> 8 & 255, length & 255])]);
-  const payload = Buffer.concat([header, dataBuffer]);
+  const rawPayload = Buffer.concat([header, dataBuffer]);
+  const payload = applyMask(rawPayload);
   const payloadBits = bufferToBits(payload);
   const image = sharp(imageBuffer);
   const metadata = await image.metadata();
@@ -120,7 +129,8 @@ async function extract(imageBuffer) {
     headerBits.push(pixelData[pixelIndex] & 1);
     pixelIndex++;
   }
-  const headerBuffer = bitsToBuffer(headerBits);
+  const rawHeaderBuffer = bitsToBuffer(headerBits);
+  const headerBuffer = applyMask(rawHeaderBuffer);
   if (headerBuffer[0] !== 67 || headerBuffer[1] !== 51) {
     throw new Error("No valid Crypto3 data found in image");
   }
@@ -138,7 +148,10 @@ async function extract(imageBuffer) {
   if (payloadBits.length < totalBitsNeeded) {
     throw new Error("Image data corrupted or truncated");
   }
-  return bitsToBuffer(payloadBits);
+  const payloadBuffer = bitsToBuffer(payloadBits);
+  const fullEncryptedBuffer = Buffer.concat([rawHeaderBuffer, payloadBuffer]);
+  const fullDecryptedBuffer = applyMask(fullEncryptedBuffer);
+  return fullDecryptedBuffer.subarray(4);
 }
 function bufferToBits(buffer) {
   const bits = [];

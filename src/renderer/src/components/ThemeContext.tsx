@@ -10,11 +10,17 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('sakura')
+  // Initialize from localStorage if available, otherwise default to 'sakura'
+  const [theme, setTheme] = useState<Theme>(() => {
+    const savedTheme = localStorage.getItem('theme')
+    return (savedTheme as Theme) || 'sakura'
+  })
 
   useEffect(() => {
     // Apply theme to document root
     document.documentElement.setAttribute('data-theme', theme)
+    // Persist to localStorage
+    localStorage.setItem('theme', theme)
   }, [theme])
 
   return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>

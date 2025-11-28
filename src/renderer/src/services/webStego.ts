@@ -1,6 +1,16 @@
 // LSB Steganography using HTML Canvas API
 
 const HEADER_PREFIX = [0x43, 0x33] // "C3"
+// Simple XOR key to obfuscate LSB patterns against standard tools
+const OBFUSCATION_KEY = [0x7A, 0x21, 0x9F, 0x4D]
+
+function applyMask(data: Uint8Array): Uint8Array {
+  const masked = new Uint8Array(data.length)
+  for (let i = 0; i < data.length; i++) {
+    masked[i] = data[i] ^ OBFUSCATION_KEY[i % OBFUSCATION_KEY.length]
+  }
+  return masked
+}
 
 export async function embed(
   imageBuffer: ArrayBuffer,
@@ -37,9 +47,12 @@ export async function embed(
   ])
 
   // Combine header + data
-  const totalPayload = new Uint8Array(header.length + dataBytes.length)
-  totalPayload.set(header)
-  totalPayload.set(dataBytes, header.length)
+  const rawPayload = new Uint8Array(header.length + dataBytes.length)
+  rawPayload.set(header)
+  rawPayload.set(dataBytes, header.length)
+
+  // Obfuscate payload
+  const totalPayload = applyMask(rawPayload)
 
   // Convert to bits
   const payloadBits: number[] = []
@@ -111,7 +124,10 @@ export async function extract(imageBuffer: ArrayBuffer): Promise<Uint8Array> {
     pixelIndex++
   }
 
-  const headerBytes = bitsToBytes(headerBits)
+  // Extract first 4 bytes (32 bits) and de-obfuscate to check header
+  let rawHeaderBytes = bitsToBytes(headerBits)
+  // Apply mask (XOR is symmetric)
+  let headerBytes = applyMask(rawHeaderBytes)
 
   if (headerBytes[0] !== 0x43 || headerBytes[1] !== 0x33) {
     throw new Error('No valid Crypto3 data found')
@@ -135,7 +151,24 @@ export async function extract(imageBuffer: ArrayBuffer): Promise<Uint8Array> {
     throw new Error('Data corrupted or truncated')
   }
 
-  return bitsToBytes(payloadBits)
+  // Combine header bits + payload bits to de-obfuscate the full stream
+  // We need to reconstruct the full masked buffer to properly unmask with the continuous key cycle
+  // Actually, we can just unmask the payload part if we account for the offset.
+  // The 'applyMask' function starts at index 0.
+  // The header was bytes 0-3. Payload is bytes 4-(4+Len).
+
+  const payloadBytes = bitsToBytes(payloadBits)
+
+  // We need to unmask ONLY the payload part, but 'applyMask' assumes 0-indexed.
+  // We can create a full buffer, unmask, and slice.
+  const fullEncryptedBuffer = new Uint8Array(4 + payloadBytes.length)
+  fullEncryptedBuffer.set(rawHeaderBytes, 0)
+  fullEncryptedBuffer.set(payloadBytes, 4)
+
+  const fullDecryptedBuffer = applyMask(fullEncryptedBuffer)
+
+  // Return only the data part
+  return fullDecryptedBuffer.slice(4)
 }
 
 function bitsToBytes(bits: number[]): Uint8Array {

@@ -5,6 +5,16 @@ import sharp from 'sharp'
 // Magic header to identify our data: "C3" (Crypto3) + 2 bytes length (max 65535 bytes)
 // We will use 4 bytes for header: [0x43, 0x33, LEN_HIGH, LEN_LOW]
 const HEADER_PREFIX = Buffer.from([0x43, 0x33]) // "C3"
+// Simple XOR key to obfuscate LSB patterns against standard tools
+const OBFUSCATION_KEY = Buffer.from([0x7A, 0x21, 0x9F, 0x4D])
+
+function applyMask(data: Buffer): Buffer {
+  const masked = Buffer.alloc(data.length)
+  for (let i = 0; i < data.length; i++) {
+    masked[i] = data[i] ^ OBFUSCATION_KEY[i % OBFUSCATION_KEY.length]
+  }
+  return masked
+}
 
 /**
  * Embeds data into an image using LSB (Least Significant Bit).
@@ -19,7 +29,8 @@ export async function embed(imageBuffer: Buffer, dataBuffer: Buffer): Promise<Bu
 
   const header = Buffer.concat([HEADER_PREFIX, Buffer.from([(length >> 8) & 0xff, length & 0xff])])
 
-  const payload = Buffer.concat([header, dataBuffer])
+  const rawPayload = Buffer.concat([header, dataBuffer])
+  const payload = applyMask(rawPayload)
   const payloadBits = bufferToBits(payload)
 
   // 2. Load image and get raw pixel data
@@ -101,7 +112,8 @@ export async function extract(imageBuffer: Buffer): Promise<Buffer> {
     pixelIndex++
   }
 
-  const headerBuffer = bitsToBuffer(headerBits)
+  const rawHeaderBuffer = bitsToBuffer(headerBits)
+  const headerBuffer = applyMask(rawHeaderBuffer)
 
   // Verify prefix "C3"
   if (headerBuffer[0] !== 0x43 || headerBuffer[1] !== 0x33) {
@@ -128,7 +140,13 @@ export async function extract(imageBuffer: Buffer): Promise<Buffer> {
     throw new Error('Image data corrupted or truncated')
   }
 
-  return bitsToBuffer(payloadBits)
+  const payloadBuffer = bitsToBuffer(payloadBits)
+
+  // Reconstruct full buffer to unmask
+  const fullEncryptedBuffer = Buffer.concat([rawHeaderBuffer, payloadBuffer])
+  const fullDecryptedBuffer = applyMask(fullEncryptedBuffer)
+
+  return fullDecryptedBuffer.subarray(4)
 }
 
 // Helpers
