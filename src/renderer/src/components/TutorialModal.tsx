@@ -189,7 +189,7 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
                         </div>
 
                         <div className="space-y-2 w-full">
-                            <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
+                            <h2 className="text-xl font-bold text-white">
                                 {steps[step].title}
                             </h2>
                             <p className="text-sm text-text-secondary leading-relaxed px-4">
