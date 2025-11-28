@@ -8,6 +8,8 @@ import VaultPanel from './components/panels/VaultPanel'
 import MimicPanel from './components/panels/MimicPanel'
 import SettingsPanel from './components/panels/SettingsPanel'
 import IdentityPanel from './components/panels/IdentityPanel' // Import new panel
+import SplashScreen from './components/SplashScreen'
+import TutorialModal from './components/TutorialModal'
 import { ThemeProvider } from './components/ThemeContext'
 import { NotificationProvider } from './components/NotificationContext'
 import { NotificationSystem } from './components/ui/NotificationSystem'
@@ -22,6 +24,11 @@ type Format = 'Base64' | 'Hex' | 'Natural Text (Markov)'
 function AppLayout(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<Tab>('vault')
   const [panicMode, setPanicMode] = useState(false)
+
+  // Splash and Tutorial States
+  const [showSplash, setShowSplash] = useState(true)
+  const [showTutorial, setShowTutorial] = useState(false)
+
   const { t } = useTranslation('common')
 
   // Shared state lifted from panels
@@ -47,12 +54,36 @@ function AppLayout(): React.ReactElement {
     setActiveTab('vault')
   }
 
+  const handleSplashComplete = () => {
+    setShowSplash(false)
+    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial')
+    if (!hasSeenTutorial) {
+      setShowTutorial(true)
+    }
+  }
+
+  const handleTutorialComplete = () => {
+    setShowTutorial(false)
+    localStorage.setItem('hasSeenTutorial', 'true')
+  }
+
+  const handleReplayTutorial = () => {
+    setShowTutorial(true)
+  }
+
   if (panicMode) {
     return <PanicMode onExit={() => setPanicMode(false)} />
   }
 
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary font-sans selection:bg-accent-primary/30 selection:text-text-primary flex overflow-hidden">
+      <AnimatePresence>
+        {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showTutorial && <TutorialModal onComplete={handleTutorialComplete} onSkip={handleTutorialComplete} />}
+      </AnimatePresence>
+
       {/* Sidebar Navigation - Desktop */}
       <nav className="hidden md:flex w-20 bg-black/10 border-r border-white/5 flex-col items-center py-6 gap-8 z-50 backdrop-blur-xl">
         <div className="w-10 h-10 bg-accent-primary/10 rounded-xl flex items-center justify-center border border-accent-primary/20 shadow-[0_0_15px_rgba(var(--accent-primary),0.2)]">
@@ -163,7 +194,7 @@ function AppLayout(): React.ReactElement {
                 />
               )}
               {activeTab === 'identity' && <IdentityPanel />}
-              {activeTab === 'settings' && <SettingsPanel />}
+              {activeTab === 'settings' && <SettingsPanel onReplayTutorial={handleReplayTutorial} />}
             </motion.div>
           </AnimatePresence>
         </main>
