@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Lock, Eye, Copy, Trash2, Key, Unlock, Send, Image as ImageIcon } from 'lucide-react'
-import { GlassCard, GlassButton, GlassInput } from '../ui/GlassComponents'
+import { Eye, Copy, Trash2, Key, Unlock, Send, Image as ImageIcon, Keyboard, Code, Shield } from 'lucide-react'
+import { GlassCard, GlassButton, GlassInput, TechHeader, MobileTabSwitcher } from '../ui/GlassComponents'
 import { motion } from 'framer-motion'
 import { useApi } from '../../useApi'
 import { useTranslation } from 'react-i18next'
@@ -41,6 +41,7 @@ export default function VaultPanel({
   onSwitchToStego
 }: VaultPanelProps) {
   const [showKey, setShowKey] = useState(false)
+  const [activeTab, setActiveTab] = useState<'input' | 'output'>('input')
   const api = useApi()
   const { t, i18n } = useTranslation('vault')
 
@@ -84,6 +85,7 @@ export default function VaultPanel({
         setIsEncrypted(false)
         setOutputData('')
         setEncryptedPackage(null)
+        setActiveTab('input') // Switch to input to see result
       } else {
         // Encrypt Logic
         if (!inputData) return
@@ -92,6 +94,7 @@ export default function VaultPanel({
         setIsEncrypted(true)
         setInputData('') // Clear input for security
         formatOutput(result, currentFormat)
+        setActiveTab('output') // Switch to output to see result
       }
     } catch (error) {
       console.error(error)
@@ -142,167 +145,209 @@ export default function VaultPanel({
   }
 
   return (
-    <div className="flex flex-col gap-6 max-w-5xl mx-auto h-full">
+    <div className="flex flex-col gap-4 max-w-7xl mx-auto h-full px-2 lg:px-4">
+      {/* Top Section: Key Management */}
       <GlassCard className="flex flex-col gap-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-sm font-bold text-text-secondary uppercase tracking-wider flex items-center gap-2">
-            <Lock size={14} /> {t('sessionKey')}
-          </h3>
-          <div className="flex gap-2">
-            <GlassButton
-              variant="ghost"
-              size="sm"
-              onClick={() => copyToClipboard(secretKey)}
-              icon={<Copy size={14} />}
-              className="text-xs"
-              disabled={!secretKey}
-            >
-              {t('copy')}
-            </GlassButton>
-            <GlassButton
-              variant="ghost"
-              size="sm"
-              onClick={generateRandomKey}
-              icon={<Key size={14} />}
-              className="text-xs"
-            >
-              {t('generateRandom')}
-            </GlassButton>
-          </div>
-        </div>
+        <TechHeader
+          title={t('sessionKey')}
+          subtitle="AES-256-GCM"
+          icon={<Shield size={18} />}
+          className="mb-2"
+        />
         <div className="relative">
           <GlassInput
             type={showKey ? 'text' : 'password'}
             value={secretKey}
             onChange={(e) => setSecretKey(e.target.value)}
             placeholder={t('enterKey')}
-            className="pr-10"
+            className="pr-24 font-mono text-sm tracking-wide"
           />
-          <button
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors"
-            onClick={handleShowKey}
-          >
-            <Eye size={16} className={showKey ? 'text-accent-primary' : ''} />
-          </button>
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+             <button
+              className="p-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-glass-highlight"
+              onClick={handleShowKey}
+              title={showKey ? 'Hide' : 'Show'}
+            >
+              <Eye size={16} className={showKey ? 'text-accent-primary' : ''} />
+            </button>
+            <div className="w-px h-4 bg-glass-border mx-1"></div>
+            <button
+              className="p-2 text-text-secondary hover:text-accent-primary transition-colors rounded-lg hover:bg-glass-highlight"
+              onClick={() => copyToClipboard(secretKey)}
+              disabled={!secretKey}
+              title={t('copy')}
+            >
+              <Copy size={16} />
+            </button>
+            <button
+              className="p-2 text-text-secondary hover:text-accent-primary transition-colors rounded-lg hover:bg-glass-highlight"
+              onClick={generateRandomKey}
+              title={t('generateRandom')}
+            >
+              <Key size={16} />
+            </button>
+          </div>
         </div>
       </GlassCard>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-0">
-        {/* Input Area */}
-        <GlassCard className="flex flex-col gap-2 min-h-[300px]">
-          <label className="text-xs text-text-secondary font-bold uppercase">{t('rawData')}</label>
-          <textarea
-            value={inputData}
-            onChange={(e) => setInputData(e.target.value)}
-            disabled={isEncrypted}
-            placeholder={t('enterMessage')}
-            className="flex-1 bg-transparent border-none resize-none focus:outline-none text-text-primary placeholder-text-secondary/30 font-mono text-sm"
-          ></textarea>
-        </GlassCard>
+      {/* Mobile Tab Switcher */}
+      <div className="lg:hidden">
+        <MobileTabSwitcher
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          tabs={[
+            { id: 'input', label: t('rawData'), icon: <Keyboard size={16} /> },
+            { id: 'output', label: t('encryptedPayload'), icon: <Code size={16} /> }
+          ]}
+        />
+      </div>
 
-        {/* Action Button (Centered Overlay for Desktop) */}
-        <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none gap-4">
-          <div className="pointer-events-auto flex flex-col gap-2">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => handleProcess('encrypt')}
-              className="bg-gradient-to-r from-accent-primary to-accent-secondary text-white p-4 rounded-full shadow-[0_0_20px_rgba(var(--accent-primary),0.4)] flex items-center justify-center"
-              title={t('encrypt')}
+      {/* Main Split Layout */}
+      <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-4 lg:gap-6 relative">
+
+        {/* Left: Input Area */}
+        <div className={`h-full flex flex-col ${activeTab === 'input' ? 'flex' : 'hidden lg:flex'}`}>
+          <GlassCard className="flex-1 flex flex-col min-h-[300px] h-full">
+            <TechHeader title={t('rawData')} icon={<Keyboard size={18} />} />
+            <textarea
+              value={inputData}
+              onChange={(e) => setInputData(e.target.value)}
               disabled={isEncrypted}
+              placeholder={t('enterMessage')}
+              className="flex-1 bg-transparent border-none resize-none focus:outline-none text-text-primary placeholder-text-secondary/30 font-mono text-sm leading-relaxed p-2"
+            ></textarea>
+            {/* Mobile Actions embedded at bottom of input card */}
+             <div className="lg:hidden mt-4 pt-4 border-t border-glass-border flex gap-2">
+                 <GlassButton
+                   onClick={() => handleProcess('encrypt')}
+                   variant="primary"
+                   icon={<Send size={16}/>}
+                   className="flex-1"
+                   disabled={isEncrypted}
+                 >
+                   {t('encrypt')}
+                 </GlassButton>
+                 <GlassButton
+                   onClick={() => setInputData('')}
+                   variant="ghost"
+                   icon={<Trash2 size={16}/>}
+                 />
+             </div>
+          </GlassCard>
+        </div>
+
+        {/* Center: Action Buttons (Desktop Only) */}
+        <div className="hidden lg:flex flex-col justify-center gap-4 z-10">
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+            <button
+              onClick={() => handleProcess('encrypt')}
+              disabled={isEncrypted}
+              className={`p-4 rounded-xl shadow-lg transition-all ${
+                isEncrypted
+                ? 'bg-bg-secondary text-text-secondary cursor-not-allowed opacity-50'
+                : 'bg-accent-primary text-white shadow-[0_0_20px_rgba(var(--accent-primary),0.4)]'
+              }`}
+              title={t('encrypt')}
             >
               <Send size={24} />
-            </motion.button>
+            </button>
+          </motion.div>
 
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+          <div className="h-16 w-0.5 bg-gradient-to-b from-transparent via-glass-border to-transparent mx-auto"></div>
+
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+            <button
               onClick={() => handleProcess('decrypt')}
-              className="bg-bg-secondary border border-glass-border text-text-secondary hover:text-white p-3 rounded-full shadow-lg flex items-center justify-center backdrop-blur-sm"
+              className="p-4 rounded-xl bg-bg-secondary border border-glass-border text-text-secondary hover:text-white hover:border-accent-primary transition-all shadow-lg"
               title={t('decrypt')}
             >
-              <Unlock size={20} />
-            </motion.button>
-          </div>
-        </div>
-        {/* Mobile Action Button */}
-        <div className="lg:hidden flex justify-center gap-4 py-2">
-          <GlassButton onClick={() => handleProcess('encrypt')} variant="primary" icon={<Send />}>
-            {t('encrypt')}
-          </GlassButton>
-          <GlassButton
-            onClick={() => handleProcess('decrypt')}
-            variant="secondary"
-            icon={<Unlock />}
-          >
-            {t('decrypt')}
-          </GlassButton>
+              <Unlock size={24} />
+            </button>
+          </motion.div>
         </div>
 
-        {/* Output Area */}
-        <GlassCard className="flex flex-col gap-2 min-h-[300px] relative group">
-          <div className="flex justify-between items-center">
-            <label className="text-xs text-text-secondary font-bold uppercase">
-              {t('encryptedPayload')}
-            </label>
-            <div className="flex gap-2">
-              <button
-                onClick={() => copyToClipboard(outputData)}
-                className="p-1 hover:text-accent-primary text-text-secondary"
-              >
-                <Copy size={14} />
-              </button>
-              <button
-                onClick={() => {
-                  setOutputData('')
-                  setEncryptedPackage(null)
-                  setIsEncrypted(false)
-                }}
-                className="p-1 hover:text-danger text-text-secondary"
-              >
-                <Trash2 size={14} />
-              </button>
-            </div>
-          </div>
+        {/* Right: Output Area */}
+        <div className={`h-full flex flex-col ${activeTab === 'output' ? 'flex' : 'hidden lg:flex'}`}>
+          <GlassCard className="flex-1 flex flex-col min-h-[300px] h-full relative group">
+             <div className="flex justify-between items-start mb-2">
+                <TechHeader title={t('encryptedPayload')} icon={<Code size={18} />} className="mb-0" />
+                <div className="flex gap-1">
+                   <button
+                    onClick={() => copyToClipboard(outputData)}
+                    className="p-1.5 hover:bg-glass-highlight rounded-md text-text-secondary hover:text-accent-primary transition-colors"
+                  >
+                    <Copy size={16} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setOutputData('')
+                      setEncryptedPackage(null)
+                      setIsEncrypted(false)
+                      setActiveTab('input')
+                    }}
+                    className="p-1.5 hover:bg-glass-highlight rounded-md text-text-secondary hover:text-danger transition-colors"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+             </div>
 
-          <textarea
-            value={outputData}
-            onChange={(e) => setOutputData(e.target.value)}
-            className="flex-1 bg-transparent border-none resize-none focus:outline-none text-accent-primary placeholder-text-secondary/30 font-mono text-sm text-xs break-all leading-relaxed"
-            placeholder={t('waitingForData')}
-          />
+            <textarea
+              value={outputData}
+              onChange={(e) => setOutputData(e.target.value)}
+              className="flex-1 bg-transparent border-none resize-none focus:outline-none text-accent-primary placeholder-text-secondary/30 font-mono text-xs break-all leading-relaxed p-2"
+              placeholder={t('waitingForData')}
+            />
 
-          {outputData && (
-            <div className="absolute top-0 left-0 w-full h-1 bg-accent-primary/20 shadow-[0_0_15px_rgba(var(--accent-primary),0.5)] animate-[scan_3s_linear_infinite] pointer-events-none"></div>
-          )}
-        </GlassCard>
+            {outputData && (
+              <div className="absolute top-0 left-0 w-full h-1 bg-accent-primary/20 shadow-[0_0_15px_rgba(var(--accent-primary),0.5)] animate-[scan_3s_linear_infinite] pointer-events-none"></div>
+            )}
+
+            {/* Mobile Actions embedded at bottom of output card */}
+             <div className="lg:hidden mt-4 pt-4 border-t border-glass-border flex gap-2">
+                 <GlassButton
+                   onClick={() => handleProcess('decrypt')}
+                   variant="secondary"
+                   icon={<Unlock size={16}/>}
+                   className="flex-1"
+                 >
+                   {t('decrypt')}
+                 </GlassButton>
+             </div>
+          </GlassCard>
+        </div>
       </div>
 
-      <div className="flex flex-wrap gap-4 pb-2">
-        {(['Base64', 'Hex', 'Natural Text (Markov)'] as Format[]).map((fmt) => (
-          <GlassButton
-            key={fmt}
-            onClick={() => setCurrentFormat(fmt)}
-            variant={currentFormat === fmt ? 'primary' : 'secondary'}
+      {/* Footer: Format Selection & Stego Switch */}
+      <GlassCard className="p-3 lg:p-4 mt-auto">
+        <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
+          <div className="flex flex-wrap gap-2 justify-center lg:justify-start w-full lg:w-auto">
+             {(['Base64', 'Hex', 'Natural Text (Markov)'] as Format[]).map((fmt) => (
+              <button
+                key={fmt}
+                onClick={() => setCurrentFormat(fmt)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all border ${
+                  currentFormat === fmt
+                    ? 'bg-accent-primary/20 text-accent-primary border-accent-primary/50'
+                    : 'bg-transparent text-text-secondary border-transparent hover:bg-glass-highlight'
+                }`}
+              >
+                {fmt}
+              </button>
+            ))}
+          </div>
+
+           <GlassButton
+            onClick={onSwitchToStego}
+            variant="ghost"
             size="sm"
-            className="whitespace-nowrap"
+            icon={<ImageIcon size={16} />}
+            className="whitespace-nowrap w-full lg:w-auto"
           >
-            {fmt}
+            Image Stego
           </GlassButton>
-        ))}
-
-        <div className="w-px h-8 bg-glass-border mx-2"></div>
-
-        <GlassButton
-          onClick={onSwitchToStego}
-          variant="ghost"
-          size="sm"
-          icon={<ImageIcon size={16} />}
-          className="whitespace-nowrap"
-        >
-          Image Stego
-        </GlassButton>
-      </div>
+        </div>
+      </GlassCard>
 
       <style>{`
         @keyframes scan {

@@ -1,5 +1,3 @@
-import Store from 'electron-store'
-
 interface Todo {
   id: number
   text: string
@@ -48,15 +46,26 @@ const schema = {
   }
 } as const
 
-// Initialize store
-// Note: In renderer, we invoke this via IPC
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const store = new Store<StoreSchema>({ schema } as any)
+let store: any
 
-export function getStoreValue<K extends keyof StoreSchema>(key: K): StoreSchema[K] {
-  return store.get(key)
+async function getStore() {
+  if (store) return store
+  const { default: Store } = await import('electron-store')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  store = new Store({ schema } as any)
+  return store
 }
 
-export function setStoreValue<K extends keyof StoreSchema>(key: K, value: StoreSchema[K]): void {
-  store.set(key, value)
+export async function getStoreValue<K extends keyof StoreSchema>(key: K): Promise<StoreSchema[K]> {
+  const s = await getStore()
+  return s.get(key)
+}
+
+export async function setStoreValue<K extends keyof StoreSchema>(
+  key: K,
+  value: StoreSchema[K]
+): Promise<void> {
+  const s = await getStore()
+  s.set(key, value)
 }
