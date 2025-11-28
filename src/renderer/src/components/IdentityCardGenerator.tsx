@@ -3,17 +3,20 @@ import { embed } from '../services/webStego'
 import { generateIdentityId } from '../services/identity'
 import { GlassButton } from './ui/GlassComponents'
 import { Download, RefreshCcw } from 'lucide-react'
+import * as LucideIcons from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { OperatorTheme } from '../data/operators'
+import { OperatorTheme, OPERATORS } from '../data/operators'
+import { renderToStaticMarkup } from 'react-dom/server'
 
 interface IdentityCardGeneratorProps {
   publicKey: string
   username?: string
   theme?: OperatorTheme
+  isCustomName?: boolean
   onRegenerate: () => void
 }
 
-export function IdentityCardGenerator({ publicKey, username = 'AGENT', theme = 'Rhodes Island', onRegenerate }: IdentityCardGeneratorProps) {
+export function IdentityCardGenerator({ publicKey, username = 'AGENT', theme = 'Rhodes Island', isCustomName = false, onRegenerate }: IdentityCardGeneratorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -138,6 +141,52 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', theme = '
     ctx.font = '32px "Comfortaa", "Courier New", monospace'
     ctx.fillText(identityId, 40, 300)
 
+    // --- WATERMARK ICON LOGIC ---
+    try {
+      let IconComponent = LucideIcons.Shield
+
+      if (!isCustomName) {
+        // Try to find the operator specific icon
+        const operator = OPERATORS.find(op => op.name === username)
+        if (operator && operator.icon && LucideIcons[operator.icon]) {
+          IconComponent = LucideIcons[operator.icon]
+        }
+      }
+
+      const svgString = renderToStaticMarkup(
+        <IconComponent
+          size={300}
+          color={activeTheme.textSecondary}
+          strokeWidth={1}
+        />
+      )
+
+      // Need to URL encode the SVG string properly
+      const img = new Image()
+      const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' })
+      const url = URL.createObjectURL(svgBlob)
+
+      await new Promise((resolve, reject) => {
+        img.onload = resolve
+        img.onerror = reject
+        img.src = url
+      })
+
+      ctx.save()
+      ctx.globalAlpha = 0.1 // Semi-transparent
+      // Position bottom right, rotated
+      ctx.translate(width - 80, height - 30)
+      ctx.rotate(-15 * Math.PI / 180)
+      // Draw centered at the translated point
+      ctx.drawImage(img, -150, -150, 300, 300)
+      ctx.restore()
+
+      URL.revokeObjectURL(url)
+
+    } catch (err) {
+      console.warn('Failed to render watermark icon', err)
+    }
+
     // 2. Embed Data (Steganography)
     try {
       // Get raw image buffer from the visual canvas
@@ -181,7 +230,7 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', theme = '
       if (downloadUrl) URL.revokeObjectURL(downloadUrl)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [publicKey, username, theme])
+  }, [publicKey, username, theme, isCustomName])
 
   return (
     <div className="flex flex-col gap-4 items-center">
