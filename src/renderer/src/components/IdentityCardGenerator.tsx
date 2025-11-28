@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 import { embed } from '../services/webStego'
+import { generateIdentityId } from '../services/identity'
 import { GlassButton } from './ui/GlassComponents'
 import { Download, RefreshCcw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -69,16 +70,14 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', onRegener
     // ID / Key Label
     ctx.fillStyle = textColorSecondary
     ctx.font = '16px "Comfortaa", "Inter", sans-serif'
-    ctx.fillText('ID / PUBLIC KEY HASH', 40, 260)
+    ctx.fillText('ID (12 DIGIT / RSA)', 40, 260)
 
-    // ID Value (Shortened for aesthetics)
-    // Extract start and end of clean key (strip header/footer if present or just raw)
-    const cleanKey = publicKey.replace(/-----BEGIN PUBLIC KEY-----|-----END PUBLIC KEY-----|\n|\r/g, '')
-    const shortKey = cleanKey.substring(0, 8) + '...' + cleanKey.substring(cleanKey.length - 8)
+    // ID Value (Generated 12-digit code)
+    const identityId = await generateIdentityId(publicKey)
 
     ctx.fillStyle = textColorPrimary
-    ctx.font = '24px "Comfortaa", "Courier New", monospace'
-    ctx.fillText(shortKey, 40, 290)
+    ctx.font = '32px "Comfortaa", "Courier New", monospace'
+    ctx.fillText(identityId, 40, 300)
 
     // 2. Embed Data (Steganography)
     try {
@@ -88,11 +87,16 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', onRegener
 
       const imageBuffer = await blob.arrayBuffer()
 
-      // New Payload: JSON Object
-      const payload = JSON.stringify({
-        name: username,
-        publicKey: publicKey
-      })
+      // New Payload: Standard Wrapped JSON Object
+      const payloadObj = {
+        c3_type: 'identity',
+        payload: {
+          name: username,
+          publicKey: publicKey
+        }
+      }
+
+      const payload = JSON.stringify(payloadObj)
       const dataBuffer = new TextEncoder().encode(payload).buffer
 
       // Embed logic returns a Uint8Array representing the NEW PNG with data
