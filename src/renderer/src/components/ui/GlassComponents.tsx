@@ -1,5 +1,5 @@
 import React from 'react'
-import { motion, HTMLMotionProps, TargetAndTransition } from 'framer-motion'
+import { motion, HTMLMotionProps } from 'framer-motion'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { Sparkles, Terminal } from 'lucide-react'
@@ -96,31 +96,17 @@ interface GlassCardProps extends HTMLMotionProps<'div'> {
   children: React.ReactNode
   className?: string
   gradient?: boolean
+  /** @deprecated Floating effect is removed in favor of unified entry animation */
   floating?: boolean
 }
 
 export function GlassCard({ children, className, gradient = false, floating = false, ...props }: GlassCardProps) {
-  const floatingAnimation: TargetAndTransition = {
-    y: [0, -10, 0],
-    transition: {
-      duration: 2,
-      ease: "easeInOut",
-      repeat: Infinity,
-    }
-  };
-
-  const initialEnterAnimation: TargetAndTransition = { opacity: 1, y: 0 };
-
-  const animateProp = floating
-    ? { opacity: 1, ...floatingAnimation } as TargetAndTransition
-    : initialEnterAnimation;
-
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={animateProp}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -20, scale: 0.95 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25, duration: 0.4 }}
       className={cn(
         'glass-panel rounded-2xl p-6 relative overflow-hidden group border border-white/5 shadow-2xl backdrop-blur-xl bg-black/20',
         gradient &&
