@@ -190,6 +190,7 @@ export default function IdentityPanel() {
                 publicKey={myPublicKeyPem}
                 username={displayUsername}
                 theme={displayTheme}
+                isCustomName={!!myName}
                 onRegenerate={handleGenerateKeys}
               />
             </div>
