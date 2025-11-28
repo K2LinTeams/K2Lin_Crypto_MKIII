@@ -42,7 +42,11 @@
     "targetRecipient": "Target Recipient",
     "decryptionComplete": "Decryption successful.",
     "encryptionComplete": "Encryption successful.",
-    "selectContact": "Select a contact..."
+    "selectContact": "Select a contact...",
+    "contactImported": "Contact imported successfully.",
+    "contactExists": "Contact already exists.",
+    "noDataOrInvalidKey": "No encrypted data found to decrypt or Key Invalid.",
+    "enterSessionKey": "Please enter a Session Key."
   },
   "identity": {
     "title": "Digital Identity",
@@ -88,7 +92,8 @@
     "outputPreview": "Output Preview",
     "stegoEncoded": ":: STEGO_ENCODED_IMAGE ::",
     "downloadResult": "Download Result",
-    "noOutput": "No Output Generated"
+    "noOutput": "No Output Generated",
+    "enterEmbedText": "Please enter some text to embed first."
   },
   "settings": {
     "title": "System Configuration",

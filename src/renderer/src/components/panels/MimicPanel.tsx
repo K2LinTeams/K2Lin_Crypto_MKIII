@@ -177,7 +177,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
                 }`}
                 onClick={() => {
                   if (manualMode && !manualInput) {
-                    addNotification('error', 'Please enter some text to embed first.')
+                      addNotification('error', t('enterEmbedText'))
                     return
                   }
                   fileInputRef.current?.click()

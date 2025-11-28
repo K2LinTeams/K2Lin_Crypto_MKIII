@@ -185,9 +185,9 @@ export default function VaultPanel({
                     const updatedContacts = [...currentContacts, newContact]
                     localStorage.setItem('contacts', JSON.stringify(updatedContacts))
                     setContacts(updatedContacts) // Update local state so it appears in dropdown immediately
-                    addNotification('success', 'Contact imported successfully.')
+                    addNotification('success', t('contactImported'))
                 } else {
-                    addNotification('info', 'Contact already exists.')
+                    addNotification('info', t('contactExists'))
                 }
 
                 // Clear the UI as the "decryption" action (processing) is done
@@ -266,7 +266,7 @@ export default function VaultPanel({
           setActiveTab('input')
           addNotification('success', t('decryptionComplete'))
         } else {
-          addNotification('error', t('noDataToDecrypt') + ' or Key Invalid')
+          addNotification('error', t('noDataOrInvalidKey'))
         }
       } else {
         // --- Encrypt Logic ---
@@ -286,7 +286,7 @@ export default function VaultPanel({
         } else {
           // Symmetric Encryption (Standard)
           if (!secretKey) {
-            addNotification('error', 'Please enter a Session Key')
+            addNotification('error', t('enterSessionKey'))
             return
           }
           const result = await api.crypto.encrypt(inputData, secretKey)
