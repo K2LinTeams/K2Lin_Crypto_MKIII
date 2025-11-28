@@ -142,7 +142,7 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
                       value={manualInput}
                       onChange={(e) => setManualInput(e.target.value)}
                       placeholder="Enter text to hide in image..."
-                      className="w-full h-32 bg-black/20 rounded-xl border border-glass-border focus:border-accent-primary outline-none resize-none text-sm p-3 font-mono"
+                      className="w-full h-32 bg-black/20 rounded-xl border border-glass-border focus:border-accent-primary outline-none resize-none text-sm p-2 font-mono"
                     />
                   </motion.div>
                 )}

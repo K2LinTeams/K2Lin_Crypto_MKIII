@@ -24,15 +24,12 @@ export function TechHeader({ title, subtitle, icon, className }: TechHeaderProps
     <div className={cn('flex items-center gap-3 mb-4 select-none', className)}>
       <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-accent-primary/10 border border-accent-primary/20 text-accent-primary shadow-[0_0_10px_rgba(var(--accent-primary),0.2)]">
         {icon || <Terminal size={16} />}
-        {/* Decorative corner bits */}
-        <div className="absolute top-0 left-0 w-1 h-1 bg-accent-primary/50" />
-        <div className="absolute bottom-0 right-0 w-1 h-1 bg-accent-primary/50" />
       </div>
       <div className="flex flex-col">
-        <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider flex items-center gap-2 font-mono">
+        <h3 className="text-lg font-bold text-text-primary uppercase tracking-wider flex items-center gap-2 font-mono">
           {title}
         </h3>
-        {subtitle && <span className="text-[10px] text-text-secondary uppercase tracking-widest font-mono opacity-70">{subtitle}</span>}
+        {subtitle && <span className="text-xs text-text-secondary uppercase tracking-widest font-mono opacity-70">{subtitle}</span>}
       </div>
       {/* Decorative Line */}
       <div className="flex-1 h-px bg-gradient-to-r from-accent-primary/50 to-transparent ml-4" />
@@ -116,10 +113,6 @@ export function GlassCard({ children, className, gradient = false, ...props }: G
       )}
       {...props}
     >
-       {/* Tech Deco: Corner accents that appear on hover or always slightly visible */}
-       <div className="absolute top-0 left-0 w-3 h-3 border-l-2 border-t-2 border-accent-primary/0 group-hover:border-accent-primary/30 transition-colors rounded-tl-lg pointer-events-none" />
-       <div className="absolute bottom-0 right-0 w-3 h-3 border-r-2 border-b-2 border-accent-primary/0 group-hover:border-accent-primary/30 transition-colors rounded-br-lg pointer-events-none" />
-
       {children}
     </motion.div>
   )
@@ -201,7 +194,7 @@ export function GlassInput({ className, label, error, ...props }: GlassInputProp
       )}
       <input
         className={cn(
-          'glass-input w-full rounded-xl px-4 py-3 text-text-primary placeholder-text-secondary/50 focus:outline-none focus:border-accent-primary/50 focus:ring-1 focus:ring-accent-primary/50 transition-all font-mono text-sm',
+          'glass-input w-full rounded-xl px-3 py-2 text-text-primary placeholder-text-secondary/50 focus:outline-none focus:border-accent-primary/50 focus:ring-1 focus:ring-accent-primary/50 transition-all font-mono text-sm',
           error && 'border-danger/50 focus:border-danger focus:ring-danger',
           className
         )}
