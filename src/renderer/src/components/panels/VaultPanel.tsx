@@ -214,7 +214,7 @@ export default function VaultPanel({
               onChange={(e) => setInputData(e.target.value)}
               disabled={isEncrypted}
               placeholder={t('enterMessage')}
-              className="flex-1 bg-transparent border-none resize-none focus:outline-none text-text-primary placeholder-text-secondary/30 font-mono text-sm leading-relaxed p-2"
+              className="flex-1 bg-transparent border-none resize-none focus:outline-none text-text-primary placeholder-text-secondary/30 font-mono text-sm leading-relaxed"
             ></textarea>
             {/* Mobile Actions embedded at bottom of input card */}
              <div className="lg:hidden mt-4 pt-4 border-t border-glass-border flex gap-2">
@@ -295,7 +295,7 @@ export default function VaultPanel({
             <textarea
               value={outputData}
               onChange={(e) => setOutputData(e.target.value)}
-              className="flex-1 bg-transparent border-none resize-none focus:outline-none text-accent-primary placeholder-text-secondary/30 font-mono text-xs break-all leading-relaxed p-2"
+              className="flex-1 bg-transparent border-none resize-none focus:outline-none text-accent-primary placeholder-text-secondary/30 font-mono text-xs break-all leading-relaxed"
               placeholder={t('waitingForData')}
             />
 

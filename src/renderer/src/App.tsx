@@ -50,8 +50,8 @@ function AppLayout(): React.ReactElement {
 
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary font-sans selection:bg-accent-primary/30 selection:text-text-primary flex overflow-hidden">
-      {/* Sidebar Navigation */}
-      <nav className="w-20 bg-bg-secondary/50 border-r border-glass-border flex flex-col items-center py-6 gap-8 z-50 backdrop-blur-xl">
+      {/* Sidebar Navigation - Desktop */}
+      <nav className="hidden md:flex w-20 bg-bg-secondary/50 border-r border-glass-border flex-col items-center py-6 gap-8 z-50 backdrop-blur-xl">
         <div className="w-10 h-10 bg-accent-primary/10 rounded-xl flex items-center justify-center border border-accent-primary/20 shadow-[0_0_15px_rgba(var(--accent-primary),0.2)]">
           <Shield size={24} className="text-accent-primary" />
         </div>
@@ -93,7 +93,7 @@ function AppLayout(): React.ReactElement {
       </nav>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col relative overflow-hidden">
+      <div className="flex-1 flex flex-col relative overflow-hidden pb-16 md:pb-0">
         {/* Animated Background Blobs */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent-primary/20 blur-[120px] rounded-full animate-pulse"></div>
@@ -101,9 +101,9 @@ function AppLayout(): React.ReactElement {
         </div>
 
         {/* Top Bar */}
-        <header className="h-16 border-b border-glass-border flex items-center justify-between px-8 backdrop-blur-sm z-40 bg-bg-primary/30">
+        <header className="h-16 border-b border-glass-border flex items-center justify-between px-4 md:px-8 backdrop-blur-sm z-40 bg-bg-primary/30">
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-accent-primary to-accent-secondary">
+            <h1 className="text-2xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-accent-primary to-accent-secondary">
               CRYPTO<span className="font-light">3</span>
             </h1>
             <span className="text-[10px] bg-bg-secondary text-text-secondary px-2 py-0.5 rounded border border-glass-border">
@@ -112,12 +112,13 @@ function AppLayout(): React.ReactElement {
           </div>
           <div className="flex items-center gap-2 text-xs text-success">
             <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-            <span>{t('systemSecure')}</span>
+            <span className="hidden md:inline">{t('systemSecure')}</span>
+            <Shield size={14} className="md:hidden" />
           </div>
         </header>
 
         {/* Dynamic Content Panel */}
-        <main className="flex-1 p-6 overflow-hidden z-10">
+        <main className="flex-1 p-4 md:p-6 overflow-hidden z-10">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -155,6 +156,47 @@ function AppLayout(): React.ReactElement {
             </motion.div>
           </AnimatePresence>
         </main>
+
+        {/* Bottom Navigation - Mobile */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-bg-secondary/80 backdrop-blur-xl border-t border-glass-border z-50 flex items-center justify-around px-2">
+          {[
+            { id: 'vault', icon: Lock, label: 'Vault' },
+            { id: 'mimic', icon: ImageIcon, label: 'Mimic' },
+            { id: 'settings', icon: Settings, label: 'Config' }
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id as Tab)}
+              className={clsx(
+                'flex flex-col items-center gap-1 p-2 rounded-xl transition-all',
+                activeTab === item.id
+                  ? 'text-accent-primary'
+                  : 'text-text-secondary hover:text-text-primary'
+              )}
+            >
+              <div
+                className={clsx(
+                  'p-1.5 rounded-lg transition-all',
+                  activeTab === item.id
+                    ? 'bg-accent-primary/20 shadow-[0_0_10px_rgba(var(--accent-primary),0.2)]'
+                    : ''
+                )}
+              >
+                <item.icon size={20} />
+              </div>
+              <span className="text-[10px] font-medium">{item.label}</span>
+            </button>
+          ))}
+          <button
+            onClick={() => setPanicMode(true)}
+            className="flex flex-col items-center gap-1 p-2 text-red-500/70 hover:text-red-400"
+          >
+            <div className="p-1.5 rounded-lg bg-red-500/10">
+              <EyeOff size={20} />
+            </div>
+            <span className="text-[10px] font-medium">Panic</span>
+          </button>
+        </nav>
       </div>
     </div>
   )
