@@ -38,7 +38,7 @@
     "clear": "Clear",
     "clearHint": "Clear to edit",
     "symmetricAES": "Symmetric (AES)",
-    "asymmetricRSA": "Asymmetric (RSA)",
+    "asymmetricRSA": "Asymmetric (ECC)",
     "targetRecipient": "Target Recipient",
     "decryptionComplete": "Decryption successful.",
     "encryptionComplete": "Encryption successful.",
@@ -52,7 +52,7 @@
     "title": "Digital Identity",
     "description": "Manage your cryptographic identity and verified contacts.",
     "myIdentity": "My Identity",
-    "noIdentity": "No identity detected. Generate a secure RSA keypair to create your Access Card.",
+    "noIdentity": "No identity detected. Generate a secure X25519 keypair to create your Access Card.",
     "generate": "Generate Identity",
     "knownAssociates": "Known Associates",
     "import": "Import Card",
@@ -123,14 +123,14 @@
     "welcomeDesc": "Your ultimate tool for secure communication and digital camouflage. Let's get you started!",
     "rsaAesTitle": "Hybrid Encryption 🛡️",
     "rsaAesDesc": "Toggle between modes in the Crypt panel to suit your needs.",
-    "rsaAesTip": "💡 Pro Tip: Use AES (Symmetric) for your own files. Use RSA (Asymmetric) to send secrets to friends.",
+    "rsaAesTip": "💡 Pro Tip: Use AES (Symmetric) for your own files. Use ECC (Asymmetric) to send secrets to friends.",
     "lookFor": "Look for this switch:",
-    "rsaStep1Title": "Start with RSA: Your Identity 🪪",
-    "rsaStep1Desc": "First, go to the ID panel and generate your Identity Card. This allows others to send you secure messages.",
+    "rsaStep1Title": "Start with ECC: Your Identity 🪪",
+    "rsaStep1Desc": "First, go to the ID panel and generate your Identity Card. This allows others to send you secure messages using X25519.",
     "rsaStep2Title": "Exchange Identity Cards 🤝",
     "rsaStep2Desc": "Send your card file to a friend. When they send you theirs, click 'Import Card'. They will appear in your contacts.",
     "rsaStep3Title": "Encrypt for a Friend 🔒",
-    "rsaStep3Desc": "In the Crypt panel, select 'Asymmetric (RSA)'. Pick your friend from the list. Now, only *they* can decrypt the message.",
+    "rsaStep3Desc": "In the Crypt panel, select 'Asymmetric (ECC)'. Pick your friend from the list. Now, only *they* can decrypt the message.",
     "aesStep1Title": "Symmetric Encryption (AES) 🔑",
     "aesStep1Desc": "Uses the same key for encryption and decryption. Ideal for personal files or quick sharing.",
     "aesStep2Title": "Decrypting with AES 🔓",
@@ -146,7 +146,7 @@
   "encyclopedia": {
     "back": "Return to Mission",
     "tabs": {
-      "rsa": "RSA Protocols",
+      "rsa": "ECC Protocols",
       "aes": "AES Channel",
       "stego": "Visual Arts",
       "diff": "Tactical Analysis",
@@ -160,11 +160,11 @@
       "tech": "The ID card is a JSON container with an RSA-2048 public key and name, plus a SHA-256 signature. The system verifies this signature on import to prevent tampering."
     },
     "rsa": {
-      "title": "RSA: Public Channel",
+      "title": "ECC: X25519 Exchange",
       "analogyTitle": "Rhodes Island Command Link",
       "analogy": "Think of it as a public drop-box for Operator reports. Any Operator can deposit a report (Public Key), but only the Doctor with the command clearance (Private Key) can unlock and read it.",
       "techTitle": "PRTS Technical Data",
-      "tech": "RSA relies on complex factorization algorithms, similar to decoding ancient Originium patterns. It is computationally heavy (slow Arts), so we use it primarily to securely exchange the tactical frequencies (AES keys)."
+      "tech": "X25519 is a high-speed Elliptic Curve protocol. Unlike the ancient RSA (slow Arts), ECC is lightweight and extremely fast, generating shared secrets (ECDH) to establish secure channels instantly."
     },
     "aes": {
       "title": "AES: Secure Frequency",
@@ -183,7 +183,7 @@
     "diff": {
       "title": "Tactical Comparison",
       "speed": "Casting Speed",
-      "speedRsa": "Slow (Heavy Arts)",
+      "speedRsa": "Fast (Standard Arts)",
       "speedAes": "Instant (Standard Comms)",
       "keys": "Clearance Required",
       "keysRsa": "Dual (Public/Private)",

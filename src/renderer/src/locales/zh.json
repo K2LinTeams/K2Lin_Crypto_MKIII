@@ -38,7 +38,7 @@
     "clear": "清除",
     "clearHint": "清除以编辑",
     "symmetricAES": "对称加密 (AES)",
-    "asymmetricRSA": "非对称加密 (RSA)",
+    "asymmetricRSA": "非对称加密 (ECC)",
     "targetRecipient": "目标接收者",
     "decryptionComplete": "解密成功。",
     "encryptionComplete": "加密成功。",
@@ -52,7 +52,7 @@
     "title": "数字身份",
     "description": "管理您的加密身份和已验证的联系人。",
     "myIdentity": "我的身份",
-    "noIdentity": "未检测到身份。生成安全的 RSA 密钥对以创建您的访问卡。",
+    "noIdentity": "未检测到身份。生成安全的 X25519 密钥对以创建您的访问卡。",
     "generate": "生成身份",
     "knownAssociates": "已知联系人",
     "import": "导入身份卡",
@@ -123,14 +123,14 @@
     "welcomeDesc": "您的终极安全通信与数字伪装工具。让我们开始吧！",
     "rsaAesTitle": "混合加密技术 🛡️",
     "rsaAesDesc": "在加解密面板中切换模式以满足您的需求。",
-    "rsaAesTip": "💡 专家提示：个人文件使用 AES (对称加密)。给朋友发送绝密信息使用 RSA (非对称加密)。",
+    "rsaAesTip": "💡 专家提示：个人文件使用 AES (对称加密)。给朋友发送绝密信息使用 ECC (非对称加密)。",
     "lookFor": "寻找此开关：",
-    "rsaStep1Title": "RSA 第一步：您的身份 🪪",
-    "rsaStep1Desc": "首先，在“身份”面板生成您的身份卡。这把“公钥”让其他人能给您发送加密信息。",
+    "rsaStep1Title": "ECC 第一步：您的身份 🪪",
+    "rsaStep1Desc": "首先，在“身份”面板生成您的身份卡。这把“公钥”让其他人能给您发送加密信息 (X25519)。",
     "rsaStep2Title": "交换身份卡 🤝",
     "rsaStep2Desc": "将您的卡片文件发给朋友。当他们把卡片发给您时，点击“导入身份卡”。他们会出现在您的联系人列表中。",
     "rsaStep3Title": "给朋友加密 🔒",
-    "rsaStep3Desc": "在加解密面板中，选择“非对称 (RSA)”。从列表中选择您的朋友。现在，只有*他们*能解密这条消息。",
+    "rsaStep3Desc": "在加解密面板中，选择“非对称 (ECC)”。从列表中选择您的朋友。现在，只有*他们*能解密这条消息。",
     "aesStep1Title": "对称加密 (AES) 🔑",
     "aesStep1Desc": "加密和解密使用相同的密钥。适用于个人文件保护或持有共享密码的通信。",
     "aesStep2Title": "AES 解密 🔓",
@@ -146,18 +146,18 @@
   "encyclopedia": {
     "back": "返回任务",
     "tabs": {
-      "rsa": "RSA 协议",
+      "rsa": "ECC 协议",
       "aes": "AES 频道",
       "stego": "光学伪装",
       "diff": "战术分析",
       "id": "干员档案"
     },
     "rsa": {
-      "title": "RSA: 公共频道",
+      "title": "ECC: X25519 交换",
       "analogyTitle": "罗德岛指令链路",
       "analogy": "这就好比一个公共的干员报告箱。任何干员都可以投入报告（使用公钥），但只有拥有最高指挥权限的博士（私钥）才能解锁并读取内容。",
       "techTitle": "PRTS 技术数据",
-      "tech": "RSA 依赖于类似于解析古老源石技艺的复杂因数分解算法。其源石技艺消耗极高（施法慢），因此我们通常仅用它来安全地交换战术通讯频道（AES 密钥）。"
+      "tech": "X25519 是高速椭圆曲线协议。与古老的 RSA（施法慢）不同，ECC 轻量且极快，可瞬间生成共享秘密（ECDH）以建立安全通讯频道。"
     },
     "aes": {
       "title": "AES: 加密频段",
@@ -176,7 +176,7 @@
     "diff": {
       "title": "战术性能对比",
       "speed": "施法速度",
-      "speedRsa": "慢 (重型法术)",
+      "speedRsa": "快 (标准法术)",
       "speedAes": "即时 (标准通讯)",
       "keys": "所需权限",
       "keysRsa": "双重 (公钥/私钥)",

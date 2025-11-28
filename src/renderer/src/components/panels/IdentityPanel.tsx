@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { generateKeyPair, exportKey } from '../../services/rsa'
+import { generateKeyPair, exportKey } from '../../services/asymmetric'
 import { IdentityCardGenerator } from '../IdentityCardGenerator'
 import { generateIdentityId } from '../../services/identity'
 import { GlassCard, GlassButton, TechHeader, GlassInput } from '../ui/GlassComponents'
@@ -106,30 +106,15 @@ export default function IdentityPanel() {
              name = jsonPayload.payload.name
              publicKey = jsonPayload.payload.publicKey
         } else {
-            // Legacy format check (optional, but code says "strict for new" - implies if it looks like JSON but not right format, fail.
-            // However, we might still want to support the OLD JSON format if user has old cards?
-            // User said "strict for new because of now is beta testing phase".
-            // I interpret this as: enforce the new wrapper structure. Old cards might fail or need regeneration.
-            // But to be safe and helpful, if it fails the strict check, we throw.
             throw new Error('Invalid Identity Card format')
         }
       } catch (e) {
         console.warn('JSON Parse failed or Strict Check failed:', e)
-        // Fallback to Raw String (Legacy Format) - Keep this for very old raw keys if desired, or remove if strict means STRICT.
-        // Given "strict for new", I will assume we only accept the new JSON wrapper.
-        // But for safety during dev, I'll comment out the fallback or remove it to be compliant with "Strict".
-
-        // Actually, let's keep the RAW string fallback only for debugging/legacy-legacy but remove the old JSON support.
-        if (decodedString.includes('BEGIN PUBLIC KEY') && !decodedString.trim().startsWith('{')) {
-           publicKey = decodedString
-           name = prompt(t('enterContactName')) || t('unknownAgent')
-        } else {
-            addNotification('error', t('importInvalid'))
-            return
-        }
+        addNotification('error', t('importInvalid'))
+        return
       }
 
-      if (publicKey && publicKey.includes('BEGIN PUBLIC KEY')) {
+      if (publicKey) {
         const newContact: Contact = { name, publicKey, addedAt: Date.now() }
         const newContacts = [...contacts, newContact]
         setContacts(newContacts)
@@ -266,7 +251,7 @@ export default function IdentityPanel() {
                               </div>
                             )}
                             <div className="text-[9px] text-white/40 font-mono tracking-wider">
-                              {contact.publicKey.substring(30, 46)}...{contact.publicKey.substring(contact.publicKey.length - 8)}
+                              {contact.publicKey.length > 20 ? contact.publicKey.substring(0, 16) + '...' + contact.publicKey.substring(contact.publicKey.length - 8) : contact.publicKey}
                             </div>
                           </div>
                         </div>
