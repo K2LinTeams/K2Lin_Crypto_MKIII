@@ -184,7 +184,7 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
         exit={{ scale: 0.9, opacity: 0 }}
         className="w-full max-w-md"
       >
-        <GlassCard className="relative overflow-hidden border-accent-primary/30 shadow-[0_0_50px_rgba(var(--accent-primary),0.15)] min-h-[500px] flex flex-col">
+        <GlassCard className="relative overflow-hidden border-accent-primary/30 shadow-[0_0_50px_rgba(var(--accent-primary),0.15)] min-h-[500px] max-h-[85vh] flex flex-col">
 
             {/* Background Blob for visual flair */}
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-accent-primary/20 blur-[60px] rounded-full pointer-events-none" />

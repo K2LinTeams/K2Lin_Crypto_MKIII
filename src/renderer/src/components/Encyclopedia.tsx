@@ -25,10 +25,11 @@ export default function Encyclopedia({ initialTopic, onBack }: EncyclopediaProps
     { id: 'aes', label: t('tabs.aes') },
     { id: 'stego', label: t('tabs.stego') },
     { id: 'diff', label: t('tabs.diff') },
+    { id: 'id', label: t('tabs.id') },
   ]
 
   return (
-    <div className="flex flex-col h-full w-full max-h-[600px]">
+    <div className="flex flex-col h-full w-full">
       {/* Header & Tabs */}
       <div className="flex items-center gap-4 mb-6">
         <button
@@ -69,6 +70,7 @@ export default function Encyclopedia({ initialTopic, onBack }: EncyclopediaProps
             {activeTab === 'aes' && <AESBlock t={t} />}
             {activeTab === 'stego' && <StegoBlock t={t} />}
             {activeTab === 'diff' && <DiffBlock t={t} />}
+            {activeTab === 'id' && <IDBlock t={t} />}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -134,6 +136,74 @@ function RSABlock({ t }: { t: any }) {
         <div className="bg-white/5 p-3 rounded-lg border-l-2 border-white/20">
           <h3 className="text-sm font-bold text-white mb-1">{t('rsa.techTitle')}</h3>
           <p className="text-xs text-text-secondary leading-relaxed font-mono">{t('rsa.tech')}</p>
+        </div>
+      </div>
+    </>
+  )
+}
+
+function IDBlock({ t }: { t: any }) {
+  return (
+    <>
+      <h2 className="text-xl font-bold text-accent-primary flex items-center gap-2">
+        <Shield size={24} /> {t('id.title')}
+      </h2>
+
+      {/* Animation: Signing */}
+      <div className="w-full h-40 bg-white/5 rounded-lg flex items-center justify-center relative overflow-hidden border border-white/10 my-2">
+
+        {/* Document */}
+        <div className="w-32 h-24 bg-white/10 border border-white/20 rounded p-2 flex flex-col gap-1 relative shadow-lg">
+          <div className="w-8 h-8 rounded bg-white/10 mb-2 flex items-center justify-center">
+            <User size={16} className="text-white/50" />
+          </div>
+          <div className="w-full h-1 bg-white/10 rounded"></div>
+          <div className="w-2/3 h-1 bg-white/10 rounded"></div>
+          <div className="w-3/4 h-1 bg-white/10 rounded"></div>
+
+          {/* Signature Mark */}
+          <motion.div
+            className="absolute bottom-2 right-2 border-2 border-accent-secondary rounded-full w-8 h-8 flex items-center justify-center rotate-[-12deg]"
+            initial={{ scale: 2, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{
+               repeat: Infinity,
+               duration: 3,
+               delay: 1.5,
+               repeatDelay: 0.5
+            }}
+          >
+             <div className="text-[6px] font-bold text-accent-secondary">SIG</div>
+          </motion.div>
+        </div>
+
+        {/* The Pen / Stamp Tool */}
+        <motion.div
+           className="absolute"
+           animate={{
+              x: [20, 0, 20],
+              y: [-20, 20, -20],
+              opacity: [0, 1, 0]
+           }}
+           transition={{
+              repeat: Infinity,
+              duration: 3,
+              repeatDelay: 0.5
+           }}
+        >
+           <div className="w-4 h-12 bg-accent-secondary rounded-full shadow-[0_0_10px_rgba(var(--accent-secondary),0.5)] origin-bottom rotate-[30deg]"></div>
+        </motion.div>
+
+      </div>
+
+      <div className="space-y-4">
+        <div className="bg-white/5 p-3 rounded-lg border-l-2 border-accent-primary">
+          <h3 className="text-sm font-bold text-white mb-1">{t('id.analogyTitle')}</h3>
+          <p className="text-sm text-text-secondary leading-relaxed">{t('id.analogy')}</p>
+        </div>
+        <div className="bg-white/5 p-3 rounded-lg border-l-2 border-white/20">
+          <h3 className="text-sm font-bold text-white mb-1">{t('id.techTitle')}</h3>
+          <p className="text-xs text-text-secondary leading-relaxed font-mono">{t('id.tech')}</p>
         </div>
       </div>
     </>

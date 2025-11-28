@@ -149,7 +149,15 @@
       "rsa": "RSA Protocols",
       "aes": "AES Channel",
       "stego": "Visual Arts",
-      "diff": "Tactical Analysis"
+      "diff": "Tactical Analysis",
+      "id": "Identity"
+    },
+    "id": {
+      "title": "Operator Card",
+      "analogyTitle": "Auth Protocol",
+      "analogy": "Every operator needs a certified profile. This profile (public key) is public, but only your private seal (private key) can sign it. Exchanging cards is exchanging trust.",
+      "techTitle": "PRTS Data Structure",
+      "tech": "The ID card is a JSON container with an RSA-2048 public key and name, plus a SHA-256 signature. The system verifies this signature on import to prevent tampering."
     },
     "rsa": {
       "title": "RSA: Public Channel",
