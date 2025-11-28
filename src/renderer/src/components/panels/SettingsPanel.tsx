@@ -103,7 +103,7 @@ export default function SettingsPanel() {
 
         {/* System Settings */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-           <GlassCard className="flex flex-col justify-between overflow-hidden relative">
+           <GlassCard className="flex flex-col justify-between overflow-hidden relative opacity-60 grayscale-[0.5] pointer-events-none">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex gap-3">
                    <div className="p-2 bg-accent-primary/10 rounded-lg text-accent-primary">
@@ -111,11 +111,12 @@ export default function SettingsPanel() {
                    </div>
                    <div>
                       <div className="text-text-primary font-bold font-mono text-sm">{t('clipboardMonitor')}</div>
-                      <div className="text-text-secondary text-xs mt-1">{t('clipboardMonitorDesc')}</div>
+                      <div className="text-text-secondary text-xs mt-1">{t('clipboardMonitorDesc')} (N/A)</div>
                    </div>
                 </div>
-                <div className="w-10 h-5 bg-bg-secondary rounded-full relative cursor-pointer border border-glass-border">
-                  <div className="absolute right-1 top-0.5 w-3.5 h-3.5 bg-accent-primary rounded-full shadow-lg shadow-accent-primary/50"></div>
+                {/* Disabled Toggle UI */}
+                <div className="w-10 h-5 bg-bg-secondary rounded-full relative border border-glass-border">
+                  <div className="absolute left-1 top-0.5 w-3.5 h-3.5 bg-text-secondary/20 rounded-full"></div>
                 </div>
               </div>
            </GlassCard>
@@ -199,7 +200,17 @@ export default function SettingsPanel() {
             <div className="text-red-400/80 text-xs leading-relaxed">
               {t('emergencyWipeDesc')}
             </div>
-            <GlassButton variant="danger" size="sm" className="whitespace-nowrap w-full md:w-auto">
+            <GlassButton
+              variant="danger"
+              size="sm"
+              className="whitespace-nowrap w-full md:w-auto"
+              onClick={() => {
+                if (window.confirm(t('confirmWipe') || 'Are you sure you want to wipe all data? This cannot be undone.')) {
+                   localStorage.clear()
+                   window.location.reload()
+                }
+              }}
+            >
               {t('execute')}
             </GlassButton>
           </div>

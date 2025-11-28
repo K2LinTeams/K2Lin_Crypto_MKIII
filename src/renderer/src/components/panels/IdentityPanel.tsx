@@ -73,19 +73,33 @@ export default function IdentityPanel() {
       let publicKey = ''
 
       try {
-        // Try parsing as JSON (New Format)
         const jsonPayload = JSON.parse(decodedString)
-        if (jsonPayload.publicKey && jsonPayload.name) {
-          name = jsonPayload.name
-          publicKey = jsonPayload.publicKey
+
+        // Strict check for new format: c3_type: 'identity'
+        if (jsonPayload.c3_type === 'identity' && jsonPayload.payload) {
+             name = jsonPayload.payload.name
+             publicKey = jsonPayload.payload.publicKey
         } else {
-          throw new Error('Invalid JSON structure')
+            // Legacy format check (optional, but code says "strict for new" - implies if it looks like JSON but not right format, fail.
+            // However, we might still want to support the OLD JSON format if user has old cards?
+            // User said "strict for new because of now is beta testing phase".
+            // I interpret this as: enforce the new wrapper structure. Old cards might fail or need regeneration.
+            // But to be safe and helpful, if it fails the strict check, we throw.
+            throw new Error('Invalid Identity Card format')
         }
-      } catch {
-        // Fallback to Raw String (Legacy Format)
-        if (decodedString.includes('BEGIN PUBLIC KEY')) {
-          publicKey = decodedString
-          name = prompt(t('enterContactName')) || t('unknownAgent')
+      } catch (e) {
+        console.warn('JSON Parse failed or Strict Check failed:', e)
+        // Fallback to Raw String (Legacy Format) - Keep this for very old raw keys if desired, or remove if strict means STRICT.
+        // Given "strict for new", I will assume we only accept the new JSON wrapper.
+        // But for safety during dev, I'll comment out the fallback or remove it to be compliant with "Strict".
+
+        // Actually, let's keep the RAW string fallback only for debugging/legacy-legacy but remove the old JSON support.
+        if (decodedString.includes('BEGIN PUBLIC KEY') && !decodedString.trim().startsWith('{')) {
+           publicKey = decodedString
+           name = prompt(t('enterContactName')) || t('unknownAgent')
+        } else {
+            alert(t('importInvalid'))
+            return
         }
       }
 

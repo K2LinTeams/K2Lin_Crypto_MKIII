@@ -9,7 +9,8 @@ import { encryptAsymmetric, decryptAsymmetric, importKey } from '../../services/
 type Format = 'Base64' | 'Hex' | 'Natural Text (Markov)'
 
 interface CryptoPackage {
-  c3_alg: 'RSA-OAEP' | 'AES-GCM'
+  c3_type?: 'identity' | 'data'
+  c3_alg?: 'RSA-OAEP' | 'AES-GCM'
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any
 }
@@ -158,7 +159,41 @@ export default function VaultPanel({
         }
 
         // 3. Auto-Detect and Decrypt based on package
-        if (pkg && pkg.c3_alg === 'RSA-OAEP') {
+        if (pkg && pkg.c3_type === 'identity') {
+             // Identity Card Detected!
+             // We do NOT decrypt this. We offer to import it.
+             const confirmImport = window.confirm(`Identity Card Detected: ${pkg.payload.name || 'Unknown'}\n\nDo you want to import this contact?`)
+
+             if (confirmImport) {
+                const newContact = {
+                   name: pkg.payload.name || 'Agent',
+                   publicKey: pkg.payload.publicKey,
+                   addedAt: Date.now()
+                }
+
+                // Add to Local Storage
+                const savedContacts = localStorage.getItem('contacts')
+                const currentContacts = savedContacts ? JSON.parse(savedContacts) : []
+
+                // Simple deduplication by Public Key
+                const exists = currentContacts.some(c => c.publicKey === newContact.publicKey)
+
+                if (!exists) {
+                    const updatedContacts = [...currentContacts, newContact]
+                    localStorage.setItem('contacts', JSON.stringify(updatedContacts))
+                    setContacts(updatedContacts) // Update local state so it appears in dropdown immediately
+                    alert('Contact imported successfully.')
+                } else {
+                    alert('Contact already exists.')
+                }
+
+                // Clear the UI as the "decryption" action (processing) is done
+                handleClear()
+                return // Exit handleProcess
+             } else {
+                 return // User cancelled
+             }
+        } else if (pkg && pkg.c3_alg === 'RSA-OAEP') {
           // Asymmetric Auto-Detect
           const myPrivateKeyPem = localStorage.getItem('my_private_key')
           if (myPrivateKeyPem) {
