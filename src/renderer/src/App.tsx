@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Shield, Lock, Image as ImageIcon, Settings, EyeOff } from 'lucide-react'
+import { Shield, Lock, Image as ImageIcon, Settings, EyeOff, User } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { clsx } from 'clsx'
 
@@ -7,13 +7,14 @@ import { clsx } from 'clsx'
 import VaultPanel from './components/panels/VaultPanel'
 import MimicPanel from './components/panels/MimicPanel'
 import SettingsPanel from './components/panels/SettingsPanel'
+import IdentityPanel from './components/panels/IdentityPanel' // Import new panel
 import { ThemeProvider } from './components/ThemeContext'
 import PanicMode from './components/PanicMode'
 import { useTranslation } from 'react-i18next'
 import './i18n' // Import i18n config
 
 // --- Main App Layout ---
-type Tab = 'vault' | 'mimic' | 'settings'
+type Tab = 'vault' | 'mimic' | 'settings' | 'identity'
 type Format = 'Base64' | 'Hex' | 'Natural Text (Markov)'
 
 function AppLayout(): React.ReactElement {
@@ -60,6 +61,7 @@ function AppLayout(): React.ReactElement {
           {[
             { id: 'vault', icon: Lock, label: 'Vault' },
             { id: 'mimic', icon: ImageIcon, label: 'Mimic' },
+            { id: 'identity', icon: User, label: 'ID' },
             { id: 'settings', icon: Settings, label: 'Config' }
           ].map((item) => (
             <button
@@ -156,6 +158,7 @@ function AppLayout(): React.ReactElement {
                   onExtract={handleExtract}
                 />
               )}
+              {activeTab === 'identity' && <IdentityPanel />}
               {activeTab === 'settings' && <SettingsPanel />}
             </motion.div>
           </AnimatePresence>
@@ -166,6 +169,7 @@ function AppLayout(): React.ReactElement {
           {[
             { id: 'vault', icon: Lock, label: t('vault') },
             { id: 'mimic', icon: ImageIcon, label: t('mimic') },
+            { id: 'identity', icon: User, label: 'ID' },
             { id: 'settings', icon: Settings, label: t('config') }
           ].map((item) => (
             <button

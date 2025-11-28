@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Eye, Copy, Trash2, Key, Unlock, Send, Image as ImageIcon, Keyboard, Code, Shield } from 'lucide-react'
+import { Eye, Copy, Trash2, Key, Unlock, Send, Image as ImageIcon, Keyboard, Code, Shield, User } from 'lucide-react'
 import { GlassCard, GlassButton, GlassInput, TechHeader, MobileTabSwitcher } from '../ui/GlassComponents'
 import { motion } from 'framer-motion'
 import { useApi } from '../../useApi'
 import { useTranslation } from 'react-i18next'
+import { encryptAsymmetric, decryptAsymmetric, importKey } from '../../services/rsa'
 
 type Format = 'Base64' | 'Hex' | 'Natural Text (Markov)'
 
@@ -43,6 +44,12 @@ export default function VaultPanel({
   const [showKey, setShowKey] = useState(false)
   const [activeTab, setActiveTab] = useState<'input' | 'output'>('input')
   const [highlightOutput, setHighlightOutput] = useState(false)
+
+  // Asymmetric Encryption State
+  const [useAsymmetric, setUseAsymmetric] = useState(false)
+  const [contacts, setContacts] = useState<{name: string, publicKey: string}[]>([])
+  const [selectedContact, setSelectedContact] = useState<string>('') // Public Key string
+
   const api = useApi()
   const { t, i18n } = useTranslation('vault')
 
@@ -56,56 +63,147 @@ export default function VaultPanel({
     return undefined
   }, [isEncrypted])
 
-  const handleProcess = async (mode: 'encrypt' | 'decrypt'): Promise<void> => {
-    if (!secretKey) return
+  // Load contacts
+  useEffect(() => {
+    const saved = localStorage.getItem('contacts')
+    if (saved) {
+      setContacts(JSON.parse(saved))
+    }
+  }, [])
 
+  const handleProcess = async (mode: 'encrypt' | 'decrypt'): Promise<void> => {
     try {
       if (mode === 'decrypt') {
-        // Decrypt Logic
-        let encryptedObj = encryptedPackage
+        // --- Decrypt Logic ---
+        // 1. Try Asymmetric First if outputData looks like a big blob (or user selected it?)
+        // Actually, we should probably try to detect or allow user to toggle "Decrypt with My Private Key"
 
-        if (!encryptedObj && outputData) {
-          // Try to parse outputData if encryptedPackage is null (e.g. pasted data)
-          if (currentFormat === 'Natural Text (Markov)') {
-            const decodedBytes = await api.nlp.decode(outputData, i18n.language)
-            const jsonString = new TextDecoder().decode(decodedBytes)
-            encryptedObj = JSON.parse(jsonString)
-          } else {
+        // Quick check if it's asymmetric? Usually RSA ciphertext is large and standard format.
+        // But for simplicity, we will assume if the user toggles "Use Asymmetric" they mean it.
+        // OR we try Symmetric first, then Asymmetric if failed?
+
+        let decrypted = ''
+        let success = false;
+
+        // Attempt 1: Asymmetric (if user has private key)
+        const myPrivateKeyPem = localStorage.getItem('my_private_key')
+        if (myPrivateKeyPem) {
             try {
-              encryptedObj = JSON.parse(atob(outputData))
-            } catch {
-              encryptedObj = JSON.parse(outputData)
+                // If the data is formatted/Markov, we need to decode first?
+                // The current RSA implementation returns Base64.
+                // If it is 'Natural Text', decode it first.
+                let dataToDecrypt = outputData;
+
+                if (currentFormat === 'Natural Text (Markov)') {
+                    const decodedBytes = await api.nlp.decode(outputData, i18n.language)
+                    dataToDecrypt = new TextDecoder().decode(decodedBytes)
+                    // If it was encrypted as JSON (Symmetric), this is JSON string.
+                    // If it was encrypted as Asymmetric (String), this is Base64 string.
+                    // Let's assume Asymmetric encryption just encrypts the raw string, not a JSON package.
+                } else if (currentFormat === 'Hex') {
+                   // Convert hex to string (assuming it was base64 encoded before hex?)
+                   // Wait, our RSA encrypt returns Base64.
+                   // If Hex format was chosen, we converted Base64 -> Hex.
+                   // So reverse it.
+                   const pairs = outputData.match(/.{1,2}/g)
+                   if (pairs) {
+                      const bytes = new Uint8Array(pairs.map(byte => parseInt(byte, 16)))
+                      dataToDecrypt = new TextDecoder().decode(bytes) // This should be the Base64 ciphertext
+                   }
+                } else {
+                    // Base64
+                    dataToDecrypt = outputData;
+                }
+
+                // Now decrypt with Private Key
+                const privateKey = await importKey(myPrivateKeyPem, 'private')
+                decrypted = await decryptAsymmetric(dataToDecrypt, privateKey)
+                success = true
+            } catch (e) {
+                // Ignore, maybe it's not asymmetric
+                console.log('Asymmetric decryption failed, trying symmetric...', e)
             }
-          }
         }
 
-        if (!encryptedObj) {
-          alert(t('noDataToDecrypt'))
-          return
+        // Attempt 2: Symmetric
+        if (!success) {
+             let encryptedObj = encryptedPackage
+
+            if (!encryptedObj && outputData) {
+                // Try to parse outputData if encryptedPackage is null
+                if (currentFormat === 'Natural Text (Markov)') {
+                    const decodedBytes = await api.nlp.decode(outputData, i18n.language)
+                    const jsonString = new TextDecoder().decode(decodedBytes)
+                    try { encryptedObj = JSON.parse(jsonString) } catch { /* ignore */ }
+                } else {
+                    try {
+                        encryptedObj = JSON.parse(atob(outputData))
+                    } catch {
+                        try { encryptedObj = JSON.parse(outputData) } catch { /* ignore */ }
+                    }
+                }
+            }
+
+            if (encryptedObj && secretKey) {
+                decrypted = await api.crypto.decrypt(
+                    encryptedObj.ciphertext,
+                    encryptedObj.iv,
+                    encryptedObj.salt,
+                    encryptedObj.tag,
+                    secretKey
+                )
+                success = true
+            }
         }
 
-        const result = await api.crypto.decrypt(
-          encryptedObj.ciphertext,
-          encryptedObj.iv,
-          encryptedObj.salt,
-          encryptedObj.tag,
-          secretKey
-        )
+        if (success) {
+            setInputData(decrypted)
+            setIsEncrypted(false)
+            setOutputData('')
+            setEncryptedPackage(null)
+            setActiveTab('input')
+        } else {
+             alert(t('noDataToDecrypt') + ' or Key Invalid')
+        }
 
-        setInputData(result)
-        setIsEncrypted(false)
-        setOutputData('')
-        setEncryptedPackage(null)
-        setActiveTab('input') // Switch to input to see result
       } else {
-        // Encrypt Logic
+        // --- Encrypt Logic ---
         if (!inputData) return
-        const result = await api.crypto.encrypt(inputData, secretKey)
-        setEncryptedPackage(result)
-        setIsEncrypted(true)
-        setInputData('') // Clear input for security
-        formatOutput(result, currentFormat)
-        // Tab switch handled by useEffect now
+
+        if (useAsymmetric && selectedContact) {
+            // Asymmetric Encryption
+            const publicKey = await importKey(selectedContact, 'public')
+            const ciphertextBase64 = await encryptAsymmetric(inputData, publicKey)
+
+            // For Asymmetric, we don't have a "package" with salt/iv/etc exposed the same way
+            // (OAEP handles randomization internally).
+            // We just treat the Base64 ciphertext as the result.
+            // But to fit our "formatOutput" logic which expects an object or string...
+            // Let's just pass the string.
+
+            setEncryptedPackage(ciphertextBase64) // It's just a string
+            setIsEncrypted(true)
+            setInputData('')
+
+            // Format it
+            // Note: formatOutput expects 'any'. If it's a string, JSON.stringify adds quotes.
+            // We might want to handle raw string differently in formatOutput?
+            // Actually, let's wrap it to be consistent: { asymmetric: true, data: ... }?
+            // Or just pass the string.
+            formatOutput(ciphertextBase64, currentFormat)
+
+        } else {
+             // Symmetric Encryption (Standard)
+            if (!secretKey) {
+                alert('Please enter a Session Key')
+                return
+            }
+            const result = await api.crypto.encrypt(inputData, secretKey)
+            setEncryptedPackage(result)
+            setIsEncrypted(true)
+            setInputData('') // Clear input for security
+            formatOutput(result, currentFormat)
+        }
       }
     } catch (error) {
       console.error(error)
@@ -115,18 +213,24 @@ export default function VaultPanel({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formatOutput = async (data: any, format: Format): Promise<void> => {
-    const jsonString = JSON.stringify(data)
+    // If data is a string (Asymmetric result), use it directly.
+    // If it's an object (Symmetric package), stringify it.
+    const contentString = typeof data === 'string' ? data : JSON.stringify(data)
 
     if (format === 'Base64') {
-      setOutputData(btoa(jsonString))
+      // If it's already Base64 (Asymmetric), we double encode?
+      // If data is object -> JSON -> Base64.
+      // If data is string (Base64) -> Base64(Base64).
+      // This ensures consistent decoding.
+      setOutputData(btoa(contentString))
     } else if (format === 'Hex') {
-      const buffer = new TextEncoder().encode(jsonString)
+      const buffer = new TextEncoder().encode(contentString)
       const hex = Array.from(new Uint8Array(buffer))
         .map((b) => b.toString(16).padStart(2, '0'))
         .join('')
       setOutputData(hex)
     } else if (format === 'Natural Text (Markov)') {
-      const buffer = new TextEncoder().encode(jsonString)
+      const buffer = new TextEncoder().encode(contentString)
       const text = await api.nlp.encode(buffer.buffer, i18n.language)
       setOutputData(text)
     }
@@ -166,52 +270,70 @@ export default function VaultPanel({
 
   return (
     <div className="flex flex-col gap-6 max-w-6xl mx-auto py-4 px-2 lg:px-4 h-full overflow-hidden">
-      {/* Top Section: Key Management */}
+      {/* Top Section: Encryption Settings */}
       <GlassCard className="flex flex-col gap-4 flex-shrink-0" gradient>
         <div className="flex flex-col md:flex-row items-center gap-4">
-          <TechHeader
-            title={t('sessionKey')}
-            subtitle={t('subtitle')}
-            icon={<Shield size={18} />}
-            className="mb-0 flex-1 w-full"
-          />
-          <div className="flex items-center gap-2">
-            <button
-              className="p-2 text-text-secondary hover:text-accent-primary transition-colors rounded-lg hover:bg-glass-highlight"
-              onClick={generateRandomKey}
-              title={t('generateRandom')}
-            >
-              <Key size={16} />
-            </button>
-          </div>
-        </div>
 
-        <div className="relative">
-          <GlassInput
-            type={showKey ? 'text' : 'password'}
-            value={secretKey}
-            onChange={(e) => setSecretKey(e.target.value)}
-            placeholder={t('enterKeyShort')}
-            className="pr-16 font-mono text-sm tracking-wide text-center"
-          />
-          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-             <button
-              className="p-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-glass-highlight"
-              onClick={handleShowKey}
-              title={showKey ? t('common:hide') : t('common:show')}
-            >
-              <Eye size={16} className={showKey ? 'text-accent-primary' : ''} />
-            </button>
-            <div className="w-px h-4 bg-white/10 mx-1"></div>
+          {/* Toggle Mode */}
+          <div className="flex bg-black/20 p-1 rounded-lg border border-white/5">
             <button
-              className="p-2 text-text-secondary hover:text-accent-primary transition-colors rounded-lg hover:bg-glass-highlight"
-              onClick={() => copyToClipboard(secretKey)}
-              disabled={!secretKey}
-              title={t('copy')}
+                onClick={() => setUseAsymmetric(false)}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${!useAsymmetric ? 'bg-accent-primary text-white shadow-lg' : 'text-text-secondary hover:text-white'}`}
             >
-              <Copy size={16} />
+                Symmetric (AES)
+            </button>
+            <button
+                onClick={() => setUseAsymmetric(true)}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${useAsymmetric ? 'bg-accent-primary text-white shadow-lg' : 'text-text-secondary hover:text-white'}`}
+            >
+                Asymmetric (RSA)
             </button>
           </div>
+
+          <div className="h-6 w-px bg-white/10 hidden md:block"></div>
+
+          {/* Configuration based on Mode */}
+          {useAsymmetric ? (
+             <div className="flex-1 w-full flex items-center gap-3">
+                <TechHeader
+                    title="Target Recipient"
+                    icon={<User size={18} />}
+                    className="mb-0 hidden md:flex"
+                />
+                <select
+                    className="flex-1 glass-input rounded-lg px-3 py-2 text-sm focus:outline-none bg-black/40 border-white/10"
+                    value={selectedContact}
+                    onChange={(e) => setSelectedContact(e.target.value)}
+                >
+                    <option value="">Select a contact...</option>
+                    {contacts.map((c, i) => (
+                        <option key={i} value={c.publicKey}>{c.name}</option>
+                    ))}
+                </select>
+             </div>
+          ) : (
+             <div className="flex-1 w-full flex items-center gap-3">
+                <TechHeader
+                    title={t('sessionKey')}
+                    icon={<Shield size={18} />}
+                    className="mb-0 hidden md:flex"
+                />
+                <div className="relative flex-1">
+                    <GlassInput
+                        type={showKey ? 'text' : 'password'}
+                        value={secretKey}
+                        onChange={(e) => setSecretKey(e.target.value)}
+                        placeholder={t('enterKeyShort')}
+                        className="pr-20 font-mono text-sm tracking-wide text-center"
+                    />
+                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                        <button onClick={handleShowKey} className="p-1.5 text-text-secondary hover:text-white"><Eye size={14} /></button>
+                        <button onClick={generateRandomKey} className="p-1.5 text-text-secondary hover:text-accent-primary"><Key size={14} /></button>
+                     </div>
+                </div>
+             </div>
+          )}
+
         </div>
       </GlassCard>
 
