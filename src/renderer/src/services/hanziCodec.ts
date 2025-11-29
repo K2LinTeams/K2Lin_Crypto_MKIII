@@ -1,4 +1,3 @@
-import pako from 'pako'
 import { HANZI_MAP } from '../data/hanziMap'
 
 const CHUNK_SIZE = 12 // 12 bits per character
@@ -6,9 +5,10 @@ const MAP_SIZE = 4096 // 2^12
 
 // Reverse map for decoding
 const REVERSE_MAP: Record<string, number> = {}
-for (let i = 0; i < HANZI_MAP.length; i++) {
-  REVERSE_MAP[HANZI_MAP[i]] = i
-}
+// Ensure HANZI_MAP is ready (it's an array)
+HANZI_MAP.forEach((char, i) => {
+  REVERSE_MAP[char] = i
+})
 
 export const encode = (data: Uint8Array | string): string => {
   let bytes: Uint8Array
@@ -18,16 +18,15 @@ export const encode = (data: Uint8Array | string): string => {
     bytes = data
   }
 
-  // 1. Compress
-  const compressed = pako.deflate(bytes)
+  // No compression, just raw bytes
 
   // 2. Convert to bit stream (accumulate bits)
   let output = ''
   let bitBuffer = 0
   let bitCount = 0
 
-  for (let i = 0; i < compressed.length; i++) {
-    const byte = compressed[i]
+  for (let i = 0; i < bytes.length; i++) {
+    const byte = bytes[i]
 
     // Add 8 bits to buffer
     bitBuffer = (bitBuffer << 8) | byte
@@ -60,9 +59,11 @@ export const decode = (text: string): Uint8Array => {
   let bitBuffer = 0
   let bitCount = 0
 
+  // Handle surrogate pairs by iterating code points or using for...of
   for (const char of text) {
     const val = REVERSE_MAP[char]
     if (val === undefined) {
+      // Skip unknown characters (e.g. whitespace or invalid chars)
       continue
     }
 
@@ -78,15 +79,8 @@ export const decode = (text: string): Uint8Array => {
     }
   }
 
-  const compressed = new Uint8Array(bytes)
-
-  // 3. Decompress
-  try {
-    return pako.inflate(compressed)
-  } catch (err) {
-    console.error('Hanzi Code Decompression Error:', err)
-    throw new Error('Invalid Hanzi Code or Corrupted Data')
-  }
+  // No decompression
+  return new Uint8Array(bytes)
 }
 
 export const hanziCodec = {
