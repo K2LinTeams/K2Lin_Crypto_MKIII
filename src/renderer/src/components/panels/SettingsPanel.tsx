@@ -45,7 +45,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
   return (
     <div className="max-w-4xl mx-auto h-full p-2 lg:p-4 overflow-y-auto">
       <div className="mb-6 lg:mb-8">
-         <h2 className="text-2xl font-bold text-text-primary mb-2 font-mono uppercase tracking-wider flex items-center gap-3">
+         <h2 className="text-2xl font-bold text-text-primary mb-2 uppercase tracking-wider flex items-center gap-3">
             <Sliders className="text-accent-primary" />
             {t('title')}
          </h2>

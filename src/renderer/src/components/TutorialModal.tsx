@@ -51,7 +51,7 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
                    <div className="w-8 h-8 rounded-full bg-accent-primary/20 flex items-center justify-center">
                        <User size={16} className="text-accent-primary" />
                    </div>
-                   <div className="text-[10px] text-accent-primary font-mono opacity-70">CRYPTO3 ID</div>
+                   <div className="text-[10px] text-accent-primary opacity-70">CRYPTO3 ID</div>
                </div>
                <div className="mt-auto">
                    <div className="h-1.5 w-2/3 bg-white/10 rounded mb-1"></div>

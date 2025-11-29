@@ -90,8 +90,8 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
                <Image size={24} />
             </div>
             <div>
-               <h2 className="text-xl font-bold text-text-primary uppercase tracking-wide font-mono">{t('title')}</h2>
-               <p className="text-xs text-text-secondary font-mono">{t('description')}</p>
+               <h2 className="text-xl font-bold text-text-primary uppercase tracking-wide">{t('title')}</h2>
+               <p className="text-xs text-text-secondary">{t('description')}</p>
             </div>
          </div>
          <div className="flex items-center gap-2 text-xs text-orange-400 bg-orange-500/10 px-3 py-2 rounded-lg border border-orange-500/20 max-w-md">
