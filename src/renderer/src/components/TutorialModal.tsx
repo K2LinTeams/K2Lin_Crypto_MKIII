@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import { GlassCard, GlassButton } from './ui/GlassComponents'
 import { Shield, Lock, Image as ImageIcon, User, ArrowRight, X, Check, Key, Unlock, UserPlus, RefreshCw } from 'lucide-react'
 import Encyclopedia from './Encyclopedia'
-import { useNotification } from './NotificationContext'
 import { useAchievements } from '../hooks/useAchievements'
 
 interface TutorialModalProps {
@@ -23,7 +22,6 @@ interface TutorialStep {
 
 export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps) {
   const { t } = useTranslation(['tutorial', 'vault', 'identity', 'encyclopedia'])
-  const { addNotification } = useNotification()
   const { unlock } = useAchievements()
   const [step, setStep] = useState(0)
 
@@ -176,7 +174,6 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
   const handleOpenEncyclopedia = () => {
      setEncyclopediaTopic(steps[step].id)
      setShowEncyclopedia(true)
-     addNotification('info', t('achievementDeeper', 'We need to go deeper 🔍'))
      unlock('encyclopedia_read')
   }
 

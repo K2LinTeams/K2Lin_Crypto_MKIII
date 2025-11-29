@@ -103,6 +103,7 @@ interface GlassCardProps extends HTMLMotionProps<'div'> {
 export function GlassCard({ children, className, gradient = false, floating = false, ...props }: GlassCardProps) {
   return (
     <motion.div
+      layout
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -20, scale: 0.95 }}
