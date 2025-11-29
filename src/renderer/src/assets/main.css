@@ -56,6 +56,20 @@
   --glass-highlight: rgba(244, 114, 182, 0.1);
 }
 
+/* Lone Trail / Lone Star Theme */
+[data-theme='lone-trail'] {
+  --bg-primary: #0f1d18; /* Dark Greenish Slate */
+  --bg-secondary: #162620;
+  --accent-primary: #81c2ac; /* Mint Green */
+  --accent-secondary: #eea837; /* Gold */
+  --text-primary: #e2e8f0; /* slate-200 */
+  --text-secondary: #94a3b8; /* slate-400 */
+  --glass-border: rgba(129, 194, 172, 0.2);
+  --glass-bg: rgba(15, 29, 24, 0.7);
+  --glass-highlight: rgba(129, 194, 172, 0.1);
+  --danger: #9c2c23; /* Dark Red */
+}
+
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);

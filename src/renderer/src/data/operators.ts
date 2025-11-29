@@ -1,4 +1,4 @@
-export type OperatorTheme = 'Rhodes Island' | 'Rhine Lab' | 'Victoria' | 'Penguin Logistics' | 'Abyssal' | 'Kjerag' | 'Kazimierz' | 'Yan' | 'cyberpunk' | 'light' | 'midnight' | 'sakura';
+export type OperatorTheme = 'Rhodes Island' | 'Rhine Lab' | 'Victoria' | 'Penguin Logistics' | 'Abyssal' | 'Kjerag' | 'Kazimierz' | 'Yan' | 'lone-trail' | 'cyberpunk' | 'light' | 'midnight' | 'sakura';
 
 export interface Operator {
   name: string;
@@ -7,8 +7,8 @@ export interface Operator {
 }
 
 export const OPERATORS: Operator[] = [
-  // Rhine Lab
-  { name: 'Muelsyse', theme: 'Rhine Lab', icon: 'Droplets' },
+  // Rhine Lab / Lone Trail
+  { name: 'Muelsyse', theme: 'lone-trail', icon: 'Droplets' },
   { name: 'Saria', theme: 'Rhine Lab', icon: 'SquareActivity' },
   { name: 'Ifrit', theme: 'Rhine Lab', icon: 'Flame' },
   { name: 'Silence', theme: 'Rhine Lab', icon: 'Feather' },
