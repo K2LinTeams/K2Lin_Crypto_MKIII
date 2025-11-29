@@ -484,6 +484,7 @@ export default function VaultPanel({
                     onClick={() => setInputData('')}
                     variant="ghost"
                     icon={<Trash2 size={16}/>}
+                    aria-label={t('clear')}
                   />
               </div>
             </GlassCard>
