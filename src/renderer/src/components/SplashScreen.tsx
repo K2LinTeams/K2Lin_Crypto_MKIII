@@ -63,7 +63,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
             transition={{ delay: 0.8, duration: 1 }}
             className="h-px bg-white/20 mx-auto my-4"
           />
-          <p className="text-sm text-text-secondary font-mono tracking-widest uppercase">
+          <p className="text-sm text-text-secondary tracking-widest uppercase">
             System Initialization...
           </p>
         </motion.div>

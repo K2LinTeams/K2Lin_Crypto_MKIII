@@ -45,7 +45,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
   return (
     <div className="max-w-4xl mx-auto h-full p-2 lg:p-4 overflow-y-auto">
       <div className="mb-6 lg:mb-8">
-         <h2 className="text-2xl font-bold text-text-primary mb-2 font-mono uppercase tracking-wider flex items-center gap-3">
+         <h2 className="text-2xl font-bold text-text-primary mb-2 uppercase tracking-wider flex items-center gap-3">
             <Sliders className="text-accent-primary" />
             {t('title')}
          </h2>
@@ -187,7 +187,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
                        <Zap size={20} />
                     </div>
                     <div>
-                       <div className="text-text-primary font-bold font-mono text-sm">{t('replayTutorial')}</div>
+                       <div className="text-text-primary font-bold text-sm">{t('replayTutorial')}</div>
                        <div className="text-text-secondary text-xs mt-1">{t('replayTutorialDesc')}</div>
                     </div>
                  </div>
@@ -210,7 +210,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
                       <Shield size={20} />
                    </div>
                    <div>
-                      <div className="text-text-primary font-bold font-mono text-sm">{t('panicModePin')}</div>
+                      <div className="text-text-primary font-bold text-sm">{t('panicModePin')}</div>
                       <div className="text-text-secondary text-xs mt-1">
                         {savedPin ? `${t('panicModePinDesc')} (ON)` : t('panicModePinDesc')}
                       </div>

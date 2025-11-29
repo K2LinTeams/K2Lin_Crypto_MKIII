@@ -26,10 +26,10 @@ export function TechHeader({ title, subtitle, icon, className }: TechHeaderProps
         {icon || <Terminal size={16} />}
       </div>
       <div className="flex flex-col">
-        <h2 className="text-lg font-bold text-text-primary uppercase tracking-wider flex items-center gap-2 font-mono">
+        <h2 className="text-lg font-bold text-text-primary uppercase tracking-wider flex items-center gap-2">
           {title}
         </h2>
-        {subtitle && <span className="text-xs text-text-secondary uppercase tracking-widest font-mono opacity-70">{subtitle}</span>}
+        {subtitle && <span className="text-xs text-text-secondary uppercase tracking-widest opacity-70">{subtitle}</span>}
       </div>
       {/* Decorative Line */}
       <div className="flex-1 h-px bg-gradient-to-r from-accent-primary/30 to-transparent ml-4 opacity-50" />
