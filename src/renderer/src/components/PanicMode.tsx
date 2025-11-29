@@ -36,7 +36,10 @@ export default function PanicMode({ onExit }: { onExit: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[100] overflow-hidden font-mono select-none bg-gray-900 text-white">
+    <div
+      className="fixed inset-0 z-[100] overflow-hidden select-none bg-gray-900 text-white"
+      style={{ fontFamily: "'Comfortaa', 'ZCOOL KuaiLe', sans-serif" }}
+    >
       {/* Background Layer */}
       <div className="absolute inset-0 z-0">
         <div
@@ -93,18 +96,18 @@ export default function PanicMode({ onExit }: { onExit: () => void }) {
                 Priority Alert
               </div>
               <h2 className="text-4xl md:text-5xl font-bold leading-tight">
-                Lone Trail
+                孤星
               </h2>
             </div>
 
             <div className="bg-black/40 backdrop-blur-md border-l-2 border-[#FF6B00] p-6 space-y-4">
-              <p className="text-gray-300 leading-relaxed text-sm md:text-base tracking-wide font-light">
+              <p className="text-gray-300 leading-relaxed text-sm md:text-base tracking-wide">
                 所有人都知道，359号基地只是一个开始，却没有人料到，克丽斯腾的行动来得如此迅速。
               </p>
-              <p className="text-gray-300 leading-relaxed text-sm md:text-base tracking-wide font-light">
+              <p className="text-gray-300 leading-relaxed text-sm md:text-base tracking-wide">
                 从天而降的“流星”，不知去向的递质，急迫的军方，别有所图的梅兰德，凯尔希与意料之外的访客......一切都预示着有什么即将发生。
               </p>
-              <p className="text-gray-300 leading-relaxed text-sm md:text-base tracking-wide font-light">
+              <p className="text-gray-300 leading-relaxed text-sm md:text-base tracking-wide">
                 没有人看得清，在迷雾的背后究竟隐藏着怎样的秘密，正如没有人料得到，未来离我们如此之近。
               </p>
               <p className="text-white font-medium text-lg pt-2 border-t border-white/10 mt-4">
