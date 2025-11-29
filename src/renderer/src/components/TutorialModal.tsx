@@ -305,6 +305,18 @@ export default function TutorialModal({ onComplete, onSkip }: TutorialModalProps
                                </>
                            )}
                        </GlassButton>
+
+                       {/* Skip button on first step */}
+                       {step === 0 && (
+                          <GlassButton
+                             variant="ghost"
+                             size="sm"
+                             className="w-full justify-center text-xs text-text-secondary hover:text-white mt-1"
+                             onClick={onSkip}
+                          >
+                             {t('skip', 'Skip Intro')}
+                          </GlassButton>
+                       )}
                    </div>
                 )}
             </div>

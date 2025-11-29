@@ -8,8 +8,9 @@ import { useTranslation } from 'react-i18next'
 import { encryptAsymmetric, decryptAsymmetric, importKey } from '../../services/asymmetric'
 import { useNotification } from '../NotificationContext'
 import { useAchievements } from '../../hooks/useAchievements'
+import { hanziCodec } from '../../services/hanziCodec'
 
-type Format = 'Base64' | 'Hex' | 'Natural Text (Markov)'
+type Format = 'Base64' | 'Hex' | 'Natural Text (Markov)' | 'Hanzi Code'
 
 interface CryptoPackage {
   c3_type?: 'identity' | 'data'
@@ -96,6 +97,9 @@ export default function VaultPanel({
         if (currentFormat === 'Natural Text (Markov)') {
           const bytes = await api.nlp.decode(outputData, i18n.language)
           decodedStr = new TextDecoder().decode(bytes)
+        } else if (currentFormat === 'Hanzi Code') {
+          const bytes = hanziCodec.decode(outputData)
+          decodedStr = new TextDecoder().decode(bytes)
         } else if (currentFormat === 'Hex') {
           const pairs = outputData.match(/.{1,2}/g)
           if (pairs) {
@@ -139,6 +143,9 @@ export default function VaultPanel({
         let rawPackageStr = outputData
         if (currentFormat === 'Natural Text (Markov)') {
           const decodedBytes = await api.nlp.decode(outputData, i18n.language)
+          rawPackageStr = new TextDecoder().decode(decodedBytes)
+        } else if (currentFormat === 'Hanzi Code') {
+          const decodedBytes = hanziCodec.decode(outputData)
           rawPackageStr = new TextDecoder().decode(decodedBytes)
         } else if (currentFormat === 'Hex') {
           const pairs = outputData.match(/.{1,2}/g)
@@ -322,6 +329,9 @@ export default function VaultPanel({
       const buffer = new TextEncoder().encode(contentString)
       const text = await api.nlp.encode(buffer.buffer, i18n.language)
       setOutputData(text)
+    } else if (format === 'Hanzi Code') {
+      const output = hanziCodec.encode(contentString)
+      setOutputData(output)
     }
     return Promise.resolve()
   }
@@ -587,11 +597,11 @@ export default function VaultPanel({
       <GlassCard className="p-3 lg:p-4 mt-auto flex-shrink-0">
         <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
           <div className="flex flex-wrap gap-2 justify-center lg:justify-start w-full lg:w-auto">
-             {(['Base64', 'Hex', 'Natural Text (Markov)'] as Format[]).map((fmt) => (
+             {(['Base64', 'Hex', 'Hanzi Code', 'Natural Text (Markov)'] as Format[]).map((fmt) => (
               <button
                 key={fmt}
                 onClick={() => setCurrentFormat(fmt)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all border ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans transition-all border ${
                   currentFormat === fmt
                     ? 'bg-accent-primary/10 text-accent-primary border-accent-primary/30'
                     : 'bg-transparent text-text-secondary border-transparent hover:bg-white/5'
@@ -599,6 +609,7 @@ export default function VaultPanel({
               >
                 {fmt === 'Base64' && t('formats.base64')}
                 {fmt === 'Hex' && t('formats.hex')}
+                {fmt === 'Hanzi Code' && t('formats.hanzi')}
                 {fmt === 'Natural Text (Markov)' && t('formats.markov')}
               </button>
             ))}

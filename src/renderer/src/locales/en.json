@@ -21,7 +21,8 @@
     "formats": {
       "base64": "Base64",
       "hex": "Hex",
-      "markov": "Natural Text (Markov)"
+      "markov": "Natural Text (Markov)",
+      "hanzi": "Hanzi Code"
     },
     "sessionKey": "Session Key",
     "generateRandom": "Generate Random",

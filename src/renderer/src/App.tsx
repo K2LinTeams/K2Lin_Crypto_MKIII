@@ -20,7 +20,7 @@ import { useAchievements } from './hooks/useAchievements'
 
 // --- Main App Layout ---
 type Tab = 'vault' | 'mimic' | 'settings' | 'identity'
-type Format = 'Base64' | 'Hex' | 'Natural Text (Markov)'
+type Format = 'Base64' | 'Hex' | 'Natural Text (Markov)' | 'Hanzi Code'
 
 function AppLayout(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<Tab>('vault')

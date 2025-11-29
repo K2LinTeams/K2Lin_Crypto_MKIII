@@ -21,7 +21,8 @@
     "formats": {
       "base64": "Base64",
       "hex": "Hex",
-      "markov": "自然文本 (马尔可夫)"
+      "markov": "自然文本 (马尔可夫)",
+      "hanzi": "汉字码"
     },
     "sessionKey": "会话密钥",
     "generateRandom": "生成随机密钥",
