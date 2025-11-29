@@ -222,6 +222,7 @@ function AppLayout(): React.ReactElement {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as Tab)}
+              aria-label={item.label || item.id}
               className={clsx(
                 'flex flex-col items-center gap-1 p-2 rounded-xl transition-all',
                 activeTab === item.id
@@ -247,6 +248,7 @@ function AppLayout(): React.ReactElement {
               unlock('panic_mode')
               setPanicMode(true)
             }}
+            aria-label={t('panic')}
             className="flex flex-col items-center gap-1 p-2 text-red-500/70 hover:text-red-400"
           >
             <div className="p-1.5 rounded-lg bg-red-500/10">
