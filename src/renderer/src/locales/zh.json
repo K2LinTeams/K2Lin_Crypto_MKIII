@@ -11,7 +11,9 @@
     "addTask": "添加新任务...",
     "simpleNotes": "简易笔记 v1.0.2 © 2024",
     "hide": "隐藏",
-    "show": "显示"
+    "show": "显示",
+    "confirm": "确认",
+    "cancel": "取消"
   },
   "vault": {
     "subtitle": "AES-256-GCM",
@@ -107,6 +109,7 @@
     "dangerZone": "危险区域",
     "emergencyWipe": "紧急销毁",
     "emergencyWipeDesc": "立即销毁所有本地密钥和缓存",
+    "confirmWipe": "您确定要销毁所有数据吗？此操作无法撤销。",
     "execute": "执行",
     "themes": {
       "cyberpunk": "赛博朋克",

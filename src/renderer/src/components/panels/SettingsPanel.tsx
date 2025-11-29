@@ -5,6 +5,7 @@ import { Moon, Sun, Monitor, AlertTriangle, Languages, Sliders, Shield, Zap, Spa
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAchievements } from '../../hooks/useAchievements'
+import { ConfirmationDialog } from '../ui/ConfirmationDialog'
 
 interface SettingsPanelProps {
   onReplayTutorial?: () => void
@@ -12,12 +13,13 @@ interface SettingsPanelProps {
 
 export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) {
   const { theme, setTheme } = useTheme()
-  const { t, i18n } = useTranslation(['settings', 'achievements'])
+  const { t, i18n } = useTranslation(['settings', 'achievements', 'common'])
   const { achievements, allIds, unlock } = useAchievements()
   const [showPinConfig, setShowPinConfig] = useState(false)
   const [pinInput, setPinInput] = useState('')
   const [savedPin, setSavedPin] = useState(localStorage.getItem('panicPin') || '')
   const [showAllAchievements, setShowAllAchievements] = useState(false)
+  const [showWipeModal, setShowWipeModal] = useState(false)
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng)
@@ -237,7 +239,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
                           className="flex-1"
                           onClick={() => setShowPinConfig(false)}
                           icon={<X size={14} />}
-                          aria-label={t('cancel')}
+                          aria-label={t('cancel', { ns: 'common' })}
                         >
                         </GlassButton>
                         <GlassButton
@@ -246,7 +248,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
                           className="flex-1"
                           onClick={handleSavePin}
                           icon={<Check size={14} />}
-                          aria-label={t('confirm')}
+                          aria-label={t('confirm', { ns: 'common' })}
                         >
                         </GlassButton>
                      </div>
@@ -286,18 +288,26 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
               variant="danger"
               size="sm"
               className="whitespace-nowrap w-full md:w-auto"
-              onClick={() => {
-                if (window.confirm(t('confirmWipe') || 'Are you sure you want to wipe all data? This cannot be undone.')) {
-                   localStorage.clear()
-                   window.location.reload()
-                }
-              }}
+              onClick={() => setShowWipeModal(true)}
             >
               {t('execute')}
             </GlassButton>
           </div>
         </GlassCard>
       </div>
+
+      <ConfirmationDialog
+        isOpen={showWipeModal}
+        title={t('dangerZone')}
+        message={t('confirmWipe') || 'Are you sure you want to wipe all data? This cannot be undone.'}
+        onConfirm={() => {
+           localStorage.clear()
+           window.location.reload()
+        }}
+        onCancel={() => setShowWipeModal(false)}
+        variant="danger"
+        confirmLabel={t('execute')}
+      />
     </div>
   )
 }
