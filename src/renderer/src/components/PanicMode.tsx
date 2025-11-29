@@ -36,7 +36,7 @@ export default function PanicMode({ onExit }: { onExit: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[100] overflow-hidden font-sans select-none bg-gray-900 text-white">
+    <div className="fixed inset-0 z-[100] overflow-hidden font-mono select-none bg-gray-900 text-white">
       {/* Background Layer */}
       <div className="absolute inset-0 z-0">
         <div
