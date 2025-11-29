@@ -16,7 +16,8 @@ const ACHIEVEMENT_IDS = [
   'panic_mode',
   'theme_changed',
   'encyclopedia_read',
-  'sanity_zero'
+  'sanity_zero',
+  'lone_trail_found'
 ] as const
 
 export type AchievementId = typeof ACHIEVEMENT_IDS[number]

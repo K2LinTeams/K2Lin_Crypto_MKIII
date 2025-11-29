@@ -45,7 +45,17 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', theme = '
     canvas.height = height
 
     // Define Themes
-    const themes = {
+    // We define a more flexible type locally to accommodate 'stripes'
+    type ThemeConfig = {
+      bg: string[]
+      textPrimary: string
+      textSecondary: string
+      logoStart: string
+      logoEnd: string
+      stripes?: string[]
+    }
+
+    const themes: Record<string, ThemeConfig> = {
       'Rhodes Island': {
         bg: ['#1e293b', '#0f172a'], // slate-800 to slate-900 (Dark Blue)
         textPrimary: '#e2e8f0', // slate-200
@@ -129,17 +139,42 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', theme = '
         textSecondary: '#64748b', // slate-500
         logoStart: '#3b82f6',
         logoEnd: '#6366f1'
+      },
+      'lone-trail': {
+        bg: ['#0f1d18', '#162620'], // fallback for gradient logic if needed
+        textPrimary: '#ffffff', // white
+        textSecondary: '#ffffff', // white
+        logoStart: '#ffffff',
+        logoEnd: '#ffffff',
+        stripes: ['#81c2ac', '#eea837', '#9c2c23']
       }
     }
 
     const activeTheme = themes[theme] || themes['Rhodes Island']
 
-    // Background Gradient
-    const gradient = ctx.createLinearGradient(0, 0, width, height)
-    gradient.addColorStop(0, activeTheme.bg[0])
-    gradient.addColorStop(1, activeTheme.bg[1])
-    ctx.fillStyle = gradient
-    ctx.fillRect(0, 0, width, height)
+    // Background Gradient or Stripes
+    if (theme === 'lone-trail' && activeTheme.stripes) {
+      // Draw 3 vertical stripes
+      const stripeWidth = width / 3
+
+      // Stripe 1 (Green)
+      ctx.fillStyle = activeTheme.stripes[0]
+      ctx.fillRect(0, 0, stripeWidth, height)
+
+      // Stripe 2 (Gold)
+      ctx.fillStyle = activeTheme.stripes[1]
+      ctx.fillRect(stripeWidth, 0, stripeWidth, height)
+
+      // Stripe 3 (Red)
+      ctx.fillStyle = activeTheme.stripes[2]
+      ctx.fillRect(stripeWidth * 2, 0, stripeWidth, height)
+    } else {
+      const gradient = ctx.createLinearGradient(0, 0, width, height)
+      gradient.addColorStop(0, activeTheme.bg[0])
+      gradient.addColorStop(1, activeTheme.bg[1])
+      ctx.fillStyle = gradient
+      ctx.fillRect(0, 0, width, height)
+    }
 
     // Header: CRYPTO 3 Logo (Gradient Text)
     const logoGradient = ctx.createLinearGradient(40, 30, 200, 30)
@@ -186,6 +221,7 @@ export function IdentityCardGenerator({ publicKey, username = 'AGENT', theme = '
         else if (theme === 'cyberpunk' && LucideIcons['Zap']) IconComponent = LucideIcons['Zap']
         else if (theme === 'light' && LucideIcons['Sun']) IconComponent = LucideIcons['Sun']
         else if (theme === 'midnight' && LucideIcons['Moon']) IconComponent = LucideIcons['Moon']
+        else if (theme === 'lone-trail' && LucideIcons['Rocket']) IconComponent = LucideIcons['Rocket']
       }
 
       const svgString = renderToStaticMarkup(

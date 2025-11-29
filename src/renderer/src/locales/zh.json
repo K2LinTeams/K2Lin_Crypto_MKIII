@@ -115,7 +115,8 @@
       "cyberpunk": "赛博朋克",
       "light": "SaaS / 亮色",
       "midnight": "深空",
-      "sakura": "樱花"
+      "sakura": "樱花",
+      "lone-trail": "孤星"
     },
     "language": "语言",
     "replayTutorial": "重播教程",
@@ -134,7 +135,8 @@
         "panic_mode": { "title": "紧急撤离", "desc": "启动紧急防御协议，掩盖所有行踪。" },
         "theme_changed": { "title": "环境模拟", "desc": "更改作战终端的视觉接口配置。" },
         "encyclopedia_read": { "title": "PRTS 权限", "desc": "深入访问罗德岛战术数据库。" },
-        "sanity_zero": { "title": "理智归零", "desc": "遭遇解码错误，指挥官理智受到打击。" }
+        "sanity_zero": { "title": "理智归零", "desc": "遭遇解码错误，指挥官理智受到打击。" },
+        "lone_trail_found": { "title": "逐星者", "desc": "试着抬头吧，答案近在眼前。" }
     }
   },
   "tutorial": {

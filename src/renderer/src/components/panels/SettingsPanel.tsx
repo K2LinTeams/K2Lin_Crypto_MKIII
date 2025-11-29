@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { GlassCard, GlassButton, TechHeader, GlassInput } from '../ui/GlassComponents'
 import { useTheme } from '../ThemeContext'
-import { Moon, Sun, Monitor, AlertTriangle, Languages, Sliders, Shield, Zap, Sparkles, X, Check, RotateCcw, Award } from 'lucide-react'
+import { Moon, Sun, Monitor, AlertTriangle, Languages, Sliders, Shield, Zap, Sparkles, X, Check, RotateCcw, Award, Rocket } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAchievements } from '../../hooks/useAchievements'
@@ -117,6 +117,18 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
               aria-label={t('themes.sakura')}
             >
               {t('themes.sakura')}
+            </GlassButton>
+            <GlassButton
+              variant={theme === 'lone-trail' ? 'primary' : 'secondary'}
+              onClick={() => {
+                handleSetTheme('lone-trail')
+                unlock('lone_trail_found')
+              }}
+              className="justify-start"
+              icon={<Rocket size={16} />}
+              aria-label={t('themes.lone-trail')}
+            >
+              {t('themes.lone-trail')}
             </GlassButton>
           </div>
         </GlassCard>

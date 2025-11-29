@@ -115,7 +115,8 @@
       "cyberpunk": "Cyberpunk",
       "light": "SaaS / Light",
       "midnight": "Deep Space",
-      "sakura": "Sakura"
+      "sakura": "Sakura",
+      "lone-trail": "LoneTrail"
     },
     "language": "Language",
     "replayTutorial": "Replay Tutorial",
@@ -134,7 +135,8 @@
         "panic_mode": { "title": "Emergency Retreat", "desc": "Activate emergency defense protocols to conceal all traces." },
         "theme_changed": { "title": "Env Simulation", "desc": "Modified combat terminal visual interface." },
         "encyclopedia_read": { "title": "PRTS Access", "desc": "Accessed Rhodes Island tactical database." },
-        "sanity_zero": { "title": "Zero Sanity", "desc": "Decoding error encountered. Commander's sanity critical." }
+        "sanity_zero": { "title": "Zero Sanity", "desc": "Decoding error encountered. Commander's sanity critical." },
+        "lone_trail_found": { "title": "Star Seeker", "desc": "Try looking up. The answer is right before your eyes." }
     }
   },
   "tutorial": {
