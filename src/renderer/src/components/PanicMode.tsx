@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Shield, Lock, Terminal, Activity, ChevronRight, AlertTriangle } from 'lucide-react'
+import { Shield, Lock, Activity, ChevronRight, AlertTriangle } from 'lucide-react'
 import rhineBg from '../assets/rhine_lab_bg.jpg'
 
 export default function PanicMode({ onExit }: { onExit: () => void }) {
