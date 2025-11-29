@@ -271,11 +271,11 @@ export default function IdentityPanel() {
                           <div>
                             <div className="font-bold text-lg text-white drop-shadow-sm">{contact.name}</div>
                             {contact.id && (
-                              <div className="text-[11px] text-accent-primary font-mono tracking-widest opacity-80 mb-0.5">
+                              <div className="text-[11px] text-accent-primary tracking-widest opacity-80 mb-0.5">
                                 {contact.id}
                               </div>
                             )}
-                            <div className="text-[9px] text-white/40 font-mono tracking-wider">
+                            <div className="text-[9px] text-white/40 tracking-wider">
                               {contact.publicKey.length > 20 ? contact.publicKey.substring(0, 16) + '...' + contact.publicKey.substring(contact.publicKey.length - 8) : contact.publicKey}
                             </div>
                           </div>
