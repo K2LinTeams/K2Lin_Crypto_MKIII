@@ -100,9 +100,9 @@ function AppLayout(): React.ReactElement {
         <div className="flex-1 flex flex-col gap-6 w-full items-center justify-center">
           {[
             { id: 'vault', icon: Lock, label: t('vault') },
-            { id: 'mimic', icon: ImageIcon, label: 'Mimic' },
-            { id: 'identity', icon: User, label: 'ID' },
-            { id: 'settings', icon: Settings, label: 'Config' }
+            { id: 'mimic', icon: ImageIcon, label: t('mimic') },
+            { id: 'identity', icon: User, label: t('identity') },
+            { id: 'settings', icon: Settings, label: t('config') }
           ].map((item) => (
             <button
               key={item.id}

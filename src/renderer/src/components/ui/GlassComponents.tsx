@@ -9,6 +9,31 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /* -------------------------------------------------------------------------- */
+/*                                 Panel Header                               */
+/* -------------------------------------------------------------------------- */
+
+interface PanelHeaderProps {
+  title: string
+  description?: string
+  className?: string
+}
+
+export function PanelHeader({ title, description, className }: PanelHeaderProps) {
+  return (
+    <div className={cn("space-y-2", className)}>
+      <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-accent-primary to-accent-secondary">
+        {title}
+      </h2>
+      {description && (
+        <p className="text-text-secondary">
+          {description}
+        </p>
+      )}
+    </div>
+  )
+}
+
+/* -------------------------------------------------------------------------- */
 /*                                 Tech Header                                */
 /* -------------------------------------------------------------------------- */
 
