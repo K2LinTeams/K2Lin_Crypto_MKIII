@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { GlassCard, GlassButton, TechHeader, GlassInput } from '../ui/GlassComponents'
+import { GlassCard, GlassButton, TechHeader, GlassInput, PanelHeader } from '../ui/GlassComponents'
 import { useTheme } from '../ThemeContext'
-import { Moon, Sun, Monitor, AlertTriangle, Languages, Sliders, Shield, Zap, Sparkles, X, Check, RotateCcw, Award, Rocket } from 'lucide-react'
+import { Moon, Sun, Monitor, AlertTriangle, Languages, Shield, Zap, Sparkles, X, Check, RotateCcw, Award, Rocket } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAchievements } from '../../hooks/useAchievements'
@@ -44,13 +44,7 @@ export default function SettingsPanel({ onReplayTutorial }: SettingsPanelProps) 
 
   return (
     <div className="max-w-4xl mx-auto h-full p-2 lg:p-4 overflow-y-auto">
-      <div className="mb-6 lg:mb-8">
-         <h2 className="text-2xl font-bold text-text-primary mb-2 uppercase tracking-wider flex items-center gap-3">
-            <Sliders className="text-accent-primary" />
-            {t('title')}
-         </h2>
-         <div className="h-px w-full bg-gradient-to-r from-accent-primary/50 to-transparent"></div>
-      </div>
+      <PanelHeader title={t('title')} description={t('description')} />
 
       <div className="space-y-6">
         {/* Language Selection */}

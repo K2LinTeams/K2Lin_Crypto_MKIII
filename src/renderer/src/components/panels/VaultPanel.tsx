@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Eye, Copy, Trash2, Key, Unlock, Send, Image as ImageIcon, Keyboard, Code, Shield, User } from 'lucide-react'
-import { GlassCard, GlassButton, GlassInput, TechHeader, MobileTabSwitcher } from '../ui/GlassComponents'
+import { GlassCard, GlassButton, GlassInput, TechHeader, MobileTabSwitcher, PanelHeader } from '../ui/GlassComponents'
 import { GlassDropdown } from '../ui/GlassDropdown'
 import { motion } from 'framer-motion'
 import { useApi } from '../../useApi'
@@ -369,6 +369,8 @@ export default function VaultPanel({
 
   return (
     <div className="flex flex-col gap-6 max-w-6xl mx-auto py-4 px-2 lg:px-4 h-full overflow-hidden">
+      <PanelHeader title={t('title')} description={t('description')} className="mb-2" />
+
       {/* Top Section: Encryption Settings */}
       <GlassCard className="flex flex-col gap-4 flex-shrink-0" gradient>
         <div className="flex flex-col md:flex-row items-center gap-4">

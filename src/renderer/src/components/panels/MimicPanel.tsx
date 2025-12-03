@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { Image, FileWarning, Download, Upload, ArrowRight, Settings, Eye } from 'lucide-react'
-import { GlassCard, GlassButton, TechHeader, MobileTabSwitcher } from '../ui/GlassComponents'
+import { GlassCard, GlassButton, TechHeader, MobileTabSwitcher, PanelHeader } from '../ui/GlassComponents'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useApi } from '../../useApi'
 import { useTranslation } from 'react-i18next'
@@ -84,21 +84,14 @@ export default function MimicPanel({ encryptedPackage, isEncrypted, onExtract }:
     <div className="flex flex-col gap-6 max-w-7xl mx-auto h-full px-2 lg:px-4">
 
       {/* Header Info */}
-      <GlassCard className="flex flex-col md:flex-row items-center justify-between gap-4 py-4">
-         <div className="flex items-center gap-4">
-            <div className="p-3 rounded-lg bg-accent-primary/10 border border-accent-primary/20 text-accent-primary">
-               <Image size={24} />
-            </div>
-            <div>
-               <h2 className="text-xl font-bold text-text-primary uppercase tracking-wide">{t('title')}</h2>
-               <p className="text-xs text-text-secondary">{t('description')}</p>
-            </div>
-         </div>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-2">
+         <PanelHeader title={t('title')} description={t('description')} className="mb-0" />
+
          <div className="flex items-center gap-2 text-xs text-orange-400 bg-orange-500/10 px-3 py-2 rounded-lg border border-orange-500/20 max-w-md">
              <FileWarning size={16} className="flex-shrink-0" />
              <span>{t('warningText')}</span>
          </div>
-      </GlassCard>
+      </div>
 
       {/* Mobile Tab Switcher */}
       <div className="lg:hidden">

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { generateKeyPair, exportKey } from '../../services/asymmetric'
 import { IdentityCardGenerator } from '../IdentityCardGenerator'
 import { generateIdentityId } from '../../services/identity'
-import { GlassCard, GlassButton, TechHeader, GlassInput } from '../ui/GlassComponents'
+import { GlassCard, GlassButton, TechHeader, GlassInput, PanelHeader } from '../ui/GlassComponents'
 import { User, Shield, Upload, UserPlus, Trash2 } from 'lucide-react'
 import { extract } from '../../services/webStego'
 import { useTranslation } from 'react-i18next'
@@ -163,14 +163,7 @@ export default function IdentityPanel() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-10">
-      <div className="space-y-2">
-        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-accent-primary to-accent-secondary">
-          {t('title')}
-        </h2>
-        <p className="text-text-secondary">
-          {t('description')}
-        </p>
-      </div>
+      <PanelHeader title={t('title')} description={t('description')} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* My Identity Section */}

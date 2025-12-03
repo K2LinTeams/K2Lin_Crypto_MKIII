@@ -5,6 +5,7 @@
     "panic": "伪装",
     "settings": "设置",
     "vault": "加解密",
+    "identity": "身份卡",
     "mimic": "隐写",
     "config": "配置",
     "dailyTasks": "每日清单",
@@ -16,6 +17,8 @@
     "cancel": "取消"
   },
   "vault": {
+    "title": "加密保险箱",
+    "description": "使用 AES-256-GCM 或 ECC-X25519 安全地加密和解密消息。",
     "subtitle": "AES-256-GCM",
     "noDataToDecrypt": "未找到可解密的加密数据。",
     "formats": {
@@ -100,6 +103,7 @@
   },
   "settings": {
     "title": "系统配置",
+    "description": "自定义界面、管理数据和查看成就。",
     "interfaceTheme": "界面主题",
     "clipboardMonitor": "剪贴板监听",
     "clipboardMonitorDesc": "自动检测 'Crypto3' 格式数据",

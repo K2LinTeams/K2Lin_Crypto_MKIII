@@ -5,6 +5,7 @@
     "panic": "Panic",
     "settings": "Settings",
     "vault": "Crypt",
+    "identity": "ID",
     "mimic": "Stego",
     "config": "Config",
     "dailyTasks": "Daily Tasks",
@@ -16,6 +17,8 @@
     "cancel": "Cancel"
   },
   "vault": {
+    "title": "Cryptographic Vault",
+    "description": "Securely encrypt and decrypt messages using AES-256-GCM or ECC-X25519.",
     "subtitle": "AES-256-GCM",
     "noDataToDecrypt": "No encrypted data found to decrypt.",
     "formats": {
@@ -100,6 +103,7 @@
   },
   "settings": {
     "title": "System Configuration",
+    "description": "Customize your interface, manage data, and view achievements.",
     "interfaceTheme": "Interface Theme",
     "clipboardMonitor": "Clipboard Monitor",
     "clipboardMonitorDesc": "Auto-detect 'Crypto3' formatted data",
